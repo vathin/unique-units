@@ -46,6 +46,7 @@
     {"id":{"name":"R_Game","path":"rooms/R_Game/R_Game.yy",},},
     {"id":{"name":"R_Main_menu","path":"rooms/R_Main_menu/R_Main_menu.yy",},},
     {"id":{"name":"Room1","path":"rooms/Room1/Room1.yy",},},
+    {"id":{"name":"Settings","path":"scripts/Settings/Settings.yy",},},
     {"id":{"name":"S_End_turn","path":"sprites/S_End_turn/S_End_turn.yy",},},
     {"id":{"name":"S_Map_cmp","path":"sprites/S_Map_cmp/S_Map_cmp.yy",},},
     {"id":{"name":"S_Map","path":"sprites/S_Map/S_Map.yy",},},
