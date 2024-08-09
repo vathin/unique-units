@@ -4,6 +4,7 @@ standart_sprite = S_Summon_active
 standart_scale = 0.3;
 image_xscale = standart_scale;
 image_yscale = standart_scale;
+image_speed = 0;
 
 hovering = false;
 is_active = true;

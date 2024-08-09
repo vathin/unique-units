@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"ArcherBehaviour",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ArcherBehaviour",
+  "parent":{
+    "name":"FigureBehaviours",
+    "path":"folders/Scripts/FigureBehaviours.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"Behaviours",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Behaviours",
+  "parent":{
+    "name":"FigureBehaviours",
+    "path":"folders/Scripts/FigureBehaviours.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

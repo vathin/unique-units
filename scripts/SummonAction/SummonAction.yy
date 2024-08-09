@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"SummonAction",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SummonAction",
+  "parent":{
+    "name":"Scripts",
+    "path":"folders/Scripts.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

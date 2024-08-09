@@ -3,7 +3,6 @@
 
 if(position_meeting(mouse_x, mouse_y, self) and is_active) {
 	global.able_to_summon = true;
-	//is_active = false;
-	change_sprite(S_Warrior, 0.409375);
+	instance_create_depth(0, 0, 0, O_SummonInputController)
 }
 

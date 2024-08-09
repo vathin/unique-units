@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"TraderBehaviour",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"TraderBehaviour",
+  "parent":{
+    "name":"FigureBehaviours",
+    "path":"folders/Scripts/FigureBehaviours.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
