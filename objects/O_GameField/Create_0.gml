@@ -17,8 +17,10 @@ for (i = 0; i < h; i++) {
 		field[i][m].ycord = i;
 		}
 	}
+	instance_create_depth(0, 0, 0, O_GameLoopController);
+	instance_create_depth(1178, 1169, 0, O_EndTurn);
 }
-instance_create_depth(0, 0, 0, O_GameLoopController);
+
 generate_new_game_field(w, h, size);
 
 check_clear_move_cells = function(xcord, ycord) {

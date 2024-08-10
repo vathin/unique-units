@@ -3,6 +3,7 @@
 in_move = false;
 owner = "player1";
 
+
 image_speed = 0;
 image_xscale = Settings.figure_scale;
 image_yscale = Settings.figure_scale;
