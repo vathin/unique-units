@@ -46,7 +46,10 @@ is_under_control = function(player) {
 				hostile = 1;
 			}
 			if (friendly and !hostile) {
-				return true
+				return true;
+			}
+			if (friendly and hostile) and ((m = 2 and i = 2) or (m = 3 and i = 2) or (m = 2 and i = 3) or (m = 3 and i = 3)) {
+				return true;
 			}
 		}
 	}

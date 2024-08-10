@@ -43,17 +43,12 @@ check_controlled_summon_cells = function(player){
 			if !cell.is_filled() {
 				if m > 2  {
 					cell.marked = 1
-					if (m = 2 and i = 2) or (m = 3 and i = 2) or (m = 2 and i = 3) or (m = 3 and i = 3) {
-						cell.marked = 0
-					}
 				}
 				if cell.is_under_control(player) {
 					cell.marked = 1
 				}
+				
 			}
-			else {
-				//marked = 0;
-			}	
 		}
 	}
 }
