@@ -1,6 +1,5 @@
 global.able_to_summon = false;
 global.moving_figure = false;
-global.chosen_figure = "";
 global.selected_cell = "";
 global.figure_to_summon = "warrior";
 cell_for_move = ""
@@ -8,6 +7,7 @@ cell_for_move = ""
 h = 6;
 w = 6;
 size = 90
+depth = 1;
 
 generate_new_game_field = function(w, h, cell_size) {
 for (i = 0; i < h; i++) {
@@ -32,16 +32,6 @@ figure_place_set = function(new_x, new_y) {
 		cell_for_move.ready_for_move = 1
 	}
 }
-move_figure = function(from_x, from_y, to_x, to_y, figure_type) {
-	new_sq = field[to_x][to_y];
-	field[from_x][from_y].clear();
-	new_sq.filled_figure = figure_type;
-	new_sq.filled = 1;
-	figure_type.x = new_sq.x;
-	figure_type.y = new_sq.y;
-	
-}
-
 
 check_clear_move_cells = function(xcord, ycord) {
 	for (i = -1; i <= 1; i++) {

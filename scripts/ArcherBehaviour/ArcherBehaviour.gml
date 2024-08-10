@@ -2,5 +2,5 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function ArcherBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Archer;
-	behaviour = "Archer";
+	index = "archer";
 }

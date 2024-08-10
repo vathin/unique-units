@@ -2,5 +2,5 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Shieldbearer;
-	index = "Shieldbearer";
+	index = "shieldbearer";
 }

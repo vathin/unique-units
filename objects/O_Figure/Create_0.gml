@@ -11,6 +11,7 @@ able_to_move = true;
 friendly = true;
 var behaviour;
 sprite_index = Behaviours.get_sprite(global.figure_to_summon);
+sprite = Behaviours.get_sprite(global.figure_to_summon);
 
 set_behaviour = function(new_behaviour) {
 	behaviour = Behaviours.get(new_behaviour);

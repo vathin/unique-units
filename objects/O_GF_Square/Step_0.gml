@@ -3,5 +3,6 @@
 
 //mouse_hovered = position_meeting(mouse.x, mouse.y, self);
 if !global.moving_figure {
-	ready_for_move = 0;
+	marked_for_move = 0;
+	
 	}

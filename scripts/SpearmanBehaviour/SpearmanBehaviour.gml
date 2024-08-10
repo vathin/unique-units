@@ -2,5 +2,5 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function SpearmanBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Spearman;
-	index = "Spearman";
+	index = "spearman";
 }

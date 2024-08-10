@@ -2,5 +2,5 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Trader;
-	index = "Trader";
+	index = "trader";
 }
