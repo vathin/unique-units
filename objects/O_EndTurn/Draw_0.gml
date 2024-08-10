@@ -1,11 +1,11 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-self.image_speed = -1
+
 draw_self();
-if active {
-	self.image_index = 1;
+if O_GameLoopController.have_action() {
+	image_index = 0
 }
 else {
-	self.image_index = 0;
+	image_index = 1
 }

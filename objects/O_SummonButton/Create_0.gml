@@ -16,4 +16,5 @@ change_sprite = function(new_sprite, new_scale) {
 }
 go_to_standart_mode = function() {
 	change_sprite(standart_sprite, standart_scale);
+	is_active = 1;
 }

@@ -1,3 +1,3 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-state = input
+state = game_state.input

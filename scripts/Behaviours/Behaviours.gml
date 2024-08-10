@@ -15,6 +15,10 @@ function Behaviours() constructor{
 	static get = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].index
 	}
+	static get_random_figure = function() {
+		randomise()
+		return choose("archer", "warrior", "trader", "spearman", "shieldbearer")
+	}
 }
 
 new Behaviours();

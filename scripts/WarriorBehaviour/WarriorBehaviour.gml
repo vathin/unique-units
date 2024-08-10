@@ -2,5 +2,5 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function WarriorBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Warrior;
-	index = "Warrior";
+	index = "warrior";
 }
