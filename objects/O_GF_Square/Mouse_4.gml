@@ -3,7 +3,7 @@
 
 if position_meeting(mouse_x, mouse_y, self) {
 
-	if self.marked_for_move {
+	if self.marked and global.moving_figure {
 		if O_GameLoopController.have_action(){
 			O_GameLoopController.action.set_new_target_coordinates(xcord, ycord);
 		}
@@ -19,13 +19,16 @@ if position_meeting(mouse_x, mouse_y, self) {
 		instance_create_depth(0, 0, 0, O_MoveInputController)
 	}
 
-	if (global.able_to_summon and !is_filled()) {
+	if (global.able_to_summon and !is_filled() and marked) {
 		if global.selected_cell = "" {
+			marked = 0;
 			global.selected_cell = self;
 			O_SummonInputController.start_summon(self.xcord, self.ycord);
 		}
 	else {
+		global.selected_cell.marked = 1;
 		global.selected_cell = self;
+		marked = 0;
 		O_GameLoopController.action.set_new_target_coordinates(self.xcord, self.ycord);
 	}
 }

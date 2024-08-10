@@ -2,7 +2,7 @@
 // Вы можете записать свой код в этом редактор
 global.selected_cell = "";
 draw_mark = true;
-marked_for_move = false;
+marked = false;
 filled_figure = "";
 var xcord;
 var ycord;
@@ -31,4 +31,24 @@ fill = function(new_figure) {
 }
 is_filled = function() {
 	return filled_figure != ""
+}
+
+is_under_control = function(player) {
+	friendly = false;
+	hostile = false;
+	neightbors = O_GameField.cell_get_neightbors(self);
+	for (i = 0; i < array_length(neightbors); i++) {
+		if neightbors[i].filled_figure != "" {
+			if neightbors[i].filled_figure.owner = player {
+				friendly = 1;
+			}
+			else {
+				hostile = 1;
+			}
+			if (friendly and !hostile) {
+				return true
+			}
+		}
+	}
+	return false
 }

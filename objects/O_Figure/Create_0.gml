@@ -1,7 +1,7 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 in_move = false;
-owner = "";
+owner = "player1";
 
 image_speed = 0;
 image_xscale = Settings.figure_scale;

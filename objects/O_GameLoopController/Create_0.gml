@@ -30,3 +30,12 @@ set_action = function(new_action) {
 have_action = function() {
 	return action != ""
 }
+
+get_opponent = function(player) {
+	if player = "player1" {
+		return "player2"
+	}
+	else {
+		return "player1"
+	}
+}
