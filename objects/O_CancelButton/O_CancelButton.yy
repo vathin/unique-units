@@ -1,14 +1,13 @@
 {
   "$GMObject":"",
-  "%Name":"O_SummonButton",
+  "%Name":"O_CancelButton",
   "eventList":[
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":3,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_SummonButton",
+  "name":"O_CancelButton",
   "overriddenProperties":[],
   "parent":{
     "name":"Objects",
@@ -33,8 +32,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"S_Summon_button",
-    "path":"sprites/S_Summon_button/S_Summon_button.yy",
+    "name":"S_Cancel_button",
+    "path":"sprites/S_Cancel_button/S_Cancel_button.yy",
   },
   "spriteMaskId":null,
   "visible":true,

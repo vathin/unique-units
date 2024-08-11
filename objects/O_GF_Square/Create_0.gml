@@ -1,5 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редактор
+global.cell_click_callback = undefined;
 global.selected_cell = "";
 draw_mark = true;
 marked = false;
@@ -54,4 +55,8 @@ is_under_control = function(player) {
 		}
 	}
 	return false
+}
+
+get_cord = function() {
+	return [ycord, xcord]
 }

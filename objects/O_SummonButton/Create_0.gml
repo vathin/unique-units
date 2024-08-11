@@ -1,6 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-standart_sprite = S_Summon_active
+standart_sprite = S_Summon_button
 standart_scale = 0.3;
 image_xscale = standart_scale;
 image_yscale = standart_scale;
@@ -16,5 +16,14 @@ change_sprite = function(new_sprite, new_scale) {
 }
 go_to_standart_mode = function() {
 	change_sprite(standart_sprite, standart_scale);
-	is_active = 1;
+	unblock()
+}
+block = function() {
+	is_active = 0
+}
+unblock = function() {
+	is_active = 1
+}
+is_blocked = function() {
+	return !is_active
 }

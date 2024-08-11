@@ -19,6 +19,7 @@ for (i = 0; i < h; i++) {
 	}
 	instance_create_depth(0, 0, 0, O_GameLoopController);
 	instance_create_depth(1178, 1169, 0, O_EndTurn);
+	instance_create_depth(502, 1169, 0, O_CancelButton);
 }
 
 generate_new_game_field(w, h, size);

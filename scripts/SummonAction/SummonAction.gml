@@ -18,3 +18,4 @@ function SummonAction(target_x, target_y, figure_sprite) : Action() constructor{
 		self.target_y = new_y
 	}
 }
+
