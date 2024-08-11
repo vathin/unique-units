@@ -1,7 +1,7 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
 turn_owner = "";
-action = "";
+action = undefined;
 turn_end = false;
 can_cancel = false;
 
@@ -12,12 +12,12 @@ enum game_state{
 state = game_state.input
 
 startInput = function() {
-	O_SummonButton.active = 1
+	O_SummonButton.unblock()
 }
 
 end_move = function() {
 	action.execute();
-	action = "";
+	action = undefined;
 	O_SummonButton.go_to_standart_mode();
 	state = game_state.move
 	alarm[0] = 120;
@@ -30,7 +30,7 @@ set_action = function(new_action, cancel) {
 }
 
 have_action = function() {
-	return action != ""
+	return action != undefined
 }
 
 get_opponent = function(player) {
@@ -42,7 +42,7 @@ get_opponent = function(player) {
 	}
 }
 
-chooze_cell_for_summon = function() {
+choose_cell_for_summon = function() {
 	if global.selected_cell = "" {
 		global.cell_click_callback.marked = 0;
 		global.selected_cell = global.cell_click_callback;
@@ -57,12 +57,10 @@ chooze_cell_for_summon = function() {
 }
 cancel_action = function() {
 	if have_action{
-		action = "";
-		global.cell_click_callback.set_draw_marks(1);
+		action = undefined;
 		clear_all();
 	}
 	else {
-		global.cell_click_callback.set_draw_marks(1);
 		clear_all();
 		try {
 			instance_destroy(O_MoveInputController);
@@ -79,5 +77,12 @@ clear_all = function() {
 	global.cell_click_callback = undefined;
 	can_cancel = 0;
 	O_SummonButton.unblock()
+	global.cell_action = function(cell) {
+		if (cell.is_filled() and cell.filled_figure.able_to_move) {
+			global.cell_click_callback = cell;
+			global.selected_cell = cell;
+			cell.filled_figure.click();
+		}
+	} 
 }
 

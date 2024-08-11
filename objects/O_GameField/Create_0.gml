@@ -1,7 +1,15 @@
+global.cell_click_callback = undefined;
+global.selected_cell = "";
 global.able_to_summon = false;
 global.moving_figure = false;
-global.selected_cell = "";
-global.figure_to_summon = "warrior";
+global.figure_to_summon = undefined;
+global.cell_action = function(cell) {
+	if (cell.is_filled() and cell.filled_figure.able_to_move) {
+		global.cell_click_callback = cell;
+		global.selected_cell = cell;
+		filled_figure.click();
+	}
+} 
 cell_for_move = ""
 
 h = 6;
@@ -61,6 +69,7 @@ clear_all_marks = function() {
 	for (i = 0; i < h; i++) {
 		for (m = 0; m < w; m++) {
 			field[i][m].marked = false;
+			field[i][m].set_draw_marks(1);
 		}
 	}
 }

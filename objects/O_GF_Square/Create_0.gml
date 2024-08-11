@@ -1,7 +1,5 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редактор
-global.cell_click_callback = undefined;
-global.selected_cell = "";
 draw_mark = true;
 marked = false;
 filled_figure = "";

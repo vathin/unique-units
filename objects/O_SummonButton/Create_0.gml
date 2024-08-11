@@ -5,6 +5,7 @@ standart_scale = 0.3;
 image_xscale = standart_scale;
 image_yscale = standart_scale;
 image_speed = 0;
+do_something = undefined;
 
 hovering = false;
 is_active = true;
