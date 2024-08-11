@@ -1,6 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
-turn_owner = "";
+global.turn_owner = "player1";
 action = undefined;
 turn_end = false;
 can_cancel = false;
@@ -21,7 +21,7 @@ end_move = function() {
 	O_SummonButton.go_to_standart_mode();
 	state = game_state.move
 	alarm[0] = 120;
-	
+	global.turn_owner = get_opponent(global.turn_owner)
 }
 
 set_action = function(new_action, cancel) {
@@ -78,11 +78,12 @@ clear_all = function() {
 	can_cancel = 0;
 	O_SummonButton.unblock()
 	global.cell_action = function(cell) {
-		if (cell.is_filled() and cell.filled_figure.able_to_move) {
-			global.cell_click_callback = cell;
-			global.selected_cell = cell;
-			cell.filled_figure.click();
-		}
+	if (cell.is_filled() and cell.filled_figure.able_to_move) and
+	cell.filled_figure.owner = global.turn_owner {
+		global.cell_click_callback = cell;
+		global.selected_cell = cell;
+		cell.filled_figure.click();
+	}
 	} 
 }
 
