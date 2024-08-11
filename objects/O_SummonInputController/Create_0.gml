@@ -4,7 +4,7 @@
 global.figure_to_summon = Behaviours.get_random_figure();
 O_SummonButton.change_sprite(Behaviours.get_sprite(global.figure_to_summon), Settings.summon_button_figure_scale);
 global.mark = S_Summon_mark;
-O_GameField.check_controlled_summon_cells("player1");
+O_GameField.check_controlled_summon_cells(global.turn_owner);
 global.able_to_summon = true;
 global.cell_click_callback = "start_summon";
 global.cell_action = function(cell) {
