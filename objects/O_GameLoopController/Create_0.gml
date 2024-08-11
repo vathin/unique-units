@@ -5,6 +5,9 @@ action = undefined;
 turn_end = false;
 can_cancel = false;
 
+set_can_cancel = function(value) {
+	can_cancel = value;
+}
 enum game_state{
 	input,
 	move
@@ -24,9 +27,8 @@ end_move = function() {
 	global.turn_owner = get_opponent(global.turn_owner)
 }
 
-set_action = function(new_action, cancel) {
+set_action = function(new_action) {
 	action = new_action;
-	can_cancel = cancel;
 }
 
 have_action = function() {
@@ -75,11 +77,12 @@ clear_all = function() {
 	O_SummonButton.go_to_standart_mode();
 	O_GameField.clear_all_marks();
 	global.cell_click_callback = undefined;
-	can_cancel = 0;
+	set_can_cancel(0)
 	O_SummonButton.unblock()
 	global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {
+		set_can_cancel(1);
 		global.cell_click_callback = cell;
 		global.selected_cell = cell;
 		cell.filled_figure.click();

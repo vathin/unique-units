@@ -8,6 +8,7 @@ global.cell_action = function(cell) {
 	cell.filled_figure.owner = global.turn_owner {
 		global.cell_click_callback = cell;
 		global.selected_cell = cell;
+		O_GameLoopController.set_can_cancel(1);
 		cell.filled_figure.click();
 	}
 } 

@@ -6,7 +6,6 @@ O_SummonButton.change_sprite(Behaviours.get_sprite(global.figure_to_summon), Set
 global.mark = S_Summon_mark;
 O_GameField.check_controlled_summon_cells(global.turn_owner);
 global.able_to_summon = true;
-global.cell_click_callback = "start_summon";
 global.cell_action = function(cell) {
 	if (cell.marked) {
 		global.cell_click_callback = cell;
@@ -15,6 +14,6 @@ global.cell_action = function(cell) {
 }
 
 start_summon = function(target_x, target_y) {
-	O_GameLoopController.set_action(new SummonAction(target_x, target_y, Behaviours.get_sprite(global.figure_to_summon)), 0);
+	O_GameLoopController.set_action(new SummonAction(target_x, target_y, Behaviours.get_sprite(global.figure_to_summon)));
 	instance_destroy();
 }
