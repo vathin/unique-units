@@ -26,4 +26,5 @@ function MoveAction(from_x, from_y, to_x, to_y, figure_sprite) : Action() constr
 		self.to_y = new_y;
 		O_GameField.field[to_y][to_x].set_draw_marks(0)
 	}
+	
 }

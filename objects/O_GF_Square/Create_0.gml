@@ -1,6 +1,5 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редактор
-global.selected_cell = "";
 draw_mark = true;
 marked = false;
 filled_figure = "";
@@ -48,10 +47,17 @@ is_under_control = function(player) {
 			if (friendly and !hostile) {
 				return true;
 			}
-			if (friendly and hostile) and ((m = 2 and i = 2) or (m = 3 and i = 2) or (m = 2 and i = 3) or (m = 3 and i = 3)) {
+			if (friendly and hostile) and ((neightbors[i].xcord = 2 and neightbors[i].ycord = 2) or
+			(neightbors[i].xcord = 3 and neightbors[i].ycord = 2) or
+			(neightbors[i].xcord = 2 and neightbors[i].ycord = 3) or 
+			(neightbors[i].xcord = 3 and neightbors[i].ycord = 3)) {
 				return true;
 			}
 		}
 	}
 	return false
+}
+
+get_cord = function() {
+	return [ycord, xcord]
 }

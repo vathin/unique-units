@@ -1,7 +1,17 @@
+global.cell_click_callback = undefined;
+global.selected_cell = "";
 global.able_to_summon = false;
 global.moving_figure = false;
-global.selected_cell = "";
-global.figure_to_summon = "warrior";
+global.figure_to_summon = undefined;
+global.cell_action = function(cell) {
+	if (cell.is_filled() and cell.filled_figure.able_to_move) and
+	cell.filled_figure.owner = global.turn_owner {
+		global.cell_click_callback = cell;
+		global.selected_cell = cell;
+		O_GameLoopController.set_can_cancel(1);
+		cell.filled_figure.click();
+	}
+} 
 cell_for_move = ""
 
 h = 6;
@@ -19,6 +29,7 @@ for (i = 0; i < h; i++) {
 	}
 	instance_create_depth(0, 0, 0, O_GameLoopController);
 	instance_create_depth(1178, 1169, 0, O_EndTurn);
+	instance_create_depth(502, 1169, 0, O_CancelButton);
 }
 
 generate_new_game_field(w, h, size);
@@ -39,17 +50,33 @@ check_clear_move_cells = function(xcord, ycord) {
 }
 
 check_controlled_summon_cells = function(player){
+	var is_on_player_side
 	for (i = 0; i < h; i++) {
 		for (m = 0; m < w; m++) {
 			cell = field[m][i]
 			if !cell.is_filled() {
-				if m > 2  {
+				if player = "player1" {
+					if m > 2 {
+						is_on_player_side = 1
+					}
+					else {
+						is_on_player_side = 0
+					}
+				}
+				else {
+					if m <= 2 {
+						is_on_player_side = 1
+					}
+					else {
+						is_on_player_side = 0
+					}
+				}
+				if is_on_player_side or cell.is_under_control(player){
 					cell.marked = 1
 				}
-				if cell.is_under_control(player) {
-					cell.marked = 1
+				if cell.is_under_control(O_GameLoopController.get_opponent(player)) {
+					cell.marked = 0
 				}
-				
 			}
 		}
 	}
@@ -60,6 +87,7 @@ clear_all_marks = function() {
 	for (i = 0; i < h; i++) {
 		for (m = 0; m < w; m++) {
 			field[i][m].marked = false;
+			field[i][m].set_draw_marks(1);
 		}
 	}
 }
