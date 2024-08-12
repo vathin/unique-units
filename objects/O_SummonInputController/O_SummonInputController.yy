@@ -8,13 +8,10 @@
   "name":"O_SummonInputController",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Controllers",
+    "path":"folders/Objects/Controllers.yy",
   },
-  "parentObjectId":{
-    "name":"O_IncputController",
-    "path":"objects/O_IncputController/O_IncputController.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,

@@ -3,6 +3,7 @@
 function Settings() constructor{
 	static figure_scale = 0.095;
 	static summon_button_figure_scale = 0.409375;
+	static move_animation_lenght = 30;
 }
 
 new Settings();

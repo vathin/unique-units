@@ -40,3 +40,8 @@ click = function() {
 		}
 	}
 }
+
+start_move_animation = function(cell, lenght) {
+	animation = instance_create_depth(0, 0, 0, O_MoveFigureAnimation);
+	animation.start_animation(x, y, cell.x, cell.y, lenght, self);
+}

@@ -11,7 +11,7 @@ function MoveAction(from_x, from_y, to_x, to_y, figure_sprite) : Action() constr
 	
 	
 	execute = function() {
-		O_GameField.field[to_y][to_x].fill(global.selected_cell.filled_figure);
+		O_GameField.field[to_y][to_x].fill(global.selected_cell.filled_figure, 1);
 		O_GameField.field[from_y][from_x].clear();
 	}
 	

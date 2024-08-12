@@ -21,11 +21,13 @@ create_figure = function(figure_behaviour) {
 clear = function() {
 	filled_figure = "";
 }
-fill = function(new_figure) {
+fill = function(new_figure, is_moving) {
 	filled = 1
 	filled_figure = new_figure
-	new_figure.x = self.x;
-	new_figure.y = self.y;
+	if !is_moving {
+		new_figure.x = self.x;
+		new_figure.y = self.y;
+	}
 	self.draw_mark = 1;
 }
 is_filled = function() {
@@ -47,10 +49,10 @@ is_under_control = function(player) {
 			if (friendly and !hostile) {
 				return true;
 			}
-			if (friendly and hostile) and ((neightbors[i].xcord = 2 and neightbors[i].ycord = 2) or
-			(neightbors[i].xcord = 3 and neightbors[i].ycord = 2) or
-			(neightbors[i].xcord = 2 and neightbors[i].ycord = 3) or 
-			(neightbors[i].xcord = 3 and neightbors[i].ycord = 3)) {
+			if (friendly and hostile) and ((xcord = 2 and ycord = 2) or
+			(xcord = 3 and ycord = 2) or
+			(xcord = 2 and ycord = 3) or 
+			(xcord = 3 and ycord = 3)) {
 				return true;
 			}
 		}

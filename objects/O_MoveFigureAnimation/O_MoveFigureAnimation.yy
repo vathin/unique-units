@@ -1,19 +1,20 @@
 {
   "$GMObject":"",
-  "%Name":"O_CancelButton",
+  "%Name":"O_MoveFigureAnimation",
   "eventList":[
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_CancelButton",
+  "name":"O_MoveFigureAnimation",
   "overriddenProperties":[],
   "parent":{
-    "name":"Buttons",
-    "path":"folders/Objects/Buttons.yy",
+    "name":"Animation",
+    "path":"folders/Objects/Animation.yy",
   },
-  "parentObjectId":null,
+  "parentObjectId":{
+    "name":"O_FigureAnimation",
+    "path":"objects/O_FigureAnimation/O_FigureAnimation.yy",
+  },
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
@@ -31,10 +32,7 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":{
-    "name":"S_Cancel_button",
-    "path":"sprites/S_Cancel_button/S_Cancel_button.yy",
-  },
+  "spriteId":null,
   "spriteMaskId":null,
   "visible":true,
 }
