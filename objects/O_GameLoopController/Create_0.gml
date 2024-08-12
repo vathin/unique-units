@@ -5,6 +5,8 @@ action = undefined;
 turn_end = false;
 can_cancel = false;
 
+O_Turn_timer.start_count()
+
 set_can_cancel = function(value) {
 	can_cancel = value;
 }
@@ -19,12 +21,17 @@ startInput = function() {
 }
 
 end_move = function() {
-	action.execute();
+	state = game_state.move
+	if global.moving_figure {
+		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
+	}
+	alarm[0] = 60;
+	if have_action() { action.execute() }
 	action = undefined;
 	O_SummonButton.go_to_standart_mode();
-	state = game_state.move
-	alarm[0] = 120;
 	global.turn_owner = get_opponent(global.turn_owner)
+	clear_all();
+	O_Turn_timer.start_count()
 }
 
 set_action = function(new_action) {
@@ -89,4 +96,5 @@ clear_all = function() {
 	}
 	} 
 }
+
 

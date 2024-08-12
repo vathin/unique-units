@@ -27,9 +27,16 @@ for (i = 0; i < h; i++) {
 		field[i][m].ycord = i;
 		}
 	}
+	instance_create_depth(0, 0, 0, O_Turn_timer);
 	instance_create_depth(0, 0, 0, O_GameLoopController);
-	instance_create_depth(1178, 1169, 0, O_EndTurn);
-	instance_create_depth(502, 1169, 0, O_CancelButton);
+	instance_create_depth(1168, 1169, 0, O_EndTurn);
+	instance_create_depth(512, 1169, 0, O_CancelButton);
+	card_x = 500;
+	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
+		new_card = instance_create_depth(card_x, 900, 0, O_Card_display);
+		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]))
+		card_x += (845 / array_length(Player_figure_list.player_figure_list))
+	}
 }
 
 generate_new_game_field(w, h, size);
@@ -76,6 +83,11 @@ check_controlled_summon_cells = function(player){
 				}
 				if cell.is_under_control(O_GameLoopController.get_opponent(player)) {
 					cell.marked = 0
+				}
+				if cell.is_under_control(player) and cell.is_under_control(O_GameLoopController.get_opponent(player)) {
+					if ((cell.xcord = 2 or cell.xcord = 3) and (cell.ycord = 2 or cell.ycord = 3)) {
+						cell.marked = 1;
+					}
 				}
 			}
 		}
