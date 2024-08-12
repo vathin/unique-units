@@ -3,4 +3,5 @@
 function SpearmanBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Spearman;
 	index = "spearman";
+	card = S_spearman_card;
 }

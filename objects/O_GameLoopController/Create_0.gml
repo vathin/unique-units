@@ -5,6 +5,8 @@ action = undefined;
 turn_end = false;
 can_cancel = false;
 
+O_Turn_timer.start_count()
+
 set_can_cancel = function(value) {
 	can_cancel = value;
 }
@@ -24,11 +26,12 @@ end_move = function() {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
 	}
 	alarm[0] = 60;
-	action.execute();
+	if have_action() { action.execute() }
 	action = undefined;
 	O_SummonButton.go_to_standart_mode();
 	global.turn_owner = get_opponent(global.turn_owner)
 	clear_all();
+	O_Turn_timer.start_count()
 }
 
 set_action = function(new_action) {
