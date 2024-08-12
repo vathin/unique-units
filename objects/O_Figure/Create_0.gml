@@ -1,8 +1,19 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
+enum figure_state_list{
+	active,
+	dropped,
+	closed,
+	overturned,
+	capture,
+	surrounded
+}
+
+state = figure_state_list.active
 in_move = false;
 owner = global.turn_owner;
 behaviour = Behaviours.get(global.figure_to_summon);
+
 if owner = "player1" {
 	image_index = 0;
 }

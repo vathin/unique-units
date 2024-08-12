@@ -63,5 +63,6 @@
     {"name":"S_Summon_mark","order":1,"path":"sprites/S_Summon_mark/S_Summon_mark.yy",},
     {"name":"S_trader_card","order":1,"path":"sprites/S_trader_card/S_trader_card.yy",},
     {"name":"S_Trader","order":2,"path":"sprites/S_Trader/S_Trader.yy",},
+    {"name":"S_Background","order":14,"path":"sprites/S_Background/S_Background.yy",},
   ],
 }

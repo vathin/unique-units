@@ -1,7 +1,7 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-O_SummonButton.change_sprite(S_Move_active, 2.32);
+O_SummonButton.change_sprite(S_Move_active, 1.63);
 global.mark = S_Move_mark;
 O_SummonButton.block();
 global.cell_action = function(cell) {
