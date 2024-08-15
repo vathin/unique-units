@@ -3,5 +3,5 @@
 
 image_speed = 0;
 image_index = 1;
-image_xscale = 0.47;
-image_yscale = 0.47;
+image_xscale = Settings.additional_buttons_scale;
+image_yscale = Settings.additional_buttons_scale;

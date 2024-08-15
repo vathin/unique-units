@@ -91,6 +91,7 @@
     {"id":{"name":"S_Trader","path":"sprites/S_Trader/S_Trader.yy",},},
     {"id":{"name":"S_warrior_card","path":"sprites/S_warrior_card/S_warrior_card.yy",},},
     {"id":{"name":"S_Warrior","path":"sprites/S_Warrior/S_Warrior.yy",},},
+    {"id":{"name":"S_Background","path":"sprites/S_Background/S_Background.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

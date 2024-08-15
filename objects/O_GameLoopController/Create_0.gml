@@ -14,6 +14,7 @@ enum game_state{
 	input,
 	move
 }
+
 state = game_state.input
 
 startInput = function() {
