@@ -10,7 +10,9 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 		target_figure.drop();
 	}
 	
-	set_target = function(new_target) {
+	draw = function() {}
+	
+	set_target = function(new_target, new_cell) {
 		target_figure = new_target;
 	}
 	

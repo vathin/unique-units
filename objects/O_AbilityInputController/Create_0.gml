@@ -13,7 +13,14 @@ global.cell_action = function(cell) {
 		global.cell_click_callback.draw_mark = 1;
 		global.cell_click_callback = cell;
 		cell.draw_mark = 0;
-		cell.filled_figure.click()
+		if cell.filled_figure != undefined {cell.filled_figure.click()}
+		else {
+			if O_GameLoopController.have_action() {O_GameLoopController.action.set_target(cell)}
+			else {
+				O_AbilityInputController.start_ability()
+				O_GameLoopController.action.set_target(cell)
+				}
+			}
 	}
 }
 

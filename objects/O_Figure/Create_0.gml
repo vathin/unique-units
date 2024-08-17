@@ -42,11 +42,11 @@ click = function() {
 		}
 		if global.using_ability {
 			if O_GameLoopController.have_action() {
-				O_GameLoopController.action.set_target(self);
+				O_GameLoopController.action.set_target(self, global.cell_click_callback);
 			}
 			else {
 				O_AbilityInputController.start_ability();
-				O_GameLoopController.action.set_target(self);
+				O_GameLoopController.action.set_target(self, global.cell_click_callback);
 			}
 		}
 	}
