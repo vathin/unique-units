@@ -10,7 +10,9 @@ ability = new create_ability(using_figure, global.cell_click_callback)
 ability.check_ability_targets()
 global.cell_action = function(cell) {
 	if cell.marked {
+		global.cell_click_callback.draw_mark = 1;
 		global.cell_click_callback = cell;
+		cell.draw_mark = 0;
 		cell.filled_figure.click()
 	}
 }
