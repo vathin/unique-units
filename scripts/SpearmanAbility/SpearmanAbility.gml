@@ -6,7 +6,7 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	cell_for_move = undefined;
 	
 	execute = function() {
-		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, 45)
+		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.ability_animation_lenght)
 		global.cell_click_callback.fill(global.selected_cell.filled_figure, 1);
 		global.selected_cell.clear();
 	}

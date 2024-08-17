@@ -5,6 +5,7 @@ function Settings() constructor{
 	static summon_button_figure_scale = 0.28;
 	static additional_buttons_scale = 0.4;
 	static move_animation_lenght = 30;
+	static ability_animation_lenght = 45;
 	static turn_time = 2700;
 	static FPS = 60;
 }
