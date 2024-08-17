@@ -3,5 +3,6 @@
 function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Shieldbearer;
 	index = "shieldbearer";
-	card = S_shieldbearer_card;
+	card = S_shieldbearer_card
+	ability = ShieldbearerAbility
 }

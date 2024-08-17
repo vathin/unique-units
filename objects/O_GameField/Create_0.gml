@@ -2,6 +2,7 @@ global.cell_click_callback = undefined;
 global.selected_cell = "";
 global.able_to_summon = false;
 global.moving_figure = false;
+global.using_ability = false;
 global.figure_to_summon = undefined;
 global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
@@ -83,7 +84,7 @@ check_controlled_summon_cells = function(player){
 				if is_on_player_side or cell.is_under_control(player){
 					cell.marked = 1
 				}
-				if cell.is_under_control(O_GameLoopController.get_opponent(player)) {
+				if cell.is_under_control(O_GameLoopController.get_opponent(player)){
 					cell.marked = 0
 				}
 				if cell.is_under_control(player) and cell.is_under_control(O_GameLoopController.get_opponent(player)) {
@@ -91,6 +92,9 @@ check_controlled_summon_cells = function(player){
 						cell.marked = 1;
 					}
 				}
+				if is_on_player_side and ((cell.xcord = 2 or cell.xcord = 3) and (cell.ycord = 2 or cell.ycord = 3)) {
+					cell.marked = 1;
+				} 
 			}
 		}
 	}

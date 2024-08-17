@@ -1,15 +1,8 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-enum figure_state_list{
-	active,
-	dropped,
-	closed,
-	overturned,
-	capture,
-	surrounded
-}
 
-state = figure_state_list.active
+state = new Figure_state();
+state.is_active = 1; 
 in_move = false;
 owner = global.turn_owner;
 behaviour = Behaviours.get(global.figure_to_summon);
@@ -34,11 +27,9 @@ set_behaviour = function(new_behaviour) {
 }
 
 click = function() {
-	if global.cell_click_callback.is_filled() and !global.able_to_summon and !global.moving_figure{
-		global.moving_figure = true;
+	if global.cell_click_callback.is_filled() and !global.able_to_summon and !global.moving_figure and !global.using_ability{
 		global.selected_cell = global.cell_click_callback;
-		O_GameField.check_clear_move_cells(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
-		instance_create_depth(0, 0, 0, O_MoveInputController);
+		instance_create_depth(0, 0, 0, O_FigureActionController);
 	}
 	else{
 		if global.moving_figure	and !global.cell_click_callback.is_filled(){
@@ -49,6 +40,15 @@ click = function() {
 				O_MoveInputController.start_move(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 			}
 		}
+		if global.using_ability {
+			if O_GameLoopController.have_action() {
+				O_GameLoopController.action.set_target(self);
+			}
+			else {
+				O_AbilityInputController.start_ability();
+				O_GameLoopController.action.set_target(self);
+			}
+		}
 	}
 }
 
@@ -56,3 +56,14 @@ start_move_animation = function(cell, lenght) {
 	animation = instance_create_depth(0, 0, 0, O_MoveFigureAnimation);
 	animation.start_animation(x, y, cell.x, cell.y, lenght, self);
 }
+
+
+drop = function() {
+	state.is_active = 0;
+	state.is_dropped = 1;
+	image_xscale = Settings.figure_scale*0.75;
+	image_yscale = Settings.figure_scale*0.75;
+	O_DroppedFigurePlace.add_figure(self);
+}
+
+get_ability = function() {return Behaviours.get_ablility(behaviour)}

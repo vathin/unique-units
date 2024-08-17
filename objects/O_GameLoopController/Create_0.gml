@@ -75,11 +75,16 @@ cancel_action = function() {
 		try {
 			instance_destroy(O_MoveInputController);
 		}
+		try {
+			O_FigureActionController.clear_buttons();
+			instance_destroy(O_FigureActionController);
+		}
 	}
 }
 
 clear_all = function() {
 	global.moving_figure = 0;
+	global.using_ability = 0;
 	global.chosen_figure = "";
 	global.selected_cell = "";
 	O_SummonButton.go_to_standart_mode();

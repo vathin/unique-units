@@ -23,6 +23,9 @@ function Behaviours() constructor{
 	static get_figure_card = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].card
 	}
+	static get_ablility = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].ability
+	}
 }
 
 new Behaviours();

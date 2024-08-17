@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"TraderAbility",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"TraderAbility",
+  "parent":{
+    "name":"FigureAbilities",
+    "path":"folders/Scripts/FigureAbilities.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

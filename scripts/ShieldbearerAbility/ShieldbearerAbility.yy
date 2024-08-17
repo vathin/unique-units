@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"ShieldbearerAbility",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ShieldbearerAbility",
+  "parent":{
+    "name":"FigureAbilities",
+    "path":"folders/Scripts/FigureAbilities.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

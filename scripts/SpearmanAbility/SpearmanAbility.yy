@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"SpearmanAbility",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SpearmanAbility",
+  "parent":{
+    "name":"FigureAbilities",
+    "path":"folders/Scripts/FigureAbilities.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

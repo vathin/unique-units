@@ -11,3 +11,5 @@ if global.turn_owner = "player1" {
 else {
 	draw_text(955, 30, "ходит игрок 2");
 }
+draw_text(1110, 510, "плен")
+draw_text(490 , 510, "сброс")
