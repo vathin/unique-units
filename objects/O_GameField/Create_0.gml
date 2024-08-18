@@ -4,6 +4,7 @@ global.able_to_summon = false;
 global.moving_figure = false;
 global.using_ability = false;
 global.figure_to_summon = undefined;
+global.input = true;
 global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {

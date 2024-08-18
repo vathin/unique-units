@@ -10,23 +10,18 @@ O_Turn_timer.start_count()
 set_can_cancel = function(value) {
 	can_cancel = value;
 }
-enum game_state{
-	input,
-	move
-}
 
-state = game_state.input
 
 startInput = function() {
 	O_SummonButton.unblock()
 }
 
 end_move = function() {
-	state = game_state.move
+	alarm[0] = 40;
+	global.input = 0;
 	if global.moving_figure {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
 	}
-	alarm[0] = 60;
 	if have_action() { action.execute() }
 	action = undefined;
 	O_SummonButton.go_to_standart_mode();
@@ -71,14 +66,11 @@ cancel_action = function() {
 		clear_all();
 	}
 	else {
-		clear_all();
 		try {
 			instance_destroy(O_MoveInputController);
 		}
-		try {
-			O_FigureActionController.clear_buttons();
-			instance_destroy(O_FigureActionController);
-		}
+	
+		clear_all();
 	}
 }
 
@@ -101,6 +93,11 @@ clear_all = function() {
 		cell.filled_figure.click();
 	}
 	} 
+	try {
+		O_FigureActionController.clear_buttons();
+		instance_destroy(O_FigureActionController);
+	}
+	catch(_exception) {}
 }
 
 

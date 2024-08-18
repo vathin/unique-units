@@ -1,9 +1,9 @@
 {
   "$GMScript":"",
-  "%Name":"ArcherAbility",
+  "%Name":"StandartMoveAbility",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"ArcherAbility",
+  "name":"StandartMoveAbility",
   "parent":{
     "name":"FigureAbilities",
     "path":"folders/Scripts/FigureAbilities.yy",

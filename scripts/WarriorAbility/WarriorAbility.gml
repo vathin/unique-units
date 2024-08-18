@@ -17,15 +17,18 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 	}
 	
 	check_ability_targets = function() {
+		found_cell = false;
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <= 1; m++) {
 				cell = O_GameField.get_cell(using_cell.xcord + i, using_cell.ycord + m)
 				if cell != undefined {
 					if cell.is_filled() and cell.filled_figure != using_cell.filled_figure{
 						cell.marked = 1;
+						found_cell = 1;
 					}
 				}
 			}
 		}
+		return found_cell();
 	}
 }

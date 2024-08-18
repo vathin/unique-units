@@ -26,6 +26,12 @@ function Behaviours() constructor{
 	static get_ablility = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].ability
 	}
+	static get_move_ability = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].move_ability
+	}
+	static have_ability = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].ability != undefined
+	}
 }
 
 new Behaviours();

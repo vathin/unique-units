@@ -20,5 +20,6 @@ sort = function() {
 
 add_figure = function(new_figure) {
 	array_push(figures, new_figure);
-	sort();
+	alarm[0] = Settings.move_animation_lenght + 2;
+	new_figure.start_move_animation(self, Settings.move_animation_lenght)
 }

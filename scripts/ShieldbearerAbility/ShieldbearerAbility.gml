@@ -15,7 +15,7 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	
 	draw = function() {
 		if selected {
-			draw_sprite_ext(using_figure.sprite_index, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
+			draw_sprite_ext(target_figure.sprite_index, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
 		Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 	}
