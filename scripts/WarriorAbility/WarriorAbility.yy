@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"WarriorAbility",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"WarriorAbility",
+  "parent":{
+    "name":"FigureAbilities",
+    "path":"folders/Scripts/FigureAbilities.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
