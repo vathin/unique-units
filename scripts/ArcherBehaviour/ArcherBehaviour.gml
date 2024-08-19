@@ -5,5 +5,5 @@ function ArcherBehaviour() : FigureBehaviour() constructor{
 	index = "archer";
 	card = S_archer_card;
 	ability = undefined;
-	move_ability = StandartMoveAbility;
+	move_ability = ArcherMoveAbility;
 }

@@ -15,7 +15,7 @@ global.cell_action = function(cell) {
 	}
 }
 
-start_move = function(to_x,to_y) {
+start_move = function(to_x, to_y) {
 	O_GameLoopController.set_action(new move_ability(global.selected_cell.xcord, global.selected_cell.ycord, 
 		to_x, to_y, global.selected_cell.filled_figure.sprite_index));
 	instance_destroy();

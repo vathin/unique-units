@@ -9,4 +9,6 @@ if animation_frame = 1 {
 }
 if animation_frame = Settings.move_animation_lenght {
 	animate_figure.depth = -1
+	animate_figure.x = x_to;
+	animate_figure.y = y_to;
 }

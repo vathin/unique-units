@@ -73,6 +73,7 @@
     {"id":{"name":"FigureBehaviour","path":"scripts/FigureBehaviour/FigureBehaviour.yy",},},
     {"id":{"name":"MoveAction","path":"scripts/MoveAction/MoveAction.yy",},},
     {"id":{"name":"Player_figure_list","path":"scripts/Player_figure_list/Player_figure_list.yy",},},
+    {"id":{"name":"ArcherMoveAbility","path":"scripts/ArcherMoveAbility/ArcherMoveAbility.yy",},},
     {"id":{"name":"Settings","path":"scripts/Settings/Settings.yy",},},
     {"id":{"name":"ShieldbearerAbility","path":"scripts/ShieldbearerAbility/ShieldbearerAbility.yy",},},
     {"id":{"name":"ShieldbearerBehaviour","path":"scripts/ShieldbearerBehaviour/ShieldbearerBehaviour.yy",},},
