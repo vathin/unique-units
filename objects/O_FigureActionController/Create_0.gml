@@ -6,8 +6,7 @@ ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
 if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {ability_button.block()}
 O_SummonButton.go_away();
 move_and_ability = false;
-if move_and_ability {
-}
+
 move_figure = function() {
 		clear_buttons();
 		O_SummonButton.block();
@@ -23,7 +22,7 @@ use_ability = function() {
 		instance_create_depth(0, 0, 0, O_AbilityInputController);
 		instance_destroy();
 	}
-	else{
+	else {
 		global.moving_figure = 0;
 		global.using_ability = 1;
 		clear_buttons();
@@ -32,6 +31,7 @@ use_ability = function() {
 		O_GameField.clear_all_marks();
 		global.mark = S_Ability_mark;
 		O_GameLoopController.action.check_ability_targets(1);
+		instance_destroy();
 	}
 }
 

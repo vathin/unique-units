@@ -29,6 +29,6 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 				}
 			}
 		}
-		return found_cell();
+		return found_cell;
 	}
 }
