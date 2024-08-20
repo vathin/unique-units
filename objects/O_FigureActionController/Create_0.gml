@@ -6,7 +6,7 @@ if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {abili
 O_SummonButton.go_away();
 move_and_ability = false;
 if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {
-	ability = new ArcherMoveAbility(global.selected_cell.xcord, global.selected_cell.ycord, 0, 0, 0)
+	ability = new ArcherMoveAbility(global.selected_cell.xcord, global.selected_cell.ycord, undefined, undefined, 0)
 	if !ability.check_clear_cells(undefined, undefined) {move_button.block()}
 }
 

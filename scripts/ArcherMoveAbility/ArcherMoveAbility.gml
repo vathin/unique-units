@@ -4,10 +4,13 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	self.from_x = from_x;
 	self.from_y = from_y;
 	self.figure_sprite = figure_sprite;
-	self.to_x = undefined;
-	self.to_y = undefined;
+	self.to_x = to_x;
+	self.to_y = to_y;
 	moving_figure = undefined;
 	cells_to_check = [];
+	if to_x != undefined{
+		O_GameField.get_cell(to_x, to_y).set_draw_marks(0);
+	}
 	for (i = 0; i <= 5; i++) {
 		for (m = 0; m <= 5; m++) {
 			cell_array[m][i] = 0;
@@ -19,14 +22,12 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	}
 	
 	draw = function() {
-		if to_x != undefined {
 			draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
-		}
 	}
 	
 	set_new_target_coordinates = function(new_x, new_y) {
-		if to_x != undefined {O_GameField.get_cell(to_x, to_y).set_draw_marks(1)}
+		O_GameField.get_cell(to_x, to_y).set_draw_marks(1)
 		self.to_x = new_x;
 		self.to_y = new_y;
 		O_GameField.get_cell(new_x, new_y).set_draw_marks(0)
