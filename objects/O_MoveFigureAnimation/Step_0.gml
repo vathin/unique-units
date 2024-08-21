@@ -7,6 +7,6 @@ event_inherited();
 if animation_frame = 1 {
 	animate_figure.depth = -2
 }
-if animation_frame = Settings.move_animation_lenght {
+if animation_frame = Settings.move_animation_lenght -1 {
 	animate_figure.depth = -1
 }
