@@ -23,11 +23,13 @@ end_move = function() {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
 	}
 	if have_action() { action.execute() }
-	action = undefined;
-	O_SummonButton.go_to_standart_mode();
-	global.turn_owner = get_opponent(global.turn_owner)
+	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
-	O_Turn_timer.start_count()
+	O_Turn_timer.start_count();
+	if array_length(O_App.data.load(global.turn_owner).player_figures) = 0 {
+		O_SummonButton.block();
+		};
+
 }
 
 set_action = function(new_action) {
@@ -97,6 +99,7 @@ clear_all = function() {
 		instance_destroy(O_FigureActionController);
 	}
 	catch(_exception) {}
+	action = undefined;
 }
 
 

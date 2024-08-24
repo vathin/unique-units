@@ -7,6 +7,7 @@ standart_y = y;
 image_xscale = standart_scale;
 image_yscale = standart_scale;
 image_speed = 0;
+image_index = 1;
 do_something = undefined;
 
 hovering = false;
@@ -25,9 +26,11 @@ go_to_standart_mode = function() {
 }
 block = function() {
 	is_active = 0
+	image_index = 2
 }
 unblock = function() {
 	is_active = 1
+	image_index = 1
 }
 is_blocked = function() {
 	return !is_active
