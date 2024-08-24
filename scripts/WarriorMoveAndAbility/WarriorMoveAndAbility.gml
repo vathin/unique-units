@@ -38,7 +38,7 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 		self.to_x = new_x;
 		self.to_y = new_y;
 		O_GameField.get_cell(new_x, new_y).set_draw_marks(0);
-		if !check_ability_targets(0) {figure_controller.ability_button.block()}
+		if !check_ability_targets(0, 0) {figure_controller.ability_button.block()}
 		else {figure_controller.ability_button.unblock()}
 	}
 	
@@ -48,7 +48,7 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 		self.target_cell.set_draw_marks(0)
 	}
 	
-	check_ability_targets = function(check) {
+	check_ability_targets = function(check, a) {
 		found_cells = false;
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <= 1; m++) {
@@ -64,7 +64,7 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 		return(found_cells)
 	}
 	
-	if !check_ability_targets(0) {figure_controller.ability_button.block()}
+	if !check_ability_targets(0, 0) {figure_controller.ability_button.block()}
 	else {figure_controller.ability_button.unblock()}
 	
 }

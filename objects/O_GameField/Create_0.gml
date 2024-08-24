@@ -137,3 +137,14 @@ cell_get_neightbors = function(cell) {
 	show_debug_message(neightbors)
 	return neightbors
 }
+
+is_any_cell_marked = function() {
+	for (i = 0; i < w; i++) {
+		for (m = 0; m < h; m++) {
+			if get_cell(m, i).marked {
+				return true
+			}
+		}
+	}
+	return false
+}

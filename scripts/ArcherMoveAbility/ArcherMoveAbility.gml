@@ -71,11 +71,9 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 						if check_cell(new_cell){
 							if !new_cell.is_filled() {
 								cell_array[new_cell.xcord][new_cell.ycord] = 2;
-								show_debug_message("3")
 							}
 							if new_cell.is_filled() {
 								array_push(cells_to_check, new_cell);
-								show_debug_message("4")
 							}
 							if cell = O_GameField.get_cell(from_x, from_y) and !new_cell.is_filled(){
 								cell_array[new_cell.xcord][new_cell.ycord] = 0;
@@ -88,11 +86,9 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	}
 	
 	check_all_cells = function() {
-		show_debug_message("1")
 		O_GameField.clear_all_marks();
 		check_move_cells(O_GameField.get_cell(from_x, from_y));
 		while (array_length(cells_to_check) != 0) { 
-			show_debug_message("2")
 			check_move_cells(array_pop(cells_to_check))
 		}
 		for (i = 0; i < 6; i++) {

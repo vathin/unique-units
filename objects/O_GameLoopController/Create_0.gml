@@ -66,15 +66,14 @@ cancel_action = function() {
 		clear_all();
 	}
 	else {
-		try {
-			instance_destroy(O_MoveInputController);
-		}
-	
+		if global.using_ability{instance_destroy(O_AbilityInputController)}
+		if global.moving_figure{instance_destroy(O_MoveInputController)}
 		clear_all();
 	}
 }
 
 clear_all = function() {
+	O_EndTurn.active = 1;
 	global.moving_figure = 0;
 	global.using_ability = 0;
 	global.chosen_figure = "";

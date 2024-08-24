@@ -20,7 +20,7 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 		Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 	}
 	
-	check_ability_targets = function() {
+	check_ability_targets = function(a, b) {
 		if O_GameField.get_cell(using_cell.xcord + 1, using_cell.ycord) != undefined and 
 		O_GameField.get_cell(using_cell.xcord + 2, using_cell.ycord) != undefined {
 			if !O_GameField.get_cell(using_cell.xcord + 1, using_cell.ycord).is_filled() and 

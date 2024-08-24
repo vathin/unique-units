@@ -5,7 +5,6 @@ state = new Figure_state();
 state.is_active = 1; 
 in_move = false;
 owner = global.turn_owner;
-behaviour = Behaviours.get(global.figure_to_summon);
 
 if owner = "player1" {
 	image_index = 0;
@@ -19,11 +18,10 @@ image_yscale = Settings.figure_scale;
 
 able_to_move = true;
 friendly = true;
-sprite_index = Behaviours.get_sprite(global.figure_to_summon);
-sprite = Behaviours.get_sprite(global.figure_to_summon);
 
 set_behaviour = function(new_behaviour) {
 	behaviour = Behaviours.get(new_behaviour);
+	sprite_index = Behaviours.get_sprite(behaviour);
 }
 
 click = function() {

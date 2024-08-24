@@ -5,27 +5,30 @@ ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
 if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {ability_button.block()}
 O_SummonButton.go_away();
 move_and_ability = false;
+
+
+figure_ability = Behaviours.get_ablility(global.selected_cell.filled_figure.behaviour);
+if figure_ability != undefined {
+	test_ability = new figure_ability(global.selected_cell.filled_figure, global.selected_cell);
+	test_ability.check_ability_targets(1, 1);
+	if !O_GameField.is_any_cell_marked() {ability_button.block()}
+	O_GameField.clear_all_marks()
+}
+
 if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {
 	ability = new ArcherMoveAbility(global.selected_cell.xcord, global.selected_cell.ycord, undefined, undefined, 0)
 	if !ability.check_clear_cells(undefined, undefined) {move_button.block()}
 }
+O_EndTurn.active = 1;
 
-
-move_figure = function() {
-	if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {
-		clear_buttons();
-		O_SummonButton.block();
-		instance_create_depth(0, 0, 0, O_MoveInputController);
-		ability.check_all_cells();
-		instance_destroy();
-	}
-	else {
-		clear_buttons();
-		O_SummonButton.block();
-		O_GameField.check_clear_move_cells(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
-		instance_create_depth(0, 0, 0, O_MoveInputController);
-		instance_destroy();
-	}
+move_figure = function() {	
+	clear_buttons();
+	O_SummonButton.block();
+	if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {ability.check_all_cells()}
+	else {O_GameField.check_clear_move_cells(global.cell_click_callback.xcord, global.cell_click_callback.ycord);}
+	instance_create_depth(0, 0, 0, O_MoveInputController);
+	instance_destroy();
+	
 }
 
 use_ability = function() {
@@ -43,7 +46,7 @@ use_ability = function() {
 		O_GameLoopController.action.using_ability = 1;
 		O_GameField.clear_all_marks();
 		global.mark = S_Ability_mark;
-		O_GameLoopController.action.check_ability_targets(1);
+		O_GameLoopController.action.check_ability_targets(1, 1);
 		instance_destroy();
 	}
 }
