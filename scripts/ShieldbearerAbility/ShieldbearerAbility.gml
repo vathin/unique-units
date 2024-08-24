@@ -23,7 +23,7 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 		if target_figure = undefined {
 			target_figure = new_target;
 			target_cell = new_cell
-			check_ability_targets()
+			check_ability_targets(0, 0)
 		}
 		else {
 			selected = 1;
@@ -31,7 +31,7 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 		}
 	}
 	
-	check_ability_targets = function() {
+	check_ability_targets = function(a, b) {
 		O_EndTurn.active = 0;
 		if target_figure = undefined {
 			for (i = -1; i <= 1; i++) {

@@ -1,7 +1,9 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-global.figure_to_summon = Behaviours.get_random_figure();
+load_data = O_App.data.load(global.turn_owner)
+global.figure_to_summon = array_pop(load_data.player_figures);
+O_App.data.save(global.turn_owner, load_data)
 O_SummonButton.change_sprite(Behaviours.get_sprite(global.figure_to_summon), Settings.summon_button_figure_scale);
 global.mark = S_Summon_mark;
 O_GameField.check_controlled_summon_cells(global.turn_owner);

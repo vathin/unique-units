@@ -16,7 +16,7 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 		target_figure = new_target;
 	}
 	
-	check_ability_targets = function() {
+	check_ability_targets = function(a, b) {
 		found_cell = false;
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <= 1; m++) {
