@@ -1,12 +1,11 @@
 {
   "$GMObject":"",
-  "%Name":"O_DroppedFigurePlace",
+  "%Name":"O_CapturedFigurePlace",
   "eventList":[
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":2,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_DroppedFigurePlace",
+  "name":"O_CapturedFigurePlace",
   "overriddenProperties":[],
   "parent":{
     "name":"FigurePlaces",

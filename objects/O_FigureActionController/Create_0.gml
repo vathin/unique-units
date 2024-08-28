@@ -2,7 +2,13 @@
 // Вы можете записать свой код в этом редакторе
 move_button = instance_create_depth(762, 1090, 0, O_MoveButton);
 ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
-if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {ability_button.block()}
+if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {
+	instance_destroy(ability_button)
+	move_button.x = 840;
+	move_button.y = 1169;
+	move_button.image_xscale = 1.35;
+	move_button.image_yscale = 1.35;
+	}
 O_SummonButton.go_away();
 move_and_ability = false;
 

@@ -37,7 +37,7 @@ is_blocked = function() {
 }
 
 go_away = function() {
-	x = -100;
-	y = -100;
+	x = -200;
+	y = -200;
 	block();
 }

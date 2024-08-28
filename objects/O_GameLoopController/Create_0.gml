@@ -1,6 +1,8 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
 global.turn_owner = "player1";
+global.player1_captured = 0;
+global.player2_captured = 0;
 action = undefined;
 turn_end = false;
 can_cancel = false;
@@ -26,10 +28,9 @@ end_move = function() {
 	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
 	O_Turn_timer.start_count();
-	if array_length(O_App.data.load(global.turn_owner).player_figures) = 0 {
-		O_SummonButton.block();
-		};
-
+	O_Figures_counter.update_turn();
+	O_GameField.check_every_figure();
+	Maps_list.check_if_any_cell_conquested(global.map);
 }
 
 set_action = function(new_action) {
@@ -101,5 +102,4 @@ clear_all = function() {
 	catch(_exception) {}
 	action = undefined;
 }
-
 

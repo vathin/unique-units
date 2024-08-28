@@ -1,5 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редактор
+can_be_conquested = false;
 draw_mark = true;
 marked = false;
 filled_figure = undefined;
@@ -16,13 +17,13 @@ create_figure = function(figure_behaviour) {
 		filled_figure.set_behaviour(figure_behaviour);
 		global.able_to_summon = false;
 		O_SummonButton.go_to_standart_mode();
+		O_Figures_counter.change_field_figures_amount(global.turn_owner, +1);
 	}
 }
 clear = function() {
 	filled_figure = undefined;
 }
 fill = function(new_figure, is_moving) {
-	filled = 1
 	filled_figure = new_figure
 	if !is_moving {
 		new_figure.x = self.x;
@@ -35,16 +36,12 @@ is_filled = function() {
 }
 
 is_under_control = function(player) {
-	friendly = false;
 	result = false
 	neightbors = O_GameField.cell_get_neightbors(self);
 	for (i = 0; i < array_length(neightbors); i++) {
-		if neightbors[i].is_filled() {
+		if neightbors[i].is_filled() and neightbors[i].filled_figure.state.is_active{
 			if neightbors[i].filled_figure.owner = player {
-				friendly = 1;
-			}
-			if (friendly) {
-				result = true;
+				result = 1
 			}
 		}
 	}
@@ -53,4 +50,22 @@ is_under_control = function(player) {
 
 get_cord = function() {
 	return [ycord, xcord]
+}
+
+update_filled_figure_state = function() {
+	if filled_figure.state.is_active {
+		found_clear_figures = 0
+		for (i = -1; i <= 1; i++) {
+			for (m = -1; m <=1; m++) {
+				cell = O_GameField.get_cell(xcord + i, ycord +m);
+				if cell != undefined{
+					if !cell.is_filled() and cell != O_GameField.get_cell(xcord, ycord) {found_clear_figures += 1}
+				}
+			}
+		}
+		if found_clear_figures = 0 {
+			filled_figure.capture(1);
+			clear();
+		}
+	}
 }
