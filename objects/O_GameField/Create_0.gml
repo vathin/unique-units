@@ -6,17 +6,22 @@ global.using_ability = false;
 global.figure_to_summon = undefined;
 global.input = true;
 global.map = "map1";
-global.cell_action = function(cell) {
-	if (cell.is_filled() and cell.filled_figure.able_to_move) and
-	cell.filled_figure.owner = global.turn_owner {
-		if filled_figure.state.is_active {
-			global.cell_click_callback = cell;
-			global.selected_cell = cell;
-			O_GameLoopController.set_can_cancel(1);
-			cell.filled_figure.click();
-		}
-	}
-} 
+
+cell_click_action = undefined;
+
+set_cell_click_action = function(_action) {
+	cell_click_action = _action;
+}
+clear_cell_click_action = function() {
+	set_cell_click_action(undefined);
+}
+execute_cell_click_action = function(cell_obj) {
+	if (cell_click_action == undefined)
+		return;
+		
+	cell_click_action(cell_obj);
+}
+
 cell_for_move = ""
 
 h = 6;
@@ -25,7 +30,7 @@ size = 90
 depth = 1;
 
 generate_new_game_field = function(w, h, cell_size) {
-for (i = 0; i < h; i++) {
+	for (i = 0; i < h; i++) {
 	for (m = 0; m < w; m++) {
 		field[i][m] = instance_create_depth(self.x+size/2+m*size, self.y+size/2+i*size, -1, O_GF_Square);
 		field[i][m].xcord = m;
@@ -47,6 +52,7 @@ for (i = 0; i < h; i++) {
 	player2_dropped.facing = -1;
 	player2_captured.facing = -1;
 	card_x = 500;
+	
 	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
 		new_card = instance_create_depth(card_x, 900, 0, O_Card_display);
 		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]))

@@ -75,6 +75,24 @@ cancel_action = function() {
 	}
 }
 
+default_cell_click_action = function(cell) {
+	if (cell_is_playable(cell)) {
+		select_movable_figure(cell);
+	}
+}
+cell_is_playable = function(cell) {
+	return (cell.is_filled() and 
+			cell.filled_figure.able_to_move and 
+			cell.filled_figure.owner = global.turn_owner and 
+			cell.filled_figure.state.is_active);
+}
+select_movable_figure = function(cell) {
+	global.cell_click_callback = cell;
+	global.selected_cell = cell;
+	set_can_cancel(1);
+	cell.filled_figure.click();
+}
+
 clear_all = function() {
 	O_EndTurn.active = 1;
 	global.moving_figure = 0;
@@ -86,17 +104,8 @@ clear_all = function() {
 	global.cell_click_callback = undefined;
 	set_can_cancel(0)
 	O_SummonButton.unblock()
-	global.cell_action = function(cell) {
-	if (cell.is_filled() and cell.filled_figure.able_to_move) and
-	cell.filled_figure.owner = global.turn_owner {
-		if cell.filled_figure.state.is_active {
-			global.cell_click_callback = cell;
-			global.selected_cell = cell;
-			set_can_cancel(1);
-			cell.filled_figure.click();
-			}
-		}
-	} 
+	global.cell_action = default_cell_click_action;
+	
 	try {
 		O_FigureActionController.clear_buttons();
 		instance_destroy(O_FigureActionController);
@@ -115,3 +124,5 @@ check_win_conditions = function() {
 		player2_win = 1;
 	}
 }
+	
+global.cell_action = default_cell_click_action;
