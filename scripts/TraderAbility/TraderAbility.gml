@@ -2,7 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constructor{
 	figure_button_x = O_GameField.x + 140;
-	figure_button_y = 1090;
+	figure_button_y = 1060;
 	summon_controller = undefined;
 	chosen_button = undefined;
 	O_SummonButton.go_away();
@@ -19,7 +19,7 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 			new_button.set_sprite(array_pop(load_data.player_figures));
 			new_button.ability = self;
 			buttons[i] = new_button
-			figure_button_x += 160;
+			figure_button_x += 130;
 		}
 		O_App.data.save(global.turn_owner, load_data)
 	}
@@ -43,7 +43,7 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	check_ability_targets = function(a, b) {
 		O_GameField.check_controlled_summon_cells(global.turn_owner);
 		load_data = O_App.data.load(global.turn_owner);
-		if array_length(load_data.player_figures) <= 3 and !global.using_ability{
+		if array_length(load_data.player_figures) < 3 and !global.using_ability{
 			O_GameField.clear_all_marks();	
 		}
 	}

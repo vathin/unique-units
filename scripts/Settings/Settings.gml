@@ -7,6 +7,7 @@ function Settings() constructor{
 	static move_animation_lenght = 30;
 	static ability_animation_lenght = 45;
 	static turn_time = 2700;
+	static max_field_figures = 10;
 	static FPS = 60;
 }
 

@@ -5,6 +5,6 @@ function Figure_state() constructor{
 	is_dropped = false;
 	is_closed = false;
 	is_overturned = false;
-	is_surrounded = false;
-	is_capture = false;
+	is_captured = false;
+	is_conquesting = false;
 }

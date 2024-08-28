@@ -1,8 +1,10 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
+figure_owner = undefined;
 size = 400;
 figures = [];
+facing = 1;
 
 sort = function() {
 	figure_y_offset = 0;
@@ -10,10 +12,10 @@ sort = function() {
 		figures[i].x = x;
 		figures[i].y = y + figure_y_offset;
 		if array_length(figures) > 8{
-			figure_y_offset += (size / array_length(figures))/2;
+			figure_y_offset += (size / array_length(figures))/2*facing;
 		}
 		else {
-			figure_y_offset += 30;
+			figure_y_offset += 30*facing;
 		}
 	}
 }

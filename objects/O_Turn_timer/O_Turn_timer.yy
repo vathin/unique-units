@@ -10,8 +10,8 @@
   "name":"O_Turn_timer",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Counters",
+    "path":"folders/Objects/Counters.yy",
   },
   "parentObjectId":null,
   "persistent":false,

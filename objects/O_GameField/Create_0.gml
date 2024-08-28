@@ -5,13 +5,16 @@ global.moving_figure = false;
 global.using_ability = false;
 global.figure_to_summon = undefined;
 global.input = true;
+global.map = "map1";
 global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {
-		global.cell_click_callback = cell;
-		global.selected_cell = cell;
-		O_GameLoopController.set_can_cancel(1);
-		cell.filled_figure.click();
+		if filled_figure.state.is_active {
+			global.cell_click_callback = cell;
+			global.selected_cell = cell;
+			O_GameLoopController.set_can_cancel(1);
+			cell.filled_figure.click();
+		}
 	}
 } 
 cell_for_move = ""
@@ -30,11 +33,19 @@ for (i = 0; i < h; i++) {
 		}
 	}
 	
+	instance_create_depth(0, 0, 0, O_App)
+	instance_create_depth(0, 0, 0, O_Figures_counter)
 	instance_create_depth(0, 0, 0, O_Turn_timer);
 	instance_create_depth(0, 0, 0, O_GameLoopController);
 	instance_create_depth(1084, 1169, 0, O_EndTurn);
 	instance_create_depth(596, 1169, 0, O_CancelButton);
 	instance_create_depth(840, 1169, 0, O_SummonButton);
+	player1_dropped = instance_create_depth(526, 574, 0, O_DroppedFigurePlace);
+	player2_dropped = instance_create_depth(526, 480, 0, O_DroppedFigurePlace);
+	player1_captured = instance_create_depth(1146, 574, 0, O_CapturedFigurePlace);
+	player2_captured = instance_create_depth(1146, 480, 0, O_CapturedFigurePlace);
+	player2_dropped.facing = -1;
+	player2_captured.facing = -1;
 	card_x = 500;
 	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
 		new_card = instance_create_depth(card_x, 900, 0, O_Card_display);
@@ -44,6 +55,7 @@ for (i = 0; i < h; i++) {
 }
 
 generate_new_game_field(w, h, size);
+O_Figures_counter.update_turn()
 
 check_clear_move_cells = function(xcord, ycord) {
 	for (i = -1; i <= 1; i++) {
@@ -52,8 +64,8 @@ check_clear_move_cells = function(xcord, ycord) {
 				cell = field[ycord+m][xcord+i]
 				if !cell.is_filled() {
 					cell.marked = true;
-				}}
-		
+				}
+			}
 			catch(_exception) {
 			}
 		}
@@ -148,3 +160,47 @@ is_any_cell_marked = function() {
 	}
 	return false
 }
+
+get_place = function(type, player) {
+	if type = "drop" {
+		if player = "player1" {
+			return player1_dropped;
+		}
+		else {
+			return player2_dropped;
+		}
+	}
+	if type = "capture" {
+		if player = "player1" {
+			return player1_captured;
+		}
+		else {
+			return player2_captured;
+		}
+	}
+}
+
+check_every_figure = function() {
+	for (i = 0; i < w; i++) {
+		for (m = 0; m < h; m++) {
+			if get_cell(m, i).is_filled() {
+				get_cell(m, i).update_filled_figure_state();
+			}
+		}
+	}
+}
+
+get_filled_cells = function(player) {
+	cells = [];
+	for (i = 0; i < w; i++) {
+		for (m = 0; m < h; m++) {
+			cell = get_cell(m, i)
+			if cell.is_filled() and cell.filled_figure.owner = player{
+				array_push(cells, cell);
+			}
+		}
+	}
+	return cells
+}
+
+Maps_list.start(global.map);

@@ -9,8 +9,8 @@
   "name":"O_DroppedFigurePlace",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"FigurePlaces",
+    "path":"folders/Objects/FigurePlaces.yy",
   },
   "parentObjectId":null,
   "persistent":false,

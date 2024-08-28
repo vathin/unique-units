@@ -1,6 +1,8 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
 global.turn_owner = "player1";
+global.player1_captured = 0;
+global.player2_captured = 0;
 action = undefined;
 turn_end = false;
 can_cancel = false;
@@ -23,11 +25,12 @@ end_move = function() {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
 	}
 	if have_action() { action.execute() }
-	action = undefined;
-	O_SummonButton.go_to_standart_mode();
-	global.turn_owner = get_opponent(global.turn_owner)
+	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
-	O_Turn_timer.start_count()
+	O_Turn_timer.start_count();
+	Maps_list.check_if_any_cell_conquested(global.map);
+	O_GameField.check_every_figure();
+	O_Figures_counter.update_turn();
 }
 
 set_action = function(new_action) {
@@ -86,17 +89,29 @@ clear_all = function() {
 	global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {
-		set_can_cancel(1);
-		global.cell_click_callback = cell;
-		global.selected_cell = cell;
-		cell.filled_figure.click();
-	}
+		if cell.filled_figure.state.is_active {
+			global.cell_click_callback = cell;
+			global.selected_cell = cell;
+			set_can_cancel(1);
+			cell.filled_figure.click();
+			}
+		}
 	} 
 	try {
 		O_FigureActionController.clear_buttons();
 		instance_destroy(O_FigureActionController);
 	}
 	catch(_exception) {}
+	action = undefined;
 }
 
-
+check_win_conditions = function() {
+	player1_win = false;
+	player2_win = false;
+	if global.player1_captured >= 4 {
+		player1_win = 1;
+	}
+	if global.player2_captured >= 4 {
+		player2_win = 1;
+	}
+}
