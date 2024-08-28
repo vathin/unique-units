@@ -16,7 +16,7 @@ change_field_figures_amount = function(player, amount) {
 
 update_turn = function() {
 	global.current_player_figures = array_length(O_App.data.load(global.turn_owner).player_figures);
-	if global.current_player_figures <= 0 {
+	if global.current_player_figures <= 0 or (player1_field_figures >= Settings.max_field_figures or player2_field_figures >= Settings.max_field_figures){
 		O_SummonButton.block();
 	}
 }

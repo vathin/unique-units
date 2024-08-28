@@ -22,7 +22,7 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 			for (m = -1; m <= 1; m++) {
 				cell = O_GameField.get_cell(using_cell.xcord + i, using_cell.ycord + m)
 				if cell != undefined {
-					if cell.is_filled() and cell.filled_figure != using_cell.filled_figure{
+					if cell.is_filled() and cell.filled_figure != using_cell.filled_figure and !cell.filled_figure.state.is_conquesting {
 						cell.marked = 1;
 						found_cell = 1;
 					}

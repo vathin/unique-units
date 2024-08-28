@@ -39,7 +39,7 @@ is_under_control = function(player) {
 	result = false
 	neightbors = O_GameField.cell_get_neightbors(self);
 	for (i = 0; i < array_length(neightbors); i++) {
-		if neightbors[i].is_filled() and neightbors[i].filled_figure.state.is_active{
+		if neightbors[i].is_filled() {
 			if neightbors[i].filled_figure.owner = player {
 				result = 1
 			}

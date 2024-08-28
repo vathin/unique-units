@@ -3,7 +3,7 @@
 figure_owner = undefined;
 size = 400;
 figures = [];
-facing = undefined;
+facing = 1;
 
 sort = function() {
 	figure_y_offset = 0;
@@ -26,6 +26,7 @@ add_figure = function(new_figure) {
 }
 
 get_new_figure = function(player) {
+	global.cell_click_callback = undefined;
 	if global.current_player_figures >= 1 {
 		load_data = O_App.data.load(player);
 		behaviour = array_pop(load_data.player_figures);
@@ -34,5 +35,9 @@ get_new_figure = function(player) {
 		else {captured_figure = instance_create_depth(480, 200, 2, O_Figure)}
 		captured_figure.set_behaviour(behaviour);
 		captured_figure.capture(0);
+	}
+	else {
+		instance_create_depth(0, 0, 0, O_CaptureFigureController);
+		
 	}
 }

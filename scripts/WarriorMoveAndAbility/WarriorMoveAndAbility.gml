@@ -54,7 +54,7 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 			for (m = -1; m <= 1; m++) {
 				cell = O_GameField.get_cell(to_x + i, to_y + m);
 				if cell != undefined {
-					if cell.is_filled() and cell != using_cell {
+					if cell.is_filled() and cell != using_cell and !cell.filled_figure.state.is_conquesting{
 						if check {cell.marked = 1}
 						found_cells = 1;
 					}

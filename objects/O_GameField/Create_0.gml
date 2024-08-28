@@ -9,10 +9,12 @@ global.map = "map1";
 global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {
-		global.cell_click_callback = cell;
-		global.selected_cell = cell;
-		O_GameLoopController.set_can_cancel(1);
-		cell.filled_figure.click();
+		if filled_figure.state.is_active {
+			global.cell_click_callback = cell;
+			global.selected_cell = cell;
+			O_GameLoopController.set_can_cancel(1);
+			cell.filled_figure.click();
+		}
 	}
 } 
 cell_for_move = ""
@@ -186,6 +188,19 @@ check_every_figure = function() {
 			}
 		}
 	}
+}
+
+get_filled_cells = function(player) {
+	cells = [];
+	for (i = 0; i < w; i++) {
+		for (m = 0; m < h; m++) {
+			cell = get_cell(m, i)
+			if cell.is_filled() and cell.filled_figure.owner = player{
+				array_push(cells, cell);
+			}
+		}
+	}
+	return cells
 }
 
 Maps_list.start(global.map);

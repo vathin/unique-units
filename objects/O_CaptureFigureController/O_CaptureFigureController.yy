@@ -1,16 +1,15 @@
 {
   "$GMObject":"",
-  "%Name":"O_CapturedFigurePlace",
+  "%Name":"O_CaptureFigureController",
   "eventList":[
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":2,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_CapturedFigurePlace",
+  "name":"O_CaptureFigureController",
   "overriddenProperties":[],
   "parent":{
-    "name":"FigurePlaces",
-    "path":"folders/Objects/FigurePlaces.yy",
+    "name":"Controllers",
+    "path":"folders/Objects/Controllers.yy",
   },
   "parentObjectId":null,
   "persistent":false,

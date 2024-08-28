@@ -89,11 +89,13 @@ clear_all = function() {
 	global.cell_action = function(cell) {
 	if (cell.is_filled() and cell.filled_figure.able_to_move) and
 	cell.filled_figure.owner = global.turn_owner {
-		set_can_cancel(1);
-		global.cell_click_callback = cell;
-		global.selected_cell = cell;
-		cell.filled_figure.click();
-	}
+		if cell.filled_figure.state.is_active {
+			global.cell_click_callback = cell;
+			global.selected_cell = cell;
+			set_can_cancel(1);
+			cell.filled_figure.click();
+			}
+		}
 	} 
 	try {
 		O_FigureActionController.clear_buttons();
@@ -103,3 +105,13 @@ clear_all = function() {
 	action = undefined;
 }
 
+check_win_conditions = function() {
+	player1_win = false;
+	player2_win = false;
+	if global.player1_captured >= 4 {
+		player1_win = 1;
+	}
+	if global.player2_captured >= 4 {
+		player2_win = 1;
+	}
+}
