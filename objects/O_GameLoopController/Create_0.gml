@@ -28,9 +28,9 @@ end_move = function() {
 	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
 	O_Turn_timer.start_count();
-	O_Figures_counter.update_turn();
-	O_GameField.check_every_figure();
 	Maps_list.check_if_any_cell_conquested(global.map);
+	O_GameField.check_every_figure();
+	O_Figures_counter.update_turn();
 }
 
 set_action = function(new_action) {

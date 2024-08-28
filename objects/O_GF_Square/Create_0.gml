@@ -53,7 +53,6 @@ get_cord = function() {
 }
 
 update_filled_figure_state = function() {
-	if filled_figure.state.is_active {
 		found_clear_figures = 0
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <=1; m++) {
@@ -67,5 +66,4 @@ update_filled_figure_state = function() {
 			filled_figure.capture(1);
 			clear();
 		}
-	}
 }
