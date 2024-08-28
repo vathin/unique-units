@@ -9,7 +9,13 @@ image_yscale = 0.21;
 set_sprite = function(sprite) {
 	sprite_index = sprite;
 }
+
 display_card = function() {
 	x = O_GameField.x;
 	y = O_GameField.y;
+}
+
+stop_display = function() {
+	x = x_default;
+	y = y_default;
 }

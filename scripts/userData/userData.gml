@@ -4,9 +4,9 @@ function userData() constructor {
 	
 	standart_data_struct = {
 		player_cards: ["trader", "archer", "shieldbearer", "warrior", "spearman"],
-		player_figures: [/*"trader", "archer", "archer", "archer", "archer", "shieldbearer", 
+		player_figures: ["trader", "archer", "archer", "archer", "archer", "shieldbearer", 
 		"shieldbearer", "shieldbearer", "shieldbearer", "warrior", "warrior", "warrior", 
-		"warrior", "warrior", "warrior", "warrior", "spearman",*/ "spearman", "spearman",  "spearman"]
+		"warrior", "warrior", "warrior", "warrior", "spearman", "spearman", "spearman",  "spearman"]
 	}
 	randomize();
 	standart_data_struct.player_figures = array_shuffle(standart_data_struct.player_figures);
