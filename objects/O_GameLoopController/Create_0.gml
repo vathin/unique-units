@@ -1,11 +1,12 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
 global.turn_owner = "player1";
-global.player1_captured = 0;
-global.player2_captured = 0;
+player1_captured = 0;
+player2_captured = 0;
 action = undefined;
 turn_end = false;
 can_cancel = false;
+displaying_card = false;
 
 O_Turn_timer.start_count()
 
@@ -105,7 +106,6 @@ clear_all = function() {
 	set_can_cancel(0)
 	O_SummonButton.unblock()
 	global.cell_action = default_cell_click_action;
-	
 	try {
 		O_FigureActionController.clear_buttons();
 		instance_destroy(O_FigureActionController);
@@ -114,15 +114,6 @@ clear_all = function() {
 	action = undefined;
 }
 
-check_win_conditions = function() {
-	player1_win = false;
-	player2_win = false;
-	if global.player1_captured >= 4 {
-		player1_win = 1;
-	}
-	if global.player2_captured >= 4 {
-		player2_win = 1;
-	}
-}
+
 	
 global.cell_action = default_cell_click_action;

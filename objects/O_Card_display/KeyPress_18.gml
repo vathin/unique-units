@@ -1,5 +1,4 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-data = new userData();
-//instance_create_depth(0, 0, 0, O_MatchController);
+if (position_meeting(mouse_x, mouse_y, self) and !O_GameLoopController.displaying_card) {display_card()}

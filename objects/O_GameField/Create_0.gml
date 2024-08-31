@@ -22,8 +22,6 @@ execute_cell_click_action = function(cell_obj) {
 	cell_click_action(cell_obj);
 }
 
-cell_for_move = ""
-
 h = 6;
 w = 6;
 size = 90
@@ -51,12 +49,12 @@ generate_new_game_field = function(w, h, cell_size) {
 	player2_captured = instance_create_depth(1146, 480, 0, O_CapturedFigurePlace);
 	player2_dropped.facing = -1;
 	player2_captured.facing = -1;
-	card_x = 500;
+	card_x = 560;
 	
 	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
-		new_card = instance_create_depth(card_x, 900, 0, O_Card_display);
+		new_card = instance_create_depth(card_x, 890, 0, O_Card_display);
 		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]))
-		card_x += (845 / array_length(Player_figure_list.player_figure_list))
+		card_x += (700 / array_length(Player_figure_list.player_figure_list))
 	}
 }
 
