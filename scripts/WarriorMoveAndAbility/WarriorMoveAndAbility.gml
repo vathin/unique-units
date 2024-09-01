@@ -21,6 +21,7 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 		global.moving_figure = 1;
 		O_GameField.field[to_y][to_x].fill(global.selected_cell.filled_figure, 1);
 		O_GameField.field[from_y][from_x].clear();
+		O_GameLoopController.alarm[0] = 35;
 		if using_ability {
 			using_figure.start_move_animation(O_GameField.get_cell(to_x, to_y), Settings.move_animation_lenght)
 			using_figure.alarm[0] = Settings.move_animation_lenght + 3;
@@ -67,4 +68,5 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 	if !check_ability_targets(0, 0) {figure_controller.ability_button.block()}
 	else {figure_controller.ability_button.unblock()}
 	
+	cancel = function() {instance_destroy(figure_controller)}
 }

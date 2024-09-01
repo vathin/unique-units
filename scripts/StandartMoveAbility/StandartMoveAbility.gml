@@ -27,4 +27,5 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 		O_GameField.get_cell(new_x, new_y).set_draw_marks(0)
 	}
 	
+	cancel = function() {}
 }

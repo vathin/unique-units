@@ -51,4 +51,6 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 		}	
 		
 	}
+	
+	cancel = function() {}
 }

@@ -31,4 +31,6 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 		}
 		return found_cell;
 	}
+	
+	cancel = function() {}
 }

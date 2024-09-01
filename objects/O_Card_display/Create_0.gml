@@ -7,7 +7,7 @@ standart_scale = 0.18
 image_xscale = standart_scale;
 image_yscale = standart_scale;
 exit_button = undefined;
-depth = -2
+depth = -1
 
 set_sprite = function(sprite) {
 	sprite_index = sprite;

@@ -50,4 +50,6 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 			O_GameField.check_clear_move_cells(using_cell.xcord, using_cell.ycord);
 		}
 	}
+	
+	cancel = function() {}
 }

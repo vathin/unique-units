@@ -100,4 +100,6 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		}
 	};
 	
+	cancel = function() {}
+	
 }

@@ -26,6 +26,8 @@ h = 6;
 w = 6;
 size = 90
 depth = 1;
+image_xscale = 0.25399;
+image_yscale = 0.25399;
 
 generate_new_game_field = function(w, h, cell_size) {
 	for (i = 0; i < h; i++) {
@@ -36,13 +38,13 @@ generate_new_game_field = function(w, h, cell_size) {
 		}
 	}
 	
-	instance_create_depth(0, 0, 0, O_App)
+	/*instance_create_depth(0, 0, 0, O_App)
 	instance_create_depth(0, 0, 0, O_Figures_counter)
 	instance_create_depth(0, 0, 0, O_Turn_timer);
 	instance_create_depth(0, 0, 0, O_GameLoopController);
 	instance_create_depth(1084, 1169, 0, O_EndTurn);
 	instance_create_depth(596, 1169, 0, O_CancelButton);
-	instance_create_depth(840, 1169, 0, O_SummonButton);
+	instance_create_depth(840, 1169, 0, O_SummonButton);*/
 	player1_dropped = instance_create_depth(526, 574, 0, O_DroppedFigurePlace);
 	player2_dropped = instance_create_depth(526, 480, 0, O_DroppedFigurePlace);
 	player1_captured = instance_create_depth(1146, 574, 0, O_CapturedFigurePlace);

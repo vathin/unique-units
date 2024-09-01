@@ -9,6 +9,9 @@ get_field_figures = function(player) {
 	if player = "player1" {return player1_field_figures}
 	else {return player2_field_figures}
 }
+get_player_figures_amount = function(player) {
+	return array_length(O_App.data.load(player).player_figures);
+}
 
 change_field_figures_amount = function(player, amount) {
 	if player = "player1" {player1_field_figures += amount}
@@ -23,8 +26,12 @@ update_turn = function() {
 }
 
 get_summon_figures_amount = function(player) {
-	if player = "player1" {return Settings.max_field_figures - player1_field_figures}
-	else {return Settings.max_field_figures - player2_field_figures}
+	if player = "player1" {
+		if get_player_figures_amount(player) < Settings.max_field_figures - player1_field_figures {return get_player_figures_amount(player)}
+		else {return Settings.max_field_figures - player1_field_figures}}
+	else {
+		if get_player_figures_amount(player) < Settings.max_field_figures - player2_field_figures {return get_player_figures_amount(player)}
+		else {return Settings.max_field_figures - player2_field_figures}}
 }
 
 get_current_player_figures = function() {

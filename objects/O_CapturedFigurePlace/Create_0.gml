@@ -27,7 +27,7 @@ add_figure = function(new_figure) {
 
 get_new_figure = function(player) {
 	global.cell_click_callback = undefined;
-	if O_Figures_counter.get_current_player_figures() = 0 {
+	if O_Figures_counter.get_player_figures_amount(player) = 0 {
 		instance_create_depth(0, 0, 0, O_CaptureFigureController);
 	}
 	else {

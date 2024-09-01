@@ -20,7 +20,7 @@ startInput = function() {
 }
 
 end_move = function() {
-	alarm[0] = 40;
+	alarm[0] = 5;
 	global.input = 0;
 	if global.moving_figure {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
@@ -32,6 +32,7 @@ end_move = function() {
 	Maps_list.check_if_any_cell_conquested(global.map);
 	O_GameField.check_every_figure();
 	O_Figures_counter.update_turn();
+	if check_win_conditions() != undefined {game_end()}
 }
 
 set_action = function(new_action) {
@@ -95,6 +96,16 @@ select_movable_figure = function(cell) {
 }
 
 clear_all = function() {
+	if !have_action() {
+		if global.using_ability{instance_destroy(O_AbilityInputController)}
+		if global.moving_figure{instance_destroy(O_MoveInputController)}
+	}
+	else {if global.input = 1 {action.cancel()} }
+	try {
+		O_FigureActionController.clear_buttons();
+		instance_destroy(O_FigureActionController);
+	}
+	catch(_exception) {}
 	O_EndTurn.active = 1;
 	global.moving_figure = 0;
 	global.using_ability = 0;
@@ -106,14 +117,16 @@ clear_all = function() {
 	set_can_cancel(0)
 	O_SummonButton.unblock()
 	global.cell_action = default_cell_click_action;
-	try {
-		O_FigureActionController.clear_buttons();
-		instance_destroy(O_FigureActionController);
-	}
-	catch(_exception) {}
 	action = undefined;
 }
 
-
+check_win_conditions = function() {
+	if player1_captured >= 4 and player2_captured >= 4 {return "draw"}
+	else {
+		if player1_captured >= 4 {return "player1_win"}
+		if player2_captured >= 4 {return "player2_win"}
+	}
+	return undefined
+}
 	
 global.cell_action = default_cell_click_action;

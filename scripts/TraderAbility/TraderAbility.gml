@@ -6,14 +6,16 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	summon_controller = undefined;
 	chosen_button = undefined;
 	O_SummonButton.go_away();
-	sprite_draw = undefined
+	sprite_draw = undefined;
+	self.using_figure = using_figure;
 	global.mark = S_Summon_mark;
 	buttons = []
-	O_EndTurn.active = 0
+	O_EndTurn.active = 0;
 	O_GameLoopController.set_can_cancel(0);
 	create_buttons = function() {
 		load_data = O_App.data.load(global.turn_owner);
 		used_array = load_data.player_figures
+		O_Figures_counter.change_field_figures_amount(using_figure.owner, +2);
 		for (i = 0; i < 3; i ++) {
 			new_button = instance_create_depth(figure_button_x, figure_button_y, 0, O_TraderAbilityButton);
 			new_button.set_sprite(array_pop(load_data.player_figures));
@@ -73,5 +75,7 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 		chosen_button.image_alpha = 0.65;
 		if O_GameLoopController.have_action() {O_EndTurn.active = 1}
 	}
+	
+	cancel = function() {}
 
 }
