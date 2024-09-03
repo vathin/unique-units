@@ -12,6 +12,7 @@ depth = -1
 set_sprite = function(sprite) {
 	sprite_index = sprite;
 }
+
 display_card = function() {
 	x = 840;
 	y = 690;
