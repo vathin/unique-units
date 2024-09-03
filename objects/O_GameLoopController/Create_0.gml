@@ -14,7 +14,6 @@ set_can_cancel = function(value) {
 	can_cancel = value;
 }
 
-
 startInput = function() {
 	O_SummonButton.unblock()
 }

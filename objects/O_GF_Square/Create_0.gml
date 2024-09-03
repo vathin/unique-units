@@ -45,8 +45,10 @@ is_under_control = function(player) {
 			}
 		}
 	}
+	
 	return result;
 }
+
 
 get_cord = function() {
 	return [ycord, xcord]

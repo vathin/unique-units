@@ -11,7 +11,6 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	global.mark = S_Summon_mark;
 	buttons = []
 	O_EndTurn.active = 0;
-	O_GameLoopController.set_can_cancel(0);
 	create_buttons = function() {
 		load_data = O_App.data.load(global.turn_owner);
 		used_array = load_data.player_figures
@@ -25,7 +24,10 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 		}
 		O_App.data.save(global.turn_owner, load_data)
 	}
-	if global.using_ability {create_buttons()}
+	if global.using_ability {
+		create_buttons();
+		O_GameLoopController.set_can_cancel(0);
+		}
 	
 	execute = function() {
 		global.cell_click_callback.create_figure(chosen_button.figure_type);
