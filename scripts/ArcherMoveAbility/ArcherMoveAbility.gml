@@ -77,10 +77,13 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		new_cell = O_GameField.get_cell(cell_x, cell_y)
 		if new_cell != undefined and new_cell != old_cell and check_cell(new_cell){
 			if new_cell.is_filled() {
-				array_push(cells_to_check, new_cell)
-			}
+				array_push(cells_to_check, new_cell);
+				}
 			else {
 				cell_array[new_cell.xcord][new_cell.ycord] = 2;
+				if old_cell = O_GameField.get_cell(from_x, from_y) {
+					cell_array[cell_x][cell_y] = 0;
+				}
 				for (j = -1; j <= 1; j++) {
 					for (k = -1; k <= 1; k++) {
 						hook_cell = O_GameField.get_cell(new_cell.xcord + j, new_cell.ycord + k);
