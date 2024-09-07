@@ -22,7 +22,7 @@ end_move = function() {
 	alarm[0] = 5;
 	global.input = 0;
 	if global.moving_figure {
-		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_lenght)
+		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 	}
 	if have_action() { action.execute() }
 	global.turn_owner = get_opponent(global.turn_owner);
@@ -52,7 +52,7 @@ get_opponent = function(player) {
 }
 
 choose_cell_for_summon = function() {
-	if global.selected_cell = "" {
+	if global.selected_cell == undefined {
 		global.cell_click_callback.marked = 0;
 		global.selected_cell = global.cell_click_callback;
 		O_SummonInputController.start_summon(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
@@ -65,14 +65,18 @@ choose_cell_for_summon = function() {
 	}
 }
 cancel_action = function() {
-	if have_action{
+	if have_action(){
+		action.cancel();
 		action = undefined;
 		clear_all();
 	}
 	else {
-		if global.using_ability{instance_destroy(O_AbilityInputController)}
-		if global.moving_figure{instance_destroy(O_MoveInputController)}
+		if instance_exists(O_SummonInputController) {
+			O_SummonInputController.cancel();
+			show_debug_message("ихихихи")
+		}
 		clear_all();
+		O_Figures_counter.update_turn();
 	}
 }
 
@@ -95,21 +99,17 @@ select_movable_figure = function(cell) {
 }
 
 clear_all = function() {
-	if !have_action() {
-		if global.using_ability{instance_destroy(O_AbilityInputController)}
-		if global.moving_figure{instance_destroy(O_MoveInputController)}
-	}
-	else {if global.input = 1 {action.cancel()} }
-	try {
+	if instance_exists(O_SummonInputController) {instance_destroy(O_SummonInputController)}
+	if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
+	if instance_exists (O_MoveInputController){instance_destroy(O_MoveInputController)}
+	if instance_exists(O_FigureActionController) {
 		O_FigureActionController.clear_buttons();
 		instance_destroy(O_FigureActionController);
 	}
-	catch(_exception) {}
 	O_EndTurn.active = 1;
 	global.moving_figure = 0;
 	global.using_ability = 0;
-	global.chosen_figure = "";
-	global.selected_cell = "";
+	global.selected_cell = undefined;
 	O_SummonButton.go_to_standart_mode();
 	O_GameField.clear_all_marks();
 	global.cell_click_callback = undefined;
@@ -125,6 +125,11 @@ check_win_conditions = function() {
 		if player1_captured >= 4 {return "player1_win"}
 		if player2_captured >= 4 {return "player2_win"}
 	}
+	if O_Figures_counter.get_player_figures_amount("player1") == 0 and 
+	O_Figures_counter.player1_field_figures == 0 {return "player2_win"}
+	if O_Figures_counter.get_player_figures_amount("player2") == 0 and 
+	O_Figures_counter.player2_field_figures == 0 {return "player1_win"}
+	
 	return undefined
 }
 	

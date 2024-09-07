@@ -9,6 +9,7 @@ image_yscale = standart_scale;
 image_speed = 0;
 image_index = 1;
 do_something = undefined;
+back = false;
 
 hovering = false;
 is_active = true;
@@ -23,6 +24,7 @@ go_to_standart_mode = function() {
 	unblock()
 	x = standart_x;
 	y = standart_y;
+	back = false;
 }
 block = function() {
 	is_active = 0
@@ -40,4 +42,11 @@ go_away = function() {
 	x = -200;
 	y = -200;
 	block();
+}
+
+set_back = function() {
+	change_sprite(S_Back, standart_scale);
+	x = standart_x;
+	y = standart_y;
+	back = 1;
 }

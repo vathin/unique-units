@@ -1,7 +1,10 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-move_button = instance_create_depth(762, 1090, 0, O_MoveButton);
-ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
+create_buttons = function() {
+	move_button = instance_create_depth(762, 1090, 0, O_MoveButton);
+	ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
+}
+create_buttons();
 if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {
 	instance_destroy(ability_button)
 	move_button.x = 840;
@@ -21,11 +24,11 @@ if figure_ability != undefined {
 	O_GameField.clear_all_marks()
 }
 
-if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {
+if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) == ArcherMoveAbility {
 	ability = new ArcherMoveAbility(global.selected_cell.xcord, global.selected_cell.ycord, undefined, undefined, 0)
 	if !ability.check_clear_cells(undefined, undefined) {move_button.block()}
 }
-O_EndTurn.active = 1;
+O_EndTurn.unblock();
 
 move_figure = function() {	
 	clear_buttons();
@@ -53,6 +56,8 @@ use_ability = function() {
 		O_GameField.clear_all_marks();
 		global.mark = S_Ability_mark;
 		O_GameLoopController.action.check_ability_targets(1, 1);
+		O_GameLoopController.action.figure_controller = undefined;
+		O_SummonButton.alarm[0] = 2;
 		instance_destroy();
 	}
 }
@@ -62,3 +67,18 @@ clear_buttons = function() {
 	instance_destroy(ability_button);
 	instance_destroy(move_button);
 }
+
+back = function() {
+	if !move_and_ability{
+		O_GameLoopController.clear_all();
+	}
+}
+
+revert_move_and_ability = function() {
+	global.using_ability = 0;
+	global.moving_figure = 1;
+	O_GameLoopController.action.using_ability = 0;
+	O_GameField.clear_all_marks();
+	global.mark = S_Move_mark;
+}
+

@@ -4,7 +4,9 @@
 state = new Figure_state();
 state.is_active = 1; 
 in_move = false;
+overturning = false;
 owner = global.turn_owner;
+
 
 if owner = "player1" {
 	image_index = 0;
@@ -26,7 +28,7 @@ set_behaviour = function(new_behaviour) {
 
 click = function() {
 	if state.is_active {
-		if global.cell_click_callback.is_filled() and !global.able_to_summon and !global.moving_figure and !global.using_ability{
+		if !global.able_to_summon and !global.moving_figure and !global.using_ability{
 			global.selected_cell = global.cell_click_callback;
 			instance_create_depth(0, 0, 0, O_FigureActionController);
 		}
@@ -82,6 +84,9 @@ capture = function(is_on_field) {
 conquest = function() {
 	state.is_active = 0;
 	state.is_conquesting = 1;
+	O_GameField.player2_captured.get_new_figure(O_GameLoopController.get_opponent(owner));
+	ov_animation = instance_create_depth(0, 0, 0, O_OverturnFigureAnimation);
+	ov_animation.start_animation(1, 1, 1, 1, 30, self);
 }
 
 get_ability = function() {return Behaviours.get_ablility(behaviour)}

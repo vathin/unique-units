@@ -1,5 +1,5 @@
 global.cell_click_callback = undefined;
-global.selected_cell = "";
+global.selected_cell = undefined;
 global.able_to_summon = false;
 global.moving_figure = false;
 global.using_ability = false;
@@ -38,13 +38,6 @@ generate_new_game_field = function(w, h, cell_size) {
 		}
 	}
 	
-	/*instance_create_depth(0, 0, 0, O_App)
-	instance_create_depth(0, 0, 0, O_Figures_counter)
-	instance_create_depth(0, 0, 0, O_Turn_timer);
-	instance_create_depth(0, 0, 0, O_GameLoopController);
-	instance_create_depth(1084, 1169, 0, O_EndTurn);
-	instance_create_depth(596, 1169, 0, O_CancelButton);
-	instance_create_depth(840, 1169, 0, O_SummonButton);*/
 	player1_dropped = instance_create_depth(526, 574, 0, O_DroppedFigurePlace);
 	player2_dropped = instance_create_depth(526, 480, 0, O_DroppedFigurePlace);
 	player1_captured = instance_create_depth(1146, 574, 0, O_CapturedFigurePlace);

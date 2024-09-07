@@ -66,6 +66,8 @@ update_filled_figure_state = function() {
 		}
 		if found_clear_figures = 0 {
 			filled_figure.capture(1);
+			if filled_figure.owner == "player1" {O_GameLoopController.player2_captured ++}
+			else {O_GameLoopController.player1_captured ++}
 			clear();
 		}
 }

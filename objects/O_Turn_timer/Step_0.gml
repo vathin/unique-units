@@ -5,5 +5,6 @@ if current_frame <= all_time and active{
 }
 else {
 	if O_GameLoopController.can_cancel {O_GameLoopController.cancel_action()}
+	if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
 	O_GameLoopController.end_move();
 }

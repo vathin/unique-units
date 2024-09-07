@@ -10,7 +10,11 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 		target_figure.drop();
 	}
 	
-	draw = function() {}
+	draw = function() {
+		if target_figure != undefined {
+			draw_sprite_ext(S_Back_Action_Target, 0, target_figure.x, target_figure.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+		}
+	}
 	
 	set_target = function(new_target, new_cell) {
 		target_figure = new_target;
@@ -33,4 +37,35 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 	}
 	
 	cancel = function() {}
+	
+	back = function() {
+		if target_figure != undefined {
+			global.cell_click_callback.set_draw_marks(1)
+			target_figure = undefined;
+			O_EndTurn.block()
+		}
+		else {
+			if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
+			O_GameField.clear_all_marks();
+			sel_cell = global.selected_cell;
+			global.cell_click_callback = global.selected_cell;
+			instance_create_depth(0, 0, 0, O_FigureActionController);
+			O_SummonButton.go_away();
+			global.using_ability = 0;
+			O_GameLoopController.action = undefined;
+		}
+	}
+	
+	export = function() {
+		export_data = {
+			ex_using_figure: using_figure,
+			ex_target_figure: target_figure,
+			action: WarriorAbility
+		}
+		return export_data
+	}
+	import = function(import_data) {
+		target_figure = import_data.ex_target_figure;
+		using_figure = import_data.ex_using_figure;
+	}
 }

@@ -1,5 +1,4 @@
-// Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
-// https://help.yoyogames.com/hc/en-us/articles/360005277377
+
 function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() constructor{
 	self.using_figure = using_figure;
 	self.using_cell = using_cell;
@@ -8,7 +7,7 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	selected = false
 	
 	execute = function() {
-		target_figure.start_move_animation(global.cell_click_callback, Settings.ability_animation_lenght)
+		target_figure.start_move_animation(global.cell_click_callback, Settings.ability_animation_length)
 		global.cell_click_callback.fill(target_figure);
 		target_cell.clear();
 	}
@@ -17,6 +16,9 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 		if selected {
 			draw_sprite_ext(target_figure.sprite_index, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
 		Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+		}
+		if target_figure != undefined {
+			draw_sprite_ext(S_Back_Action_Target, 0, target_figure.x, target_figure.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 		}
 	}
 	set_target = function(new_target, new_cell) {
@@ -52,4 +54,23 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	}
 	
 	cancel = function() {}
+	back = function() {
+		if target_figure != undefined {
+			target_figure = undefined;
+			O_GameField.clear_all_marks()
+			check_ability_targets(0, 0);
+			target_cell = undefined
+			selected = false
+		}
+		else {
+			if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
+			O_GameField.clear_all_marks();
+			sel_cell = global.selected_cell;
+			global.cell_click_callback = global.selected_cell;
+			instance_create_depth(0, 0, 0, O_FigureActionController);
+			O_SummonButton.go_away();
+			global.using_ability = 0;
+			O_GameLoopController.action = undefined;
+		}
+	}
 }

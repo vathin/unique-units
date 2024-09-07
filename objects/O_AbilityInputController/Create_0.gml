@@ -1,5 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
+O_SummonButton.alarm[0] = 2;
 global.cell_action = function(cell) {
 	if cell.marked {
 		global.cell_click_callback.set_draw_marks(1);
@@ -19,13 +20,22 @@ global.cell_action = function(cell) {
 O_SummonButton.change_sprite(S_AbilityButton, 1.63);
 global.mark = S_Ability_mark;
 global.using_ability = 1;
-using_figure = global.cell_click_callback.filled_figure;
+using_figure = global.selected_cell.filled_figure;
 create_ability = using_figure.get_ability()
-ability = new create_ability(using_figure, global.cell_click_callback)
+ability = new create_ability(using_figure, global.selected_cell)
 ability.check_ability_targets(1, 1)
 
 
 start_ability = function() {
 	O_GameLoopController.set_action(ability);
+	instance_destroy();
+}
+
+back = function() {
+	O_GameField.clear_all_marks();
+	global.cell_click_callback = global.selected_cell;
+	instance_create_depth(0, 0, 0, O_FigureActionController);
+	O_SummonButton.go_away();
+	global.using_ability = 0;
 	instance_destroy();
 }
