@@ -18,6 +18,7 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 	
 	set_target = function(new_target, new_cell) {
 		target_figure = new_target;
+		O_EndTurn.unblock();
 	}
 	
 	check_ability_targets = function(a, b) {
@@ -36,7 +37,6 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 		return found_cell;
 	}
 	
-	cancel = function() {}
 	
 	back = function() {
 		if target_figure != undefined {
@@ -49,18 +49,19 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 			O_GameField.clear_all_marks();
 			sel_cell = global.selected_cell;
 			global.cell_click_callback = global.selected_cell;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
 			O_SummonButton.go_away();
 			global.using_ability = 0;
+			instance_create_depth(0, 0, 0, O_FigureActionController);
 			O_GameLoopController.action = undefined;
 		}
 	}
 	
 	export = function() {
 		export_data = {
+			action: WarriorAbility,
+			type: "act_ability",
 			ex_using_figure: using_figure,
-			ex_target_figure: target_figure,
-			action: WarriorAbility
+			ex_target_figure: target_figure
 		}
 		return export_data
 	}

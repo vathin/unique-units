@@ -19,7 +19,6 @@ image_xscale = Settings.figure_scale;
 image_yscale = Settings.figure_scale;
 
 able_to_move = true;
-friendly = true;
 
 set_behaviour = function(new_behaviour) {
 	behaviour = Behaviours.get(new_behaviour);
@@ -87,6 +86,17 @@ conquest = function() {
 	O_GameField.player2_captured.get_new_figure(O_GameLoopController.get_opponent(owner));
 	ov_animation = instance_create_depth(0, 0, 0, O_OverturnFigureAnimation);
 	ov_animation.start_animation(1, 1, 1, 1, 30, self);
+	O_GameLoopController.check_win_conditions();
 }
+
+click_while_conquesting = function() {
+	draw_sprite_ext(S_Conquesting, image_index, x, y, image_xscale, image_yscale, 0, c_white, 0.25);
+	draw_sprite_ext(sprite_index, image_index, O_SummonButton.standart_x, O_SummonButton.standart_y, 
+	Settings.summon_button_figure_scale, Settings.summon_button_figure_scale, 0, c_white, 1);
+	draw_sprite_ext(S_watching_overturned_figure, 0, O_SummonButton.standart_x, O_SummonButton.standart_y, 
+	0.8, 0.8, 0, c_white, 0.35)
+	if instance_exists(O_FigureActionController) {O_FigureActionController.set_buttons_alpha(0);}
+}
+
 
 get_ability = function() {return Behaviours.get_ablility(behaviour)}

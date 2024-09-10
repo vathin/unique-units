@@ -31,7 +31,7 @@ end_move = function() {
 	Maps_list.check_if_any_cell_conquested(global.map);
 	O_GameField.check_every_figure();
 	O_Figures_counter.update_turn();
-	if check_win_conditions() != undefined {game_end()}
+	if check_win_conditions() != undefined {O_MatchController.alarm[0] = 60}
 }
 
 set_action = function(new_action) {
@@ -65,19 +65,15 @@ choose_cell_for_summon = function() {
 	}
 }
 cancel_action = function() {
-	if have_action(){
-		action.cancel();
-		action = undefined;
-		clear_all();
-	}
-	else {
-		if instance_exists(O_SummonInputController) {
-			O_SummonInputController.cancel();
-			show_debug_message("ихихихи")
-		}
 		clear_all();
 		O_Figures_counter.update_turn();
-	}
+}
+
+clean_controllers = function() {
+	if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
+	if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
+	global.moving_figure = 0;
+	global.using_ability = 0;
 }
 
 default_cell_click_action = function(cell) {
@@ -100,15 +96,12 @@ select_movable_figure = function(cell) {
 
 clear_all = function() {
 	if instance_exists(O_SummonInputController) {instance_destroy(O_SummonInputController)}
-	if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
-	if instance_exists (O_MoveInputController){instance_destroy(O_MoveInputController)}
+	clean_controllers();
 	if instance_exists(O_FigureActionController) {
 		O_FigureActionController.clear_buttons();
 		instance_destroy(O_FigureActionController);
 	}
 	O_EndTurn.active = 1;
-	global.moving_figure = 0;
-	global.using_ability = 0;
 	global.selected_cell = undefined;
 	O_SummonButton.go_to_standart_mode();
 	O_GameField.clear_all_marks();
@@ -132,5 +125,14 @@ check_win_conditions = function() {
 	
 	return undefined
 }
-	
+
+add_captured_figure = function(player) {
+	if player = "player1" {
+		player1_captured ++;
+	}
+	else {
+		player2_captured ++;
+	}
+}
+
 global.cell_action = default_cell_click_action;

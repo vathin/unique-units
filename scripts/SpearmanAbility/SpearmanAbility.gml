@@ -6,13 +6,13 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	target_figure = undefined;
 	
 	execute = function() {
-		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.ability_animation_length)
-		global.cell_click_callback.fill(global.selected_cell.filled_figure, 1);
-		global.selected_cell.clear();
+		using_cell.filled_figure.start_move_animation(cell_for_move, Settings.ability_animation_length)
+		cell_for_move.fill(using_cell.filled_figure, 1);
+		using_cell.clear();
 	}
 	
-	set_target = function(f, new_cell) {
-		cell_for_move = new_cell;
+	set_target = function(useless_data, useless_data2) {
+		cell_for_move = global.cell_click_callback;
 	}
 	
 	draw = function() {
@@ -54,19 +54,36 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 		
 	}
 	
-	cancel = function() {}
 	
 	back = function() {
-		if cell_for_move != undefined {
-			cell_for_move = undefined;
-			global.cell_click_callback = global.selected_cell;
+		if global.cell_click_callback != global.selected_cell {
+			global.cell_click_callback.set_draw_marks(1);
+			global.cell_click_callback = using_cell;
 		}
 		else {
-			instance_create_depth(0, 0, 0, O_FigureActionController);
 			O_GameField.clear_all_marks();
 			O_SummonButton.go_away();
-			global.cell_click_callback = global.selected_cell;
+			global.cell_click_callback = using_cell;
+			global.using_ability = 0;
+			instance_create_depth(0, 0, 0, O_FigureActionController);
 			O_GameLoopController.action = undefined;
 		}
+	}
+	
+	export = function() {
+		export_data = {
+			action : SpearmanAbility,
+			type : "act_ability",
+			ex_using_figure: using_figure,
+			ex_using_cell: using_cell,
+			ex_cell_for_move: cell_for_move
+		}
+		return export_data
+	}
+	
+	import = function(import_data) {
+		using_figure = import_data.ex_using_figure;
+		using_cell = import_data.ex_using_cell;
+		cell_for_move = import_data.ex_cell_for_move;
 	}
 }

@@ -30,8 +30,8 @@ function Maps_list() constructor{
 			if O_GameField.get_cell(player1[i][0], player1[i][1]).is_filled() {
 				if O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.owner == "player2" 
 				and O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.state.is_active {
-					O_GameLoopController.player2_captured += 1
 					O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.alarm[1] = 30
+					O_GameLoopController.add_captured_figure("player2");
 				}
 			}
 		}
@@ -39,8 +39,8 @@ function Maps_list() constructor{
 			if O_GameField.get_cell(player2[i][0], player2[i][1]).is_filled() {
 				if O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.owner == "player1" 
 				and O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.state.is_active {
-					O_GameLoopController.player1_captured += 1;
-					 O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.alarm[1] = 30
+					 O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.alarm[1] = 30;
+					 O_GameLoopController.add_captured_figure("player1");
 				}
 			}
 		}

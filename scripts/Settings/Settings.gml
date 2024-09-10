@@ -2,7 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Settings() constructor{
 	static figure_scale = 0.095;
-	static summon_button_figure_scale = 0.28;
+	static summon_button_figure_scale = 0.287;
 	static additional_buttons_scale = 0.4;
 	static move_animation_length = 30;
 	static ability_animation_length = 35;

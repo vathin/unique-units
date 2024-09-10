@@ -22,16 +22,16 @@ execute_cell_click_action = function(cell_obj) {
 	cell_click_action(cell_obj);
 }
 
-h = 6;
-w = 6;
+field_heigth = 6;
+field_width = 6;
 size = 90
 depth = 1;
 image_xscale = 0.25399;
 image_yscale = 0.25399;
 
 generate_new_game_field = function(w, h, cell_size) {
-	for (i = 0; i < h; i++) {
-	for (m = 0; m < w; m++) {
+	for (i = 0; i < field_heigth; i++) {
+	for (m = 0; m < field_width; m++) {
 		field[i][m] = instance_create_depth(self.x+size/2+m*size, self.y+size/2+i*size, -1, O_GF_Square);
 		field[i][m].xcord = m;
 		field[i][m].ycord = i;
@@ -52,15 +52,23 @@ generate_new_game_field = function(w, h, cell_size) {
 		card_x += (700 / array_length(Player_figure_list.player_figure_list))
 	}
 }
+get_cell = function(xcord, ycord) {
+	if xcord >= 0 and xcord < field_width and ycord >= 0 and ycord < field_heigth{
+		return field[ycord][xcord];
+	}
+	else {
+		return undefined
+	}
+}
 
-generate_new_game_field(w, h, size);
+generate_new_game_field(field_width, field_heigth, size);
 O_Figures_counter.update_turn()
 
 check_clear_move_cells = function(xcord, ycord) {
 	for (i = -1; i <= 1; i++) {
 		for (m = -1; m <= 1; m++) {
 			try {
-				cell = field[ycord+m][xcord+i]
+				cell = get_cell(xcord + i, ycord + m);
 				if !cell.is_filled() {
 					cell.marked = true;
 				}
@@ -73,8 +81,8 @@ check_clear_move_cells = function(xcord, ycord) {
 
 check_controlled_summon_cells = function(player){
 	var is_on_player_side
-	for (i = 0; i < h; i++) {
-		for (m = 0; m < w; m++) {
+	for (i = 0; i < field_heigth; i++) {
+		for (m = 0; m < field_width; m++) {
 			cell = field[m][i]
 			if !cell.is_filled() {
 				if player = "player1" {
@@ -114,20 +122,11 @@ check_controlled_summon_cells = function(player){
 
 
 clear_all_marks = function() {
-	for (i = 0; i < h; i++) {
-		for (m = 0; m < w; m++) {
+	for (i = 0; i < field_heigth; i++) {
+		for (m = 0; m < field_width; m++) {
 			field[i][m].marked = false;
 			field[i][m].set_draw_marks(1);
 		}
-	}
-}
-
-get_cell = function(xcord, ycord) {
-	if xcord >= 0 and xcord < w and ycord >= 0 and ycord < h{
-		return field[ycord][xcord];
-	}
-	else {
-		return undefined
 	}
 }
 
@@ -150,8 +149,8 @@ cell_get_neightbors = function(cell) {
 }
 
 is_any_cell_marked = function() {
-	for (i = 0; i < w; i++) {
-		for (m = 0; m < h; m++) {
+	for (i = 0; i < field_width; i++) {
+		for (m = 0; m < field_heigth; m++) {
 			if get_cell(m, i).marked {
 				return true
 			}
@@ -180,8 +179,8 @@ get_place = function(type, player) {
 }
 
 check_every_figure = function() {
-	for (i = 0; i < w; i++) {
-		for (m = 0; m < h; m++) {
+	for (i = 0; i < field_width; i++) {
+		for (m = 0; m < field_heigth; m++) {
 			if get_cell(m, i).is_filled() {
 				get_cell(m, i).update_filled_figure_state();
 			}
@@ -191,8 +190,8 @@ check_every_figure = function() {
 
 get_filled_cells = function(player) {
 	cells = [];
-	for (i = 0; i < w; i++) {
-		for (m = 0; m < h; m++) {
+	for (i = 0; i < field_width; i++) {
+		for (m = 0; m < field_heigth; m++) {
 			cell = get_cell(m, i)
 			if cell.is_filled() and cell.filled_figure.owner = player{
 				array_push(cells, cell);

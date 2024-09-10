@@ -2,6 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : FigureAbilityAction() constructor{
 	type = "move";
+	O_EndTurn.unblock();
 	self.from_x = from_x;
 	self.from_y = from_y;
 	self.to_x = to_x;
@@ -9,7 +10,6 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 	self.figure_sprite = figure_sprite;
 	O_GameField.field[to_y][to_x].set_draw_marks(0)
 	O_SummonButton.set_back();
-	
 	
 	execute = function() {
 		O_GameField.get_cell(to_x, to_y).fill(O_GameField.get_cell(from_x, from_y).filled_figure, 1);
@@ -28,14 +28,15 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 		self.to_x = new_x;
 		self.to_y = new_y;
 		O_GameField.get_cell(new_x, new_y).set_draw_marks(0)
+		O_EndTurn.unblock()
 	}
 	
-	cancel = function() {}
 	back = function() {
 		if to_x != undefined {
 			O_GameField.field[to_y][to_x].set_draw_marks(1)
 			to_x = undefined;
 			to_y = undefined;
+			O_EndTurn.block()
 		}
 		else {
 			if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
@@ -50,6 +51,7 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 	export = function() {
 		export_data = {
 			action: StandartMoveAbility,
+			type: "move_ability",
 			ex_to_x: to_x,
 			ex_to_y: to_y,
 			ex_from_x: from_x,

@@ -1,20 +1,18 @@
 {
   "$GMObject":"",
-  "%Name":"O_DroppedFigurePlace",
+  "%Name":"O_Figure_place",
   "eventList":[
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":2,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_DroppedFigurePlace",
+  "name":"O_Figure_place",
   "overriddenProperties":[],
   "parent":{
     "name":"FigurePlaces",
     "path":"folders/Objects/FigurePlaces.yy",
   },
-  "parentObjectId":{
-    "name":"O_Figure_place",
-    "path":"objects/O_Figure_place/O_Figure_place.yy",
-  },
+  "parentObjectId":null,
   "persistent":false,
   "physicsAngularDamping":0.1,
   "physicsDensity":0.5,
