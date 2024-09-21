@@ -4,6 +4,7 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	self.using_cell = using_cell;
 	cell_for_move = undefined;
 	target_figure = undefined;
+	draw_previous_move_cell = false;
 	
 	execute = function() {
 		using_cell.filled_figure.start_move_animation(cell_for_move, Settings.ability_animation_length)
@@ -13,13 +14,23 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	
 	set_target = function(useless_data, useless_data2) {
 		cell_for_move = global.cell_click_callback;
+		O_EndTurn.unblock();
 	}
 	
 	draw = function() {
 		if global.cell_click_callback != using_cell{
 			draw_sprite_ext(using_figure.sprite_index, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			if using_figure.previous_ability_cell != undefined and !using_figure.previous_ability_cell.is_filled(){
+				draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_ability_cell.x, using_figure.previous_ability_cell.y,
+				Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+			}
 		}
+		if draw_previous_move_cell {
+			draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+		}
+		
 	}
 	
 	check_ability_targets = function(a, b) {
@@ -50,8 +61,11 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 			!O_GameField.get_cell(using_cell.xcord, using_cell.ycord - 2).is_filled() {
 				O_GameField.get_cell(using_cell.xcord, using_cell.ycord - 2).marked = 1;
 			}
-		}	
-		
+		}
+		if using_cell.filled_figure.previous_move_cell != undefined and using_cell.filled_figure.previous_move_cell.marked {
+			draw_previous_move_cell = 1;
+			using_cell.filled_figure.previous_move_cell.marked = 0;
+		}
 	}
 	
 	
@@ -59,14 +73,10 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 		if global.cell_click_callback != global.selected_cell {
 			global.cell_click_callback.set_draw_marks(1);
 			global.cell_click_callback = using_cell;
+			O_EndTurn.block();
 		}
 		else {
-			O_GameField.clear_all_marks();
-			O_SummonButton.go_away();
-			global.cell_click_callback = using_cell;
-			global.using_ability = 0;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
-			O_GameLoopController.action = undefined;
+			O_GameLoopController.quit_from_action()
 		}
 	}
 	

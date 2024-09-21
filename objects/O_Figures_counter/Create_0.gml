@@ -54,3 +54,17 @@ get_summon_figures_amount = function(player) {
 get_current_player_figures = function() {
 	return current_player_figures;
 }
+
+export = function() {
+	export_data = {
+		ex_player1_field_figures: player1_field_figures,
+		ex_player2_field_figures: player2_field_figures,
+	}
+		return export_data;
+}
+
+import = function(import_data) {
+	player1_field_figures = import_data.ex_player1_field_figures;
+	player2_field_figures = import_data.ex_player2_field_figures;
+	update_turn();
+}

@@ -45,14 +45,7 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 			O_EndTurn.block()
 		}
 		else {
-			if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
-			O_GameField.clear_all_marks();
-			sel_cell = global.selected_cell;
-			global.cell_click_callback = global.selected_cell;
-			O_SummonButton.go_away();
-			global.using_ability = 0;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
-			O_GameLoopController.action = undefined;
+			O_GameLoopController.quit_from_action();
 		}
 	}
 	

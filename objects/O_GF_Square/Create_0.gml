@@ -12,13 +12,9 @@ set_draw_marks = function(value) {
 }
 
 create_figure = function(figure_behaviour) {
-	if (!is_filled()){
-		filled_figure = instance_create_depth(self.x, self.y, -1, O_Figure);
-		filled_figure.set_behaviour(figure_behaviour);
-		global.able_to_summon = false;
-		O_SummonButton.go_to_standart_mode();
-		O_Figures_counter.change_field_figures_amount(global.turn_owner, +1);
-	}
+	filled_figure = instance_create_depth(self.x, self.y, -1, O_Figure);
+	filled_figure.set_behaviour(figure_behaviour);
+	O_Figures_counter.change_field_figures_amount(global.turn_owner, +1);
 }
 clear = function() {
 	filled_figure = undefined;
@@ -29,7 +25,6 @@ fill = function(new_figure, is_moving) {
 		new_figure.x = self.x;
 		new_figure.y = self.y;
 	}
-	self.draw_mark = 1;
 }
 is_filled = function() {
 	return filled_figure != undefined
@@ -55,16 +50,47 @@ get_cord = function() {
 }
 
 update_filled_figure_state = function() {
-		found_clear_figures = 0
+	filled_figure.check_cycle_rule();
+		found_clear_cells = 0
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <=1; m++) {
 				cell = O_GameField.get_cell(xcord + i, ycord +m);
 				if cell != undefined{
-					if !cell.is_filled() and cell != O_GameField.get_cell(xcord, ycord) {found_clear_figures += 1}
+					if cell != O_GameField.get_cell(xcord, ycord) {
+						if !cell.is_filled() {found_clear_cells++}
+						else {
+							if cell.filled_figure.state.is_dropped {found_clear_cells++}
+						}
+					}
 				}
 			}
 		}
-		if found_clear_figures = 0 {
+		if found_clear_cells == 0 {
 			O_Figures_counter.add_figure_to_capture(filled_figure, self);
 		}
+}
+
+export = function() {
+	filled_figure_struct = undefined
+	if is_filled() {filled_figure_struct = filled_figure.export()}
+	export_data = {
+		ex_can_be_conquested: can_be_conquested,
+		ex_draw_mark: draw_mark,
+		ex_filled_figure: filled_figure,
+		ex_filled_figure_struct: filled_figure_struct
+	}
+	return export_data
+}
+
+// надо перелопатить
+import = function(import_data) {
+	can_be_conquested = import_data.ex_can_be_conquested;
+	ex_draw_mark = import_data.ex_draw_mark;
+	if import_data.ex_filled_figure != undefined {
+		clear();
+		create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
+		O_Figures_counter.change_field_figures_amount(global.turn_owner, -1);
+		filled_figure.import(import_data.ex_filled_figure_struct);
+	}
+	if import_data.ex_filled_figure == undefined {clear()}
 }

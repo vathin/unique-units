@@ -17,7 +17,6 @@ if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {
 O_SummonButton.go_away();
 move_and_ability = false;
 
-
 figure_ability = Behaviours.get_ablility(global.selected_cell.filled_figure.behaviour);
 if figure_ability != undefined {
 	test_ability = new figure_ability(global.selected_cell.filled_figure, global.selected_cell);
@@ -36,8 +35,6 @@ if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) == 
 move_figure = function() {	
 	clear_buttons();
 	O_SummonButton.block();
-	if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) = ArcherMoveAbility {ability.check_all_cells()}
-	else {O_GameField.check_clear_move_cells(global.cell_click_callback.xcord, global.cell_click_callback.ycord);}
 	instance_create_depth(0, 0, 0, O_MoveInputController);
 	instance_destroy();
 	

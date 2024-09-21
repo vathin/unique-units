@@ -8,4 +8,6 @@ function FigureAbilityAction() : Action() constructor{
 		instance_create_depth(0, 0, 0, O_FigureActionController);
 		O_GameLoopController.action = undefined;
 	}
+	draw_previous_ability_cell = false;
+	draw_previous_move_cell = false;
 }

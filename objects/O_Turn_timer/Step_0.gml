@@ -1,10 +1,18 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-if current_frame <= all_time and active{
-	current_frame ++;
-}
-else {
-	if O_GameLoopController.can_cancel {O_GameLoopController.cancel_action()}
-	if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
-	O_GameLoopController.end_move();
+if active {
+	if current_frame <= all_time {
+		current_frame ++;
+		using_time_bank = 0;
+	}
+	else {
+		if get_player_time_bank(global.turn_owner) > 1 {
+			use_time_bank(global.turn_owner);
+		}
+		else {
+			if O_GameLoopController.can_cancel {O_GameLoopController.cancel_action()}
+			if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
+			O_GameLoopController.end_move();
+	}
+	}
 }

@@ -4,8 +4,8 @@ global.able_to_summon = false;
 global.moving_figure = false;
 global.using_ability = false;
 global.figure_to_summon = undefined;
-global.input = true;
 global.map = "map1";
+global.input = 1;
 
 cell_click_action = undefined;
 
@@ -44,8 +44,12 @@ generate_new_game_field = function(w, h, cell_size) {
 	player2_captured = instance_create_depth(1146, 480, 0, O_CapturedFigurePlace);
 	player2_dropped.facing = -1;
 	player2_captured.facing = -1;
-	card_x = 560;
 	
+	generate_cards();
+}
+
+generate_cards = function() {
+	card_x = 560;
 	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
 		new_card = instance_create_depth(card_x, 890, 0, O_Card_display);
 		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]))
@@ -199,6 +203,41 @@ get_filled_cells = function(player) {
 		}
 	}
 	return cells
+}
+
+export_cell = function(cell_x, cell_y) {
+	cell = get_cell(cell_x, cell_y);
+	return cell.export()
+}
+
+export = function() {
+	for (i = 0; i < field_width; i++) {
+		for (m = 0; m < field_heigth; m++) {
+			export_cells[m][i] = get_cell(m, i).export();
+		}
+	}
+	export_data = {
+		ex_cells: export_cells,
+		ex_player1_dropped: player1_dropped.export(),
+		ex_player2_dropped: player2_dropped.export(),
+		ex_player1_captured: player1_captured.export(),
+		ex_player2_captured: player2_captured.export(),
+		ex_map: global.map,
+	}
+	return export_data
+}
+
+import = function(import_data) {
+	for (i = 0; i < field_width; i++) {
+		for (m = 0; m < field_heigth; m++) {
+			get_cell(m, i).import(import_data.ex_cells[m][i]);
+		}
+	}
+	player1_dropped.import(import_data.ex_player1_dropped);
+	player2_dropped.import(import_data.ex_player2_dropped);
+	player1_captured.import(import_data.ex_player1_captured);
+	player2_captured.import(import_data.ex_player2_captured);
+	global.map = import_data.ex_map;
 }
 
 Maps_list.start(global.map);

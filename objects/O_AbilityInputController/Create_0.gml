@@ -17,7 +17,13 @@ set_new_cell_action = function() {
 		}
 	}
 }
+
 set_new_cell_action();
+
+start_ability = function() {
+	O_GameLoopController.set_action(ability);
+	instance_destroy();
+}
 
 O_SummonButton.change_sprite(S_AbilityButton, 1.63);
 global.mark = S_Ability_mark;
@@ -26,14 +32,9 @@ using_figure = global.selected_cell.filled_figure;
 create_ability = using_figure.get_ability();
 ability = new create_ability(using_figure, global.selected_cell);
 ability.check_ability_targets(1, 1);
+
 if O_GameLoopController.can_cancel {
 	O_SummonButton.alarm[0] = 1;
-}
-
-
-start_ability = function() {
-	O_GameLoopController.set_action(ability);
-	instance_destroy();
 }
 
 back = function() {

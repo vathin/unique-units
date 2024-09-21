@@ -5,9 +5,13 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	target_figure = undefined;
 	target_cell = undefined;
 	fill_cell = undefined;
-	selected = false
+	selected = false;
+	draw_previous_ability = 0;
+	draw_previous_move = 0;
 	
 	execute = function() {
+		target_figure.add_previous_move_cell(target_cell);
+		using_figure.add_previous_ability_cell(fill_cell, target_figure);
 		target_figure.start_move_animation(fill_cell, Settings.ability_animation_length)
 		fill_cell.fill(target_figure);
 		target_cell.clear();
@@ -16,12 +20,21 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	draw = function() {
 		if selected {
 			draw_sprite_ext(target_figure.sprite_index, 0, fill_cell.x, fill_cell.y, 
-		Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 		if target_figure != undefined {
 			draw_sprite_ext(S_Back_Action_Target, 0, target_figure.x, target_figure.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			if draw_previous_ability{
+				draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_ability_cell.x, using_figure.previous_ability_cell.y,
+				Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+			}
+			if draw_previous_move {
+				draw_sprite_ext(S_cycle_rule, 0, target_figure.previous_move_cell.x, target_figure.previous_move_cell.y,
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			}
 		}
 	}
+	
 	set_target = function(new_target, new_cell) {
 		if target_figure == undefined {
 			target_figure = new_target;
@@ -53,6 +66,17 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 		else {
 			O_GameField.clear_all_marks();
 			O_GameField.check_clear_move_cells(using_cell.xcord, using_cell.ycord);
+			if using_figure.previous_ability_cell != undefined and using_figure.previous_ability_cell.marked 
+			and using_figure.previous_ability_target == target_figure{
+				using_figure.previous_ability_cell.marked = 0;
+				draw_previous_ability = 1
+			}
+			else {
+				if target_figure.previous_move_cell != undefined and !target_figure.previous_move_cell.is_filled() {
+					target_figure.previous_move_cell.marked = 0
+					draw_previous_move = 1
+				}
+			}
 		}
 	}
 	
@@ -71,15 +95,12 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 				check_ability_targets(0, 0);
 				target_cell = undefined;
 				selected = false;
+				draw_previous_ability = 0;
+				draw_previous_move = 0;
 			}
 		}
 		else {
-			if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
-			O_GameField.clear_all_marks();
-			global.using_ability = 0;
-			global.cell_click_callback = global.selected_cell;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
-			O_GameLoopController.action = undefined;
+			O_GameLoopController.quit_from_action();
 		}
 	}
 	
@@ -95,6 +116,7 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 		}
 		return export_data
 	}
+	
 	import = function(import_data) {
 		using_figure = import_data.ex_using_figure;
 		using_cell = import_data.ex_using_cell;

@@ -7,6 +7,7 @@ action = undefined;
 turn_end = false;
 can_cancel = false;
 displaying_card = false;
+global.input = true;
 
 O_Turn_timer.start_count()
 
@@ -25,9 +26,9 @@ end_move = function() {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 	}
 	if have_action() { action.execute() }
+	O_Turn_timer.reset();
 	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
-	O_Turn_timer.start_count();
 	Maps_list.check_if_any_cell_conquested(global.map);
 	O_GameField.check_every_figure();
 	O_Figures_counter.update_turn();
@@ -69,6 +70,18 @@ cancel_action = function() {
 		O_Figures_counter.update_turn();
 }
 
+quit_from_action = function() {
+	if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
+	if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
+	O_GameField.clear_all_marks(); 
+	O_SummonButton.go_away();
+	global.moving_figure = 0;
+	global.using_ability = 1;
+	global.cell_click_callback = global.selected_cell;
+	instance_create_depth(0, 0, 0, O_FigureActionController);
+	O_GameLoopController.action = undefined;
+}
+
 clean_controllers = function() {
 	if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
 	if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
@@ -83,8 +96,7 @@ default_cell_click_action = function(cell) {
 }
 cell_is_playable = function(cell) {
 	return (cell.is_filled() and 
-			cell.filled_figure.able_to_move and 
-			cell.filled_figure.owner = global.turn_owner and 
+			cell.filled_figure.owner == global.turn_owner and 
 			cell.filled_figure.state.is_active);
 }
 select_movable_figure = function(cell) {
@@ -110,6 +122,9 @@ clear_all = function() {
 	O_SummonButton.unblock()
 	global.cell_action = default_cell_click_action;
 	action = undefined;
+	global.able_to_summon = false;
+	global.moving_figure = false;
+	global.using_ability = false;
 }
 
 check_win_conditions = function() {
@@ -133,6 +148,36 @@ add_captured_figure = function(player) {
 	else {
 		player2_captured ++;
 	}
+}
+
+export = function() {
+	export_data = {
+		ex_turn_owner: global.turn_owner,
+		ex_player1_captured: player1_captured,
+		ex_player2_captured: player2_captured,
+		ex_timer_struct: O_Turn_timer.export(),
+		ex_figures_counter_struct: O_Figures_counter.export(),
+		ex_gamefield: O_GameField.export(),
+		ex_player1_figures: O_App.data.load("player1"),
+		ex_player2_figures: O_App.data.load("player2")
+	}
+	return export_data
+}
+
+import = function(import_data) {
+	clear_all();
+	while (instance_number(O_Figure) > 0) {
+		show_debug_message("deleted")
+		instance_destroy(instance_find(O_Figure, 0))
+		}
+	global.turn_owner = import_data.ex_turn_owner;
+	player1_captured = import_data.ex_player1_captured;
+	player2_captured = import_data.ex_player2_captured;
+	O_Turn_timer.import(import_data.ex_timer_struct);
+	O_Figures_counter.import(import_data.ex_figures_counter_struct);
+	O_GameField.import(import_data.ex_gamefield);
+	O_App.data.save("player1", import_data.ex_player1_figures);
+	O_App.data.save("player2", import_data.ex_player2_figures);
 }
 
 global.cell_action = default_cell_click_action;

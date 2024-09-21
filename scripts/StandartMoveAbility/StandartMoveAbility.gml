@@ -1,7 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : FigureAbilityAction() constructor{
-	type = "move";
 	O_EndTurn.unblock();
 	self.from_x = from_x;
 	self.from_y = from_y;
@@ -10,42 +9,49 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 	self.figure_sprite = figure_sprite;
 	O_GameField.field[to_y][to_x].set_draw_marks(0)
 	O_SummonButton.set_back();
+	from_move = O_GameField.get_cell(from_x, from_y);
+	to_move = O_GameField.get_cell(to_x, to_y);
+	draw_previous_cell = false;
+	
 	
 	execute = function() {
-		O_GameField.get_cell(to_x, to_y).fill(O_GameField.get_cell(from_x, from_y).filled_figure, 1);
-		O_GameField.get_cell(from_x, from_y).clear();
+		to_move.fill(O_GameField.get_cell(from_x, from_y).filled_figure, 1);
+		from_move.clear();
 	}
 	
 	draw = function() {
 		if to_x != undefined {
-			draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
+			draw_sprite_ext(self.figure_sprite, 0, to_move.x, to_move.y, 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+		}
+		if draw_previous_cell{
+			draw_sprite_ext(S_cycle_rule, 0, from_move.filled_figure.previous_move_cell.x, from_move.filled_figure.previous_move_cell.y,
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 		}
 	}
 	
 	set_new_target_coordinates = function(new_x, new_y) {
-		if to_x != undefined {O_GameField.get_cell(to_x, to_y).set_draw_marks(1)}
+		if draw_previous_cell {
+			from_move.filled_figure.previous_move_cell.marked = 0;
+		}
+		if to_x != undefined {to_move.set_draw_marks(1)}
 		self.to_x = new_x;
 		self.to_y = new_y;
-		O_GameField.get_cell(new_x, new_y).set_draw_marks(0)
+		to_move = O_GameField.get_cell(new_x, new_y);
+		to_move.set_draw_marks(0)
 		O_EndTurn.unblock()
 	}
 	
 	back = function() {
 		if to_x != undefined {
-			O_GameField.field[to_y][to_x].set_draw_marks(1)
+			to_move.set_draw_marks(1)
 			to_x = undefined;
 			to_y = undefined;
+			to_move = undefined;
 			O_EndTurn.block()
 		}
 		else {
-			if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
-			O_GameField.clear_all_marks();
-			global.cell_click_callback = global.selected_cell;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
-			O_SummonButton.go_away();
-			global.moving_figure = 0;
-			O_GameLoopController.action = undefined;
+			O_GameLoopController.quit_from_action();
 		}
 	}
 	export = function() {

@@ -15,7 +15,8 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	moving_figure = undefined;
 	found_move_cells = false;
 	cells_to_check = [];
-	using_figure = global.selected_cell.filled_figure;
+	using_figure = O_GameField.get_cell(from_x, from_y).filled_figure;
+	draw_previous_cell = false;
 	
 	init = function() {
 		if to_x != undefined {
@@ -31,6 +32,10 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		if to_x != undefined {
 			draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+		}
+		if draw_previous_cell{
+			draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
@@ -62,7 +67,7 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		if O_GameField.get_cell(cell_x - 1, cell_y) != undefined and O_GameField.get_cell(cell_x - 1, cell_y).is_filled() {closed ++}
 		if O_GameField.get_cell(cell_x, cell_y + 1) != undefined and O_GameField.get_cell(cell_x, cell_y + 1).is_filled() {closed ++}
 		if O_GameField.get_cell(cell_x, cell_y - 1) != undefined and O_GameField.get_cell(cell_x, cell_y - 1).is_filled() {closed ++}
-		if closed = 4 {return false}
+		if closed == 4 {return false}
 		return found_cells
 	}
 	
@@ -88,8 +93,11 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	check_cell_for_move = function(from_cell, new_cell) {
 		if (new_cell == undefined) return;
 		if (from_cell == new_cell) return;
+		if (new_cell == using_figure.previous_move_cell) {
+			draw_previous_cell = 1;
+			return;
+		}
 		if (not check_cell_not_yet_calculated(new_cell)) return;
-		
 		if (new_cell.is_filled()) return;
 		
 		
@@ -198,13 +206,7 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 			O_EndTurn.block();
 		}
 		else {
-			if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
-			O_GameField.clear_all_marks();
-			global.cell_click_callback = global.selected_cell;
-			O_SummonButton.go_away();
-			global.moving_figure = 0;
-			instance_create_depth(0, 0, 0, O_FigureActionController);
-			O_GameLoopController.action = undefined;
+			O_GameLoopController.quit_from_action();
 		}
 	}
 	

@@ -1,6 +1,5 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-figure_owner = undefined;
 size = 400;
 figures = [];
 facing = 1;
@@ -26,4 +25,25 @@ add_figure = function(new_figure) {
 	array_push(figures, new_figure);
 	alarm[0] = Settings.move_animation_length + 2;
 	new_figure.start_move_animation(self, Settings.move_animation_length)
+}
+
+export = function() {
+	figures_structs = []
+	for (i = 0; i < array_length(figures); i++) {array_push(figures_structs, figures[i].export())}
+	export_data = {
+		ex_figures: figures,
+		ex_figures_structs: figures_structs
+	}
+	return export_data
+}
+
+import = function(import_data) {
+	new_figures = import_data.ex_figures;
+	figures = []
+	for (i = 0; i < array_length(new_figures); i++) {
+		new_figure = instance_create_depth(x, y, 0, O_Figure);
+		new_figure.import(import_data.ex_figures_structs[i])
+		figures[i] = new_figure;
+	}
+	sort();
 }

@@ -100,5 +100,6 @@
     {"name":"S_trader_card","order":1,"path":"sprites/S_trader_card/S_trader_card.yy",},
     {"name":"S_Trader","order":2,"path":"sprites/S_Trader/S_Trader.yy",},
     {"name":"S_watching_overturned_figure","order":3,"path":"sprites/S_watching_overturned_figure/S_watching_overturned_figure.yy",},
+    {"name":"S_cycle_rule","order":4,"path":"sprites/S_cycle_rule/S_cycle_rule.yy",},
   ],
 }

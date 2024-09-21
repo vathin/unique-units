@@ -6,6 +6,11 @@ state.is_active = 1;
 in_move = false;
 overturning = false;
 owner = global.turn_owner;
+previous_ability_cell = undefined;
+previous_ability_target = undefined;
+previous_move_cell = undefined;
+previous_ability_counter = 0;
+previous_move_counter = 0;
 
 
 if owner = "player1" {
@@ -23,6 +28,49 @@ able_to_move = true;
 set_behaviour = function(new_behaviour) {
 	behaviour = Behaviours.get(new_behaviour);
 	sprite_index = Behaviours.get_sprite(behaviour);
+}
+update_stats = function() {
+	if owner == "player1" {
+		image_index = 0;
+	}
+	else {
+		image_index = 1;
+	}
+}
+
+clear_previous_move_cell = function() {
+	previous_move_cell = undefined;
+}
+
+clear_previous_ability_cell = function() {
+	previous_ability_target = undefined;
+	previous_ability_cell = undefined;
+}
+
+check_previous_ability_targets = function() {
+	if previous_ability_counter == 0 {
+		if previous_ability_cell != undefined {
+			clear_previous_ability_cell();
+		}
+	}
+	else {previous_ability_counter --}
+	if !instance_exists(previous_ability_target) or previous_ability_target.state.is_dropped {
+		clear_previous_ability_cell()
+	}
+}
+
+check_previous_move_cell = function() {
+	if previous_move_counter == 0 {
+		if previous_move_cell != undefined {
+			clear_previous_move_cell();
+		}
+	}
+	else {previous_move_counter--}
+}
+
+check_cycle_rule = function() {
+	check_previous_ability_targets();
+	check_previous_move_cell();
 }
 
 click = function() {
@@ -58,6 +106,21 @@ start_move_animation = function(cell, lenght) {
 	animation.start_animation(x, y, cell.x, cell.y, lenght, self);
 }
 
+add_previous_ability_cell = function(add_cell, add_target) {
+	previous_ability_cell = add_cell;
+	previous_ability_target = add_target;
+	previous_ability_counter = 2;
+}
+
+add_previous_move_cell = function(add_cell) {
+	previous_move_cell = add_cell;
+	previous_move_counter = 2;
+}
+
+revert_counter = function() {
+	previous_ability_counter++;
+	previous_move_counter++;
+}
 
 drop = function() {
 	state.is_active = 0;
@@ -100,3 +163,29 @@ click_while_conquesting = function() {
 
 
 get_ability = function() {return Behaviours.get_ablility(behaviour)}
+
+export = function() {
+	export_data = {
+		ex_state: state,
+		ex_owner: owner,
+		ex_behaviour: behaviour,
+		ex_previous_ability_cell: previous_ability_cell,
+		ex_previous_ability_target: previous_ability_target,
+		ex_previous_move_cell: previous_move_cell,
+		ex_previous_ability_counter: previous_ability_counter,
+		ex_previous_move_counter: previous_move_counter
+	}
+	return export_data
+}
+
+import = function(import_data) {
+	state = import_data.ex_state;
+	owner = import_data.ex_owner;
+	set_behaviour(import_data.ex_behaviour);
+	previous_ability_cell = import_data.ex_previous_ability_cell;
+	previous_ability_target = import_data.ex_previous_ability_target;
+	previous_move_cell = import_data.ex_previous_move_cell;
+	previous_ability_counter = import_data.ex_previous_ability_counter;
+	previous_move_counter = import_data.ex_previous_move_counter;
+	update_stats();
+}
