@@ -11,7 +11,8 @@ if active {
 		}
 		else {
 			if O_GameLoopController.can_cancel {O_GameLoopController.cancel_action()}
-			if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
+			//if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
+			player_out_of_time = global.turn_owner;
 			O_GameLoopController.end_move();
 	}
 	}

@@ -215,11 +215,14 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	
 	export = function() {
 		export_data = {
+			ex_action: ArcherMoveAbility,
+			ex_type: "move_ability",
 			ex_from_x: from_x,
 			ex_from_y: from_y,
 			ex_to_x: to_x,
 			ex_to_y: to_y,
-			ex_using_figure: using_figure
+			ex_using_figure: using_figure,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

@@ -114,10 +114,13 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	
 	export = function() {
 		export_data = {
-			action: TraderAbility,
-			type: "act_ability",
+			ex_action: TraderAbility,
+			ex_type: "act_ability",
+			ex_using_figure: using_figure,
+			ex_using_cell: undefined,
 			ex_buttons: buttons,
-			ex_target_cell: target_cell
+			ex_target_cell: target_cell,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

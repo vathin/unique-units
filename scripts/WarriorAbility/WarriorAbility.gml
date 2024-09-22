@@ -54,7 +54,8 @@ function WarriorAbility(using_figure, using_cell) : FigureAbilityAction() constr
 			action: WarriorAbility,
 			type: "act_ability",
 			ex_using_figure: using_figure,
-			ex_target_figure: target_figure
+			ex_target_figure: target_figure,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

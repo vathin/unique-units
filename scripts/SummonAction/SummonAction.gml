@@ -4,10 +4,12 @@ function SummonAction(target_x, target_y, figure_sprite) : Action() constructor{
 	self.target_x = target_x;
 	self.target_y = target_y;
 	self.figure_sprite = figure_sprite;
+	summon_figure = global.figure_to_summon;
 	O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
-	O_SummonButton.back = 1
+	O_SummonButton.back = 1;
+	
 	execute = function() {
-		O_GameField.field[self.target_y][self.target_x].create_figure(global.figure_to_summon)
+		O_GameField.get_cell(target_x, target_y).create_figure(summon_figure)
 	}
 	draw = function() {
 		if target_x != undefined {
@@ -33,6 +35,24 @@ function SummonAction(target_x, target_y, figure_sprite) : Action() constructor{
 			O_SummonButton.back = 0;
 			global.cell_click_callback = undefined;
 		}
+	}
+	
+	export = function() {
+		export_data = {
+			ex_action: SummonAction,
+			ex_type: "summon",
+			ex_target_x: target_x,
+			ex_target_y: target_y,
+			ex_turn_owner: global.turn_owner,
+			ex_summon_figure: summon_figure
+		}
+		return export_data
+	}
+	
+	import = function(import_data) {
+		target_x = import_data.ex_target_x;
+		target_y = import_data.ex_target_y;
+		summon_figure = import_data.ex_summon_figure;
 	}
 }
 

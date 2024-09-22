@@ -25,7 +25,7 @@ end_move = function() {
 	if global.moving_figure {
 		global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 	}
-	if have_action() { action.execute() }
+	execute_action();
 	O_Turn_timer.reset();
 	global.turn_owner = get_opponent(global.turn_owner);
 	clear_all();
@@ -80,6 +80,13 @@ quit_from_action = function() {
 	global.cell_click_callback = global.selected_cell;
 	instance_create_depth(0, 0, 0, O_FigureActionController);
 	O_GameLoopController.action = undefined;
+}
+
+execute_action = function() {
+	if have_action() {
+		O_App.game_data.save_action(action.export())
+		action.execute();
+	}
 }
 
 clean_controllers = function() {
@@ -137,6 +144,10 @@ check_win_conditions = function() {
 	O_Figures_counter.player1_field_figures == 0 {return "player2_win"}
 	if O_Figures_counter.get_player_figures_amount("player2") == 0 and 
 	O_Figures_counter.player2_field_figures == 0 {return "player1_win"}
+	if O_Turn_timer.player_out_of_time != undefined {
+		if global.turn_owner == "player1" {return "player1_win"}
+		else {return "player2_win"}
+	}
 	
 	return undefined
 }
@@ -178,6 +189,25 @@ import = function(import_data) {
 	O_GameField.import(import_data.ex_gamefield);
 	O_App.data.save("player1", import_data.ex_player1_figures);
 	O_App.data.save("player2", import_data.ex_player2_figures);
+}
+
+import_action = function(import_struct) {
+	clear_all();
+	global.turn_owner = import_struct.ex_turn_owner;
+	if import_struct.ex_type == "act_ability" {
+		action = new import_struct.ex_action(import_struct.ex_using_figure, import_struct.ex_using_cell);
+		action.import(import_struct);
+	}
+	else if import_struct.ex_type == "move_ability" {
+		action = new import_struct.ex_action(import_struct.ex_from_x, import_struct.ex_from_y, 
+		import_struct.ex_to_x, import_struct.ex_to_y, undefined);
+		action.import();
+	}
+	else if import_struct.ex_type == "summon" {
+		action = new import_struct.ex_action(import_struct.ex_target_x, import_struct.ex_target_y, undefined);
+		action.import();
+	}
+	end_move();
 }
 
 global.cell_action = default_cell_click_action;

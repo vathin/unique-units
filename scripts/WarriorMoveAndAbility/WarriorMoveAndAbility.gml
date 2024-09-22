@@ -48,6 +48,11 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 				draw_sprite_ext(S_Back_Action_Target, 0, target_cell.x, target_cell.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			}
 		}
+		if global.moving_figure and draw_previous_cell{
+			draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			if using_figure.previous_move_cell.marked {using_figure.previous_move_cell.marked = 0}
+		}
 	}
 	
 	set_new_target_coordinates = function(new_x, new_y) {
@@ -139,7 +144,8 @@ function WarriorMoveAndAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figu
 			ex_to_x: to_x,
 			ex_to_y: to_y,
 			ex_using_ability: using_ability,
-			ex_target_cell: target_cell
+			ex_target_cell: target_cell,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

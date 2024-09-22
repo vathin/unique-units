@@ -56,12 +56,13 @@ function StandartMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) : Figure
 	}
 	export = function() {
 		export_data = {
-			action: StandartMoveAbility,
-			type: "move_ability",
+			ex_action: StandartMoveAbility,
+			ex_type: "move_ability",
 			ex_to_x: to_x,
 			ex_to_y: to_y,
 			ex_from_x: from_x,
-			ex_from_y: from_y
+			ex_from_y: from_y,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

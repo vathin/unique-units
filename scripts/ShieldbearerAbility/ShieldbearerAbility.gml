@@ -106,13 +106,14 @@ function ShieldbearerAbility(using_figure, using_cell) : FigureAbilityAction() c
 	
 	export = function() {
 		export_data = {
-			action: ShieldbearerAbility,
-			type: "act_ability",
+			ex_action: ShieldbearerAbility,
+			ex_type: "act_ability",
 			ex_using_figure: using_figure,
 			ex_using_cell: using_cell,
 			ex_target_figure: target_figure,
 			ex_target_cell: target_cell,
-			ex_fill_cell: fill_cell
+			ex_fill_cell: fill_cell,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

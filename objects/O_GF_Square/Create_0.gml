@@ -82,7 +82,6 @@ export = function() {
 	return export_data
 }
 
-// надо перелопатить
 import = function(import_data) {
 	can_be_conquested = import_data.ex_can_be_conquested;
 	ex_draw_mark = import_data.ex_draw_mark;

@@ -82,11 +82,12 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	
 	export = function() {
 		export_data = {
-			action : SpearmanAbility,
-			type : "act_ability",
+			ex_action : SpearmanAbility,
+			ex_type : "act_ability",
 			ex_using_figure: using_figure,
 			ex_using_cell: using_cell,
-			ex_cell_for_move: cell_for_move
+			ex_cell_for_move: cell_for_move,
+			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}

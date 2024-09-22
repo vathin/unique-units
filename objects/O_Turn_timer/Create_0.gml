@@ -5,9 +5,10 @@ bank_seconds = 0;
 all_time = undefined;
 current_frame = 0;
 active = 0;
-using_time_bank = 0;
+using_time_bank = false;
 draw_x = 815;
 draw_y = 190;
+player_out_of_time = undefined;
 
 max_time_bank = 7200;
 player1_time_bank = 3600;
@@ -15,14 +16,15 @@ player2_time_bank = 3600;
 
 add_player_time_bank = function(value, player) {
 	if player == "player1" and player1_time_bank < max_time_bank{
-		if ((player1_time_bank + value) <= max_time_bank) {player1_time_bank += value}
-		else {player1_time_bank = max_time_bank}
+		player1_time_bank += value
+		if player1_time_bank > max_time_bank {player1_time_bank = max_time_bank}
 	}
 	if player == "player2" and player2_time_bank < max_time_bank{
-		if ((player2_time_bank + value) <= max_time_bank) {player2_time_bank += value}
-		else {player2_time_bank = max_time_bank}
+		player2_time_bank += value
+		if player2_time_bank > max_time_bank {player2_time_bank = max_time_bank}
 	}
 }
+
 get_player_time_bank = function(player) {
 	if player == "player1" {return player1_time_bank}
 	else {return player2_time_bank}
@@ -39,12 +41,12 @@ use_time_bank = function(player) {
 
 stop_count = function() {
 	if !using_time_bank {
-		add_player_time_bank(seconds*Settings.FPS, global.turn_owner);
+		add_player_time_bank((all_time-current_frame), global.turn_owner);
 	}
-	using_time_bank = 0;
 }
 start_count = function() {
 	self.all_time = Settings.turn_time;
+	draw_x = 815;
 	current_frame = 0;
 	seconds = 0;
 	bank_seconds = 0;
@@ -55,10 +57,6 @@ start_count = function() {
 reset = function() {
 	stop_count();
 	start_count();
-}
-
-stop_count = function() {
-	active = 0;
 }
 
 export = function() {
