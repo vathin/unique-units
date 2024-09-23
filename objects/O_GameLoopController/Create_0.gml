@@ -178,7 +178,6 @@ export = function() {
 import = function(import_data) {
 	clear_all();
 	while (instance_number(O_Figure) > 0) {
-		show_debug_message("deleted")
 		instance_destroy(instance_find(O_Figure, 0))
 		}
 	global.turn_owner = import_data.ex_turn_owner;

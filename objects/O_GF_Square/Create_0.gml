@@ -83,13 +83,12 @@ export = function() {
 }
 
 import = function(import_data) {
+	clear();
 	can_be_conquested = import_data.ex_can_be_conquested;
 	ex_draw_mark = import_data.ex_draw_mark;
-	if import_data.ex_filled_figure != undefined {
-		clear();
+	if import_data.ex_filled_figure_struct != undefined {
 		create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
 		O_Figures_counter.change_field_figures_amount(global.turn_owner, -1);
 		filled_figure.import(import_data.ex_filled_figure_struct);
 	}
-	if import_data.ex_filled_figure == undefined {clear()}
 }

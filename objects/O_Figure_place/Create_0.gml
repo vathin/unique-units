@@ -24,13 +24,9 @@ sort = function() {
 
 add_figure = function(new_figure) {
 	array_push(figures, new_figure);
-	last_added_figure = new_figure
-	if !new_figure.in_move {
-		alarm[1] = 1;
-	}
-	else {
-		alarm[1] = Settings.move_animation_length + 5;
-	}
+	figures_to_add = new_figure
+	alarm[0] = Settings.move_animation_length;
+	new_figure.start_move_animation(self, Settings.move_animation_length);
 }
 
 export = function() {
@@ -53,3 +49,4 @@ import = function(import_data) {
 	}
 	sort();
 }
+//
