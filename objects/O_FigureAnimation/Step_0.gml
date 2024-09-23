@@ -5,5 +5,8 @@ if animation_enabled {
 	if animation_frame < animation_length{
 		update_animation();
 	}
-	if animation_frame >= animation_length {instance_destroy()}
+	if animation_frame >= animation_length {
+		instance_destroy()
+		animate_figure.in_move = 0;
+		}
 }

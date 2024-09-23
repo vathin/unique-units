@@ -19,6 +19,10 @@ animate = function(){
 	}
 	if animation_frame >= animation_length -1{
 		animate_figure.image_xscale = Settings.figure_scale;
+		if animate_figure.state.is_dropped or animate_figure.state.is_captured {
+			animate_figure.image_xscale = Settings.figure_scale*0.75;
+			animate_figure.image_yscale = Settings.figure_scale*0.75;
+		}
 	}
 }
 

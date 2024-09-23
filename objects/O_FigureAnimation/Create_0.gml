@@ -21,6 +21,7 @@ start_animation = function(x_from, y_from, x_to, y_to, animation_length, animate
 	animation_frame = 0;
 	animation_enabled = 1;
 	percent = 0;
+	animate_figure.in_move = 1;
 }
 
 update_animation = function() {

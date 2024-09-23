@@ -3,7 +3,8 @@
 size = 400;
 figures = [];
 facing = 1;
-place_direction = 1
+place_direction = 1;
+last_added_figure = undefined;
 
 sort = function() {
 	if x < O_GameField.x {place_direction = -1}
@@ -23,8 +24,13 @@ sort = function() {
 
 add_figure = function(new_figure) {
 	array_push(figures, new_figure);
-	alarm[0] = Settings.move_animation_length + 2;
-	new_figure.start_move_animation(self, Settings.move_animation_length)
+	last_added_figure = new_figure
+	if !new_figure.in_move {
+		alarm[1] = 1;
+	}
+	else {
+		alarm[1] = Settings.move_animation_length + 5;
+	}
 }
 
 export = function() {
