@@ -1,7 +1,7 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constructor{
-	figure_button_x = O_GameField.x + 140;
+	figure_button_x = O_GameField.x -130;
 	figure_button_y = 1045;
 	self.using_figure = using_figure;
 	chosen_button = undefined;

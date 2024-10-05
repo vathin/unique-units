@@ -11,6 +11,7 @@ previous_ability_target = undefined;
 previous_move_cell = undefined;
 previous_ability_counter = 0;
 previous_move_counter = 0;
+standart_scale = Settings.figure_scale;
 
 
 if owner = "player1" {

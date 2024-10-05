@@ -1,5 +1,9 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редактор
+
+standart_scale = 1;
+image_xscale = standart_scale;
+image_yscale = standart_scale;
 can_be_conquested = false;
 draw_mark = true;
 marked = false;
