@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceBase",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceBase",
+  "parent":{
+    "name":"Core",
+    "path":"folders/Scripts/Interface/Core.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
