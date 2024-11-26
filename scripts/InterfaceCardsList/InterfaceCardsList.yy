@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceCardsList",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceCardsList",
+  "parent":{
+    "name":"Game",
+    "path":"folders/Scripts/Interface/Elements/Game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

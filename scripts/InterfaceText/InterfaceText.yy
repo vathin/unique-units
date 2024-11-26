@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceText",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceText",
+  "parent":{
+    "name":"Elements",
+    "path":"folders/Scripts/Interface/Elements.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

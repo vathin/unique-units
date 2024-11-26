@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceField",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceField",
+  "parent":{
+    "name":"Game",
+    "path":"folders/Scripts/Interface/Elements/Game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

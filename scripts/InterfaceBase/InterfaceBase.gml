@@ -13,6 +13,9 @@ function InterfaceBase() constructor {
     parent = undefined;
     is_broken = true;
     
+    matrix = undefined;
+    matrix_builder = new InterfaceMatrixBuilder();
+    
     event_create = GetDelegate(self);
     event_destroy = GetDelegate(self);
     event_draw = GetDelegate(self);
@@ -23,6 +26,11 @@ function InterfaceBase() constructor {
     
     old_width = 0;
     old_height = 0;
+    
+    color = c_white;
+    alpha = 1;
+    color_overwrite = undefined;
+    alpha_overwrite = undefined;
     
     static configurator = new InterfaceConfigurator();
     
@@ -59,13 +67,39 @@ function InterfaceBase() constructor {
     
     static draw = function() {
         
-        event_draw.call(self);
+        var matrix_old = undefined;
+        if (matrix != undefined) {
+            matrix_old = matrix_get(matrix_world);
+            matrix_set(matrix_world, matrix);
+        }
         
+        var color_previous = draw_get_color();
+        if (color_overwrite != undefined) {
+            draw_set_color(color_overwrite);
+        } else if (color != c_white) {
+            draw_set_color(color_multiply(color_previous, color))
+        }
+        var alpha_previous = draw_get_alpha();
+        if (alpha_overwrite != undefined) {
+            draw_set_alpha(alpha_overwrite);
+        } else if (alpha != 1) {
+            draw_set_alpha(alpha * alpha_previous);
+        }
+        
+        event_draw.call(self);
         for(var i = 0, i_size = array_length(children); i < i_size; i++) {
             children[i].draw();
         }
-        
         event_draw_end.call(self);
+        
+        if (draw_get_color() != color_previous)
+            draw_set_color(color_previous);
+        if (draw_get_alpha() != alpha_previous)
+            draw_set_alpha(alpha_previous);
+        
+        if (matrix_old != undefined) {
+            matrix_set(matrix_world, matrix_old);
+        }
     }
     static step = function() {
         event_step_begin.call(self);
@@ -92,8 +126,6 @@ function InterfaceBase() constructor {
             h = g.height;
         }
         flexpanel_calculate_layout(flex, w, h, flexpanel_direction.LTR);
-        
-        show_debug_message($"calculate {get_name()}: {w}-{h} {get_geometry()}")
         
         set_calculated();
     }
@@ -269,12 +301,51 @@ function InterfaceBase() constructor {
         set_broken();
     }
     
+    static set_position_type = function(_flexpanel_position_type) {
+        flexpanel_node_style_set_position_type(flex, _flexpanel_position_type);
+        set_broken();
+    }
+    
+    
+    static matrix_move = function(offsetX, offsetY) {
+        var _matrix = matrix_build(offsetX, offsetY, 0, 0, 0, 0, 1, 1, 1); 
+        matrix_modify(_matrix);
+    }
+    static matrix_rotate = function(rotation, rotationX=0, rotationY=0) {
+        var _matrix = matrix_build(0, 0, 0, rotationX, rotationY, rotation, 1, 1, 1); 
+        matrix_modify(_matrix);
+    }
+    static matrix_scale = function(scaleX, scaleY, scaleZ=1) {
+        var _matrix = matrix_build(0, 0, 0, 0, 0, 0, scaleX, scaleY, scaleZ);
+        matrix_modify(_matrix);
+    }
+    static matrix_modify = function(other_matrix) {
+        if (matrix == undefined) {
+            set_matrix_null();
+        }
+        
+        set_matrix(matrix_multiply(matrix, other_matrix));
+        return self;
+    }
+    static set_matrix_ext = function(_x, _y, scaleX, scaleY, rotation) {
+        set_matrix(matrix_build(_x, _y, 0, 0, 0, rotation, scaleX, scaleY, 0));
+    }
+    static set_matrix_null = function() {
+        set_matrix(matrix_build(0, 0, 0, 0, 0, 0, 1, 1, 1));
+    }
+    static set_matrix = function(_matrix) {
+        matrix = _matrix;
+    }
+    static reset_matrix = function() {
+        matrix = undefined;
+    }
+    
     /// @returns {Struct.InterfaceGeometry}
     static get_geometry = function() {
         return flexpanel_node_layout_get_position(flex, false);
     }
 }
-function InterfaceGeometry() {
+function InterfaceGeometry() constructor {
     left = 0;
     top = 0;
     right = 0;
@@ -283,6 +354,35 @@ function InterfaceGeometry() {
     height = 0;
     hadOverflow = false;
     direction = 0;
+}
+function InterfaceMatrixBuilder() constructor {
+    scaleX = 1;
+    scaleY = 1;
+    anchorX = 0.5;
+    anchorY = 0.5;
+    offsetX = 0;
+    offsetY = 0;
+    rotation = 0;
+    
+    /// @arg {Struct.InterfaceBase} _element
+    static update = function(_element) {
+        var geometry = _element.get_geometry();
+        
+        if (geometry.width == 0) {
+            _element.calculate();
+            geometry = _element.get_geometry();
+        }
+        
+        var delay_x = geometry.left + geometry.width * anchorX;
+        var delay_y = geometry.top + geometry.height * anchorY;
+        
+        _element.set_matrix_null();
+        _element.matrix_move(-delay_x, -delay_y);
+        _element.matrix_rotate(rotation);
+        _element.matrix_scale(scaleX, scaleY);
+        _element.matrix_move(delay_x + offsetX, delay_y + offsetY);
+        show_debug_message([geometry, scaleX, scaleY, offsetX, offsetY])
+    }
 }
 
 function GetFlexUnit(_v) {

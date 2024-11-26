@@ -5,9 +5,13 @@ function InterfaceScreen() : InterfaceBase() constructor {
     window_w = 0;
     window_h = 0;
     
-    base_height = 1920;
+    static base_height = 1920;
+    static base_width = 1344;
     gui_width = 0;
     gui_height = 0;
+    
+    color_override = c_white;
+    alpha_override = 1;
     
     event_create.add(function() {
         set_align_across(flexpanel_align.center);

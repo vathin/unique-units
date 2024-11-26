@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceMainElement",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceMainElement",
+  "parent":{
+    "name":"Elements",
+    "path":"folders/Scripts/Interface/Elements.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
