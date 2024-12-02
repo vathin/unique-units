@@ -54,7 +54,7 @@ call_reaction = function(_message) {
 		var reaction = callbacks[i];
 		
 		if (reaction.message_type == undefined || _message.is(reaction.message_type))
-			reaction.func();
+			reaction.func(_message);
 	}
 }
 
@@ -70,3 +70,7 @@ remove_reaction = function(_reaction) {
 }
 
 connect();
+
+Server.add_reaction(function(msg) {
+	show_message("login refused because " + msg.data.description)
+}, ServerMessageType.LoginRefuse)
