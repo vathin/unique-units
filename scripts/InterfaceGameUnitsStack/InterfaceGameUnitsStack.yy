@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceGameUnitsStack",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceGameUnitsStack",
+  "parent":{
+    "name":"Game",
+    "path":"folders/Scripts/Interface/Elements/Game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

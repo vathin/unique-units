@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"InterfaceText",
+  "%Name":"InterfaceButton",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"InterfaceText",
+  "name":"InterfaceButton",
   "parent":{
     "name":"Base",
     "path":"folders/Scripts/Interface/Elements/Base.yy",

@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"InterfaceText",
+  "%Name":"Point",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"InterfaceText",
+  "name":"Point",
   "parent":{
-    "name":"Base",
-    "path":"folders/Scripts/Interface/Elements/Base.yy",
+    "name":"Core",
+    "path":"folders/Scripts/Interface/Core.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

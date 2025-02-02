@@ -10,8 +10,8 @@
   "name":"O_Interface",
   "overriddenProperties":[],
   "parent":{
-    "name":"Objects",
-    "path":"folders/Objects.yy",
+    "name":"Interface",
+    "path":"folders/Scripts/Interface.yy",
   },
   "parentObjectId":null,
   "persistent":false,

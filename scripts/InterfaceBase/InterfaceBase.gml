@@ -31,6 +31,8 @@ function InterfaceBase() constructor {
     alpha = 1;
     color_overwrite = undefined;
     alpha_overwrite = undefined;
+	
+	cached_geometry = undefined;
     
     static configurator = new InterfaceConfigurator();
     
@@ -130,13 +132,15 @@ function InterfaceBase() constructor {
         set_calculated();
     }
     static set_calculated = function() {
-        static child_calculated = function(_child) {
-                    _child.set_calculated();
+        static child_set_calculated = function(_child) {
+					_child.set_calculated();
                 }
         
         is_broken = false; 
-        array_foreach(children, child_calculated);
+        array_foreach(children, child_set_calculated);
         
+		cached_geometry = undefined;
+		
         var geometry = get_geometry();
         var new_width = geometry.width;
         var new_height = geometry.height;
@@ -335,16 +339,24 @@ function InterfaceBase() constructor {
     }
     static set_matrix = function(_matrix) {
         matrix = _matrix;
+		cached_geometry = undefined;
     }
     static reset_matrix = function() {
         matrix = undefined;
+		cached_geometry = undefined;
     }
     
     /// @returns {Struct.InterfaceGeometry}
     static get_geometry = function() {
-        return flexpanel_node_layout_get_position(flex, false);
+		if (is_undefined(cached_geometry)) {
+			cached_geometry = flexpanel_node_layout_get_position(flex, false);
+		}
+		cached_geometry.right = cached_geometry.left + cached_geometry.width;
+		cached_geometry.bottom = cached_geometry.top + cached_geometry.height;
+		return cached_geometry;
     }
 }
+
 function InterfaceGeometry() constructor {
     left = 0;
     top = 0;
@@ -355,6 +367,8 @@ function InterfaceGeometry() constructor {
     hadOverflow = false;
     direction = 0;
 }
+InterfaceGeometry.Empty = new InterfaceGeometry();
+
 function InterfaceMatrixBuilder() constructor {
     scaleX = 1;
     scaleY = 1;
@@ -413,5 +427,9 @@ function GetInterfaceUnitByString(str) {
 }
 
 
-
+function point_matrix_multiply(_x, _y, matrix) {
+	var point_matrix = matrix_build(_x, _y, 0, 0, 0, 0, 1, 1, 1);
+	var result = matrix_multiply(point_matrix, matrix);
+	return [result[12], result[13]];
+}
 

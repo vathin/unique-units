@@ -114,6 +114,9 @@ function InterfaceConfigurator() constructor {
                 self.element = element;
                 array_foreach(children, add_children_by_data);
                 break;
+			case "position_type":
+				element.set_position_type(value);
+				break;
             default:
                 handle_undefined_key(element, key, value)
             

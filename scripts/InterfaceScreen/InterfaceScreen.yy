@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"InterfaceScreen",
   "parent":{
-    "name":"Elements",
-    "path":"folders/Scripts/Interface/Elements.yy",
+    "name":"Base",
+    "path":"folders/Scripts/Interface/Elements/Base.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

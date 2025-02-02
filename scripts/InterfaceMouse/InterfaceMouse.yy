@@ -1,12 +1,12 @@
 {
   "$GMScript":"v1",
-  "%Name":"InterfaceText",
+  "%Name":"InterfaceMouse",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"InterfaceText",
+  "name":"InterfaceMouse",
   "parent":{
-    "name":"Base",
-    "path":"folders/Scripts/Interface/Elements/Base.yy",
+    "name":"Core",
+    "path":"folders/Scripts/Interface/Core.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
