@@ -577,8 +577,8 @@ function UISequenceDesignInstance(_fabric/*:UISequenceDesignFabric*/, _design/*:
 	instantiate_ui = function() /*=>*/ {
 		prepare_ui();
 		
-		show_debug_message($"instantiate {script_get_name(class)}")
 		ui = Interface.create(class);
+		ui.set_position_type(flexpanel_position_type.absolute);
 		ui.set_name(ID);
 		
 		setup_ui();

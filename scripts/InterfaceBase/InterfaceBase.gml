@@ -343,7 +343,8 @@ function InterfaceBase() constructor {
         set_broken();
     }
     static set_anchor = function(_x, _y) {
-		
+		flexpanel_node_style_set_margin(flex, flexpanel_edge.left, -_x);
+		flexpanel_node_style_set_margin(flex, flexpanel_edge.top,  -_y);
 	}
 	
     static set_max_width = function(_value, _unit=InterfaceUnit.pixel) {
