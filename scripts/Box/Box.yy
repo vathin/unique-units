@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"Point",
+  "%Name":"Box",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Point",
+  "name":"Box",
   "parent":{
     "name":"Libraries",
     "path":"folders/Scripts/Interface/Libraries.yy",

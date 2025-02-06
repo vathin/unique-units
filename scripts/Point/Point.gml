@@ -6,6 +6,9 @@ function Point(_x = 0, _y = 0) constructor {
 		x = _x;
 		y = _y;
 	}
+	static set_point = function(_p) {
+		set(_p.x, _p.y);
+	}
 	static set_from_point = function(_point) {
 		x = _point.x;
 		y = _point.y;
@@ -96,8 +99,9 @@ function Point(_x = 0, _y = 0) constructor {
 	static copy = function() {
 	    return new Point(x, y);
 	}
+	static clone = copy;
 	
-	static is_equals = function(point) {
+	static equals = function(point) {
 	    return x == point.x && y == point.y;
 	}
 	

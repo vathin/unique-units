@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"Point",
+  "%Name":"SequenceParser",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Point",
+  "name":"SequenceParser",
   "parent":{
     "name":"Libraries",
     "path":"folders/Scripts/Interface/Libraries.yy",

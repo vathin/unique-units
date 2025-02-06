@@ -7,8 +7,11 @@ enum InterfaceUnit {
 }
 
 function InterfaceBase() constructor {
+	ID = "";
 	flex = flexpanel_create_node();
     
+	active = true;
+	visible = true;
     children = [];
     parent = undefined;
     is_broken = true;
@@ -88,6 +91,11 @@ function InterfaceBase() constructor {
             draw_set_alpha(alpha * alpha_previous);
         }
         
+		if (keyboard_check(vk_f1)) {
+			var g = get_geometry();
+			draw_rectangle(g.left, g.top, g.left + g.width, g.top + g.height, 1);
+		}
+		
         event_draw.call(self);
         for(var i = 0, i_size = array_length(children); i < i_size; i++) {
             children[i].draw();
@@ -169,15 +177,34 @@ function InterfaceBase() constructor {
     }
     
     static set_name = function(_name) {
+		ID = _name;
         flexpanel_node_set_name(flex, _name);
     }
     static get_name = function() {
         return flexpanel_node_get_name(flex);
     }
     
+	/// @desc Поиск элемента по имени
+	static find = function(target_id) {
+        if (self.ID == target_id) {
+            return self; 
+        }
+
+        for (var i = 0; i < array_length(self.children); i++) {
+            var child = self.children[i];
+			
+            var result = child.find(target_id);
+            if (result != undefined) {
+                return result; 
+            }
+        }
+
+        return undefined;
+    }
+	
     /// @arg {Struct.InterfaceBase} _parent
     static set_parent = function(_parent) {
-        _parent.insert_child(self);
+        _parent.add(self);
     }
     static get_parent = function() {
         return flexpanel_node_get_parent(flex);
@@ -226,6 +253,29 @@ function InterfaceBase() constructor {
         return array_length(children);
     }
     
+	static set_active = function(_active) {
+		active = _active;
+	}
+	static is_active = function() {
+		var element = self;
+		while (element.parent != undefined) {
+			if (!element.active)
+				return false;
+		}
+		return true;
+	}
+	static set_visible = function(_visible) {
+		visible = _visible;
+	}
+	static is_visible = function() {
+		var element = self;
+		while (element.parent != undefined) {
+			if (!element.visible)
+				return false;
+		}
+		return true;
+	}
+	
 	static set_left = function(_value, _unit=InterfaceUnit.pixel) {
 		flexpanel_node_style_set_position(flex, flexpanel_edge.left, _value, GetFlexUnit(_unit));
         set_broken();
@@ -246,7 +296,13 @@ function InterfaceBase() constructor {
         flexpanel_node_style_set_position(flex, flexpanel_edge.all_edges, _value, GetFlexUnit(_unit));
         set_broken();
     }
-    static set_width = function(_value, _unit=InterfaceUnit.pixel) {
+    static set_size = function(_width, _height) {
+		static val_width = []; configurator.parse_value(_width, val_width);
+		static val_height = []; configurator.parse_value(_height, val_height);
+		set_width(val_width[0], val_width[1]);
+		set_height(val_height[0], val_height[1]);
+	}
+	static set_width = function(_value, _unit=InterfaceUnit.pixel) {
         flexpanel_node_style_set_width(flex, _value, GetFlexUnit(_unit));
         set_broken();
     }
@@ -286,7 +342,10 @@ function InterfaceBase() constructor {
         flexpanel_node_style_set_flex(flex, _value);
         set_broken();
     }
-    
+    static set_anchor = function(_x, _y) {
+		
+	}
+	
     static set_max_width = function(_value, _unit=InterfaceUnit.pixel) {
         show_debug_message("changed max width to " + string(_value))
         flexpanel_node_style_set_max_width(flex, _value, GetFlexUnit(_unit));

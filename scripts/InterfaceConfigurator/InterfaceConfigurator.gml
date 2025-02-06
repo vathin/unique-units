@@ -118,7 +118,7 @@ function InterfaceConfigurator() constructor {
 				element.set_position_type(value);
 				break;
             default:
-                handle_undefined_key(element, key, value)
+                handle_undefined_key(element, key, value, val_container);
             
         }
     }
@@ -126,6 +126,7 @@ function InterfaceConfigurator() constructor {
         if (!is_string(_val)) {
             _out[0] = _val;
             _out[1] = undefined;
+			_out[2] = _val;
             return;
         }
         
