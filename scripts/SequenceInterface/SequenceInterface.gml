@@ -632,11 +632,20 @@ function UISequenceDesignInstance(_fabric/*:UISequenceDesignFabric*/, _design/*:
 			
 			var processor = fabric.processors[$ processor_name];
 			if (processor == undefined) {
+				var type_of_asset = asset_get_type(processor_name);
 				var ui_class = asset_get_index(processor_name);
-				if (ui_class == -1)
-					ui_class = asset_get_index("Interface" + processor_name);
-				if (ui_class == -1)
-					ui_class = asset_get_index("Interface" + string_upper(string_char_at(processor_name, 1)) + string_delete(processor_name, 1, 1));
+				
+				if (type_of_asset == -1) {
+					processor_name = "Interface" + processor_name;
+					ui_class = asset_get_index(processor_name);
+					type_of_asset = asset_get_type(processor_name);
+				}
+				
+				if (type_of_asset == -1) {
+					processor_name = "Interface" + string_upper(string_char_at(processor_name, 1)) + string_delete(processor_name, 1, 1);
+					ui_class = asset_get_index(processor_name);
+					type_of_asset = asset_get_type(processor_name);
+				}
 					
 				var type_of_asset = asset_get_type(processor_name);
 				
