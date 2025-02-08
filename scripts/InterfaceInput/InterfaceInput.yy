@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceInput",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceInput",
+  "parent":{
+    "name":"Inputs",
+    "path":"folders/Scripts/Interface/Elements/Base/Inputs.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

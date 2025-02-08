@@ -907,10 +907,8 @@ function UISequenceDesignDataParser(_element/*:UISequenceDesignInstance*/) const
 		}
 		if (!dimensions_changeable && !force) return;
 		
-		var parent_w = max(element_reference.parent.size.x, 1);
-		var parent_h = max(element_reference.parent.size.y, 1);
-		var element_w = max(element_reference.size.x, 1);
-		var element_h = max(element_reference.size.y, 1);
+		var element_w = max(get_element_size().x, 1);
+		var element_h = max(get_element_size().y, 1);
 		
 		if (anchor_changeable || force) {
 			ui.set_anchor(
@@ -938,6 +936,10 @@ function UISequenceDesignDataParser(_element/*:UISequenceDesignInstance*/) const
 				ui.set_height(element_h);
 		}
 		
+	}
+	
+	static get_element_size = function() {
+		return element.element_reference.size;
 	}
 
 }
@@ -969,6 +971,15 @@ function UISequenceDesignDataParser_Sprite(_element/*:UISequenceDesignInstance*/
 	init_append = function(struct) /*=>*/ {
 		struct.sprite = element_sprite.sprite;
 		struct.frame = element_sprite.frame;
+	}
+	
+	static get_element_size = function() {
+		static point = new Point();
+		point.set(
+					element.element_reference.size.x * element.element_reference.scale.x,
+					element.element_reference.size.y * element.element_reference.scale.y,
+					);
+		return point;
 	}
 }
 function UISequenceDesignDataParser_Particle(_element/*:UISequenceDesignInstance*/) : UISequenceDesignDataParser(_element) constructor {

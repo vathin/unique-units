@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"ObservableParameter",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"ObservableParameter",
+  "parent":{
+    "name":"Libraries",
+    "path":"folders/Scripts/Interface/Libraries.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

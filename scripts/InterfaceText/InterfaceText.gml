@@ -24,9 +24,10 @@ function InterfaceText() : InterfaceBase() constructor {
         
         draw_set_halign(text_halign);
         draw_set_valign(text_valign);
-        draw_text(  geometry.left + geometry.width * (text_halign/2),
-                    geometry.top + geometry.height * (text_valign/2),
-                    text_to_render);
+        draw_text_ext(  geometry.left + geometry.width * (text_halign/2),
+	                    geometry.top + geometry.height * (text_valign/2),
+	                    text_to_render,
+						-1, geometry.width);
     })
 }
 

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"InterfaceControl",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"InterfaceControl",
+  "parent":{
+    "name":"Modules",
+    "path":"folders/Scripts/Interface/Core/Modules.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
