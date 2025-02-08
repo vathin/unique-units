@@ -558,7 +558,7 @@ function SequenceElement(_parser) constructor {
 	origin = new Point(0);
 	origin_summary = new Point(0);
 	size = new Point(0);
-	scale = new Point(1);
+	scale = new Point(1, 1);
 	angle = 0;
 	color = c_white;
 	alpha = 1;

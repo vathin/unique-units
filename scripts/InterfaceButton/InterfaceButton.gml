@@ -1,4 +1,4 @@
-function InterfaceButtonSprite() : InterfaceButtonAbstract() constructor {
+function InterfaceButtonSprite() : InterfaceButton() constructor {
 	sprite = S_Button;
 	text = "";
 	text_color = c_dkgray;
@@ -35,7 +35,7 @@ function InterfaceButtonSprite() : InterfaceButtonAbstract() constructor {
 	});
 }
 
-function InterfaceButtonAbstract() : InterfaceBase() constructor {
+function InterfaceButton() : InterfaceBase() constructor {
 	InterfaceMouseApply();
 	
 	state = ButtonState.IDLE;

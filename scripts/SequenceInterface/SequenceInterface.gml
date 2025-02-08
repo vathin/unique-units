@@ -30,6 +30,7 @@ function InterfaceSequence() : InterfaceBase() constructor {
 		
 		cleanup_sequence_elements();
 		parse(data.root);
+		sync_size();
 	}
 	cleanup_sequence_elements = function() /*=>*/ {
 		fabric.element_cleanup_all();
@@ -75,6 +76,11 @@ function InterfaceSequence() : InterfaceBase() constructor {
 		return new UISequenceDesignInstanceAnimator(design_instance);
 	}
 	
+	
+	static sync_size = function() {
+		set_size(data.width(), data.height());
+		set_anchor(data.anchor.x, data.anchor.y);
+	}
 	/*on_calculate_begin.add(function() {
 		if (data == undefined)
 			return;
@@ -646,8 +652,6 @@ function UISequenceDesignInstance(_fabric/*:UISequenceDesignFabric*/, _design/*:
 					ui_class = asset_get_index(processor_name);
 					type_of_asset = asset_get_type(processor_name);
 				}
-					
-				var type_of_asset = asset_get_type(processor_name);
 				
 				if (ui_class != -1 && type_of_asset == asset_script)
 					class = ui_class;
