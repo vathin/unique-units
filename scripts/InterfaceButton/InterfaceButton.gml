@@ -1,3 +1,9 @@
+SequenceInterfaceClasses().register("button-sprite", InterfaceButtonSprite);
+SequenceInterfaceClasses().register("sprite-button", InterfaceButtonSprite);
+SequenceInterfaceClasses().register("button_sprite", InterfaceButtonSprite);
+SequenceInterfaceClasses().register("sprite_button", InterfaceButtonSprite);
+SequenceInterfaceClasses().register("ButtonSprite", InterfaceButtonSprite);
+SequenceInterfaceClasses().register("SpriteButton", InterfaceButtonSprite);
 function InterfaceButtonSprite() : InterfaceButton() constructor {
 	sprite = S_Button;
 	text = "";

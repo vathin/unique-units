@@ -641,16 +641,13 @@ function UISequenceDesignInstance(_fabric/*:UISequenceDesignFabric*/, _design/*:
 				var type_of_asset = asset_get_type(processor_name);
 				var ui_class = asset_get_index(processor_name);
 				
-				if (type_of_asset == -1) {
-					processor_name = "Interface" + processor_name;
-					ui_class = asset_get_index(processor_name);
-					type_of_asset = asset_get_type(processor_name);
-				}
-				
-				if (type_of_asset == -1) {
-					processor_name = "Interface" + string_upper(string_char_at(processor_name, 1)) + string_delete(processor_name, 1, 1);
-					ui_class = asset_get_index(processor_name);
-					type_of_asset = asset_get_type(processor_name);
+				if (ui_class == -1) {
+					ui_class = SequenceInterfaceClasses().get(processor_name);
+					if (ui_class == undefined)
+						ui_class = -1;
+					else {
+						type_of_asset = asset_script;
+					}
 				}
 				
 				if (ui_class != -1 && type_of_asset == asset_script)
@@ -821,6 +818,19 @@ function UISequenceDesignInstance(_fabric/*:UISequenceDesignFabric*/, _design/*:
 	}
 }
 
+function SequenceInterfaceClasses() {
+	static classes = {
+		classes: {},
+		register: function(name, class) {
+			classes[$ name] = class;
+		},
+		get: function(name) {
+			return classes[$ name];
+		}
+	}
+	return classes;
+}
+
 
 function UISequenceDesignDataParser_Create(_element/*:UISequenceDesignInstance*/) {
 	switch (_element.element_reference.class) {
@@ -969,3 +979,9 @@ function UISequenceDesignDataParser_Particle(_element/*:UISequenceDesignInstance
 		struct.system = element_particle.system;
 	}
 }
+
+
+
+SequenceInterfaceClasses().register("Base", InterfaceBase);
+SequenceInterfaceClasses().register("base", InterfaceBase);
+SequenceInterfaceClasses().register("empty", InterfaceBase);
