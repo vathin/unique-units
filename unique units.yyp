@@ -187,8 +187,8 @@
   "resourceType":"GMProject",
   "resourceVersion":"2.0",
   "RoomOrderNodes":[
-    {"roomId":{"name":"R_Game","path":"rooms/R_Game/R_Game.yy",},},
     {"roomId":{"name":"R_Main_menu","path":"rooms/R_Main_menu/R_Main_menu.yy",},},
+    {"roomId":{"name":"R_Game","path":"rooms/R_Game/R_Game.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[
