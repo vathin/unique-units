@@ -52,7 +52,7 @@ generate_new_game_field = function(w, h, cell_size) {
 generate_cards = function() {
 	card_x = 560;
 	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
-		new_card = instance_create_depth(card_x, 890, 0, O_Card_display);
+		new_card = instance_create_depth(card_x, 820, 0, O_Card_display);
 		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]));
 		card_x += (700 / array_length(Player_figure_list.player_figure_list));
 	}

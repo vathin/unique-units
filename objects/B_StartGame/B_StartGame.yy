@@ -1,16 +1,17 @@
 {
   "$GMObject":"",
-  "%Name":"Server",
+  "%Name":"B_StartGame",
   "eventList":[
+    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"","%Name":"","collisionObjectId":null,"eventNum":68,"eventType":7,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"Server",
+  "name":"B_StartGame",
   "overriddenProperties":[],
   "parent":{
-    "name":"unique units",
-    "path":"unique units.yyp",
+    "name":"MainMenu",
+    "path":"folders/Objects/Buttons/MainMenu.yy",
   },
   "parentObjectId":null,
   "persistent":false,
@@ -30,7 +31,10 @@
   "resourceType":"GMObject",
   "resourceVersion":"2.0",
   "solid":false,
-  "spriteId":null,
+  "spriteId":{
+    "name":"S_start_game",
+    "path":"sprites/S_start_game/S_start_game.yy",
+  },
   "spriteMaskId":null,
   "visible":true,
 }

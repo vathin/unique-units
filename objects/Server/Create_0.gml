@@ -71,6 +71,6 @@ remove_reaction = function(_reaction) {
 
 connect();
 
-Server.add_reaction(function(msg) {
-	show_message("login refused because " + msg.data.description)
-}, ServerMessageType.LoginRefuse)
+//Server.add_reaction(function(msg) {
+//	show_message("login refused because " + msg.data.description)
+//}, ServerMessageType.LoginRefuse)

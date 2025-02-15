@@ -3,16 +3,16 @@
 
 buttons_visiblity = 1;
 create_buttons = function() {
-	move_button = instance_create_depth(762, 1090, 0, O_MoveButton);
-	ability_button = instance_create_depth(917, 1090, 0, O_AbilityButton);
+	move_button = instance_create_depth(762, 1000, 0, O_MoveButton);
+	ability_button = instance_create_depth(917, 1000, 0, O_AbilityButton);
 }
 create_buttons();
 if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {
 	instance_destroy(ability_button)
 	move_button.x = 840;
 	move_button.y = 1169;
-	move_button.image_xscale = 1.35;
-	move_button.image_yscale = 1.35;
+	move_button.image_xscale = 1.25;
+	move_button.image_yscale = 1.25;
 	}
 O_SummonButton.go_away();
 move_and_ability = false;

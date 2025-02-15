@@ -3,7 +3,7 @@
 
 x_default = x;
 y_default = y;
-standart_scale = 0.18
+standart_scale = 0.16
 image_xscale = standart_scale;
 image_yscale = standart_scale;
 exit_button = undefined;

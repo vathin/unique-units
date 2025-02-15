@@ -1,6 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-window_default_x_size = 1680;
+/*window_default_x_size = 1680;
 window_default_y_size = 1050;
 window_x_size = window_get_width();
 window_y_size = window_get_height();
@@ -18,6 +18,6 @@ resize_all = function() {
 			obj_to_resize.image_yscale = objects_yscale*obj_to_resize.standart_scale;
 		}
 	}
-}
+}*/
 
-resize_all();
+//resize_all();
