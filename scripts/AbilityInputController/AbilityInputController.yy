@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"AbilityInputController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"AbilityInputController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

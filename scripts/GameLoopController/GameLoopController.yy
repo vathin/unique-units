@@ -1,12 +1,12 @@
 {
   "$GMScript":"",
-  "%Name":"Game",
+  "%Name":"GameLoopController",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"Game",
+  "name":"GameLoopController",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

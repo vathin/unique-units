@@ -4,47 +4,49 @@ function Field() constructor{
 	
 	field_height = 6;
 	field_width = 6;
-	size = 90
+	scale = 0.7
+	size = 90*scale
+	start_x = (room_width/2) - size*3
+	start_y = (room_height/2) - size*3
 	
 	cell_array = []
 	for (i = 0; i < field_height; i++) {
 		for (m = 0; m < field_width; m++) {
-			cell_array[i][m] = new Game
-			cell_array[i][m].obj = instance_create_depth(self.x-(sprite_width/2)+size/2+m*size, self.y-(sprite_width/2)+size/2+i*size, -1, O_GF_Square);
-			cell_array[i][m].xcord = m;
-			cell_array[i][m].ycord = i;
+			cell_array[i][m] = new Cell()
+			cell_array[i][m].set_coordinates(m, i)
 		}
 	}
 	
-	generate_new_game_field = function(w, h, cell_size) {
-		player1_dropped = instance_create_depth(526, 574, 0, O_DroppedFigurePlace);
-		player2_dropped = instance_create_depth(526, 480, 0, O_DroppedFigurePlace);
-		player1_captured = instance_create_depth(1146, 574, 0, O_CapturedFigurePlace);
-		player2_captured = instance_create_depth(1146, 480, 0, O_CapturedFigurePlace);
+	TEST_draw_cells = function() {
+		for (var h = 0; h < field_height; h++) 
+		{
+			for (var w = 0; w < field_width; w++) 
+			{
+				draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
+				if (cell_array[h][w].is_filled()) {
+					draw_text(start_x + cell_array[h][w].get_coordinates()[0]*90, start_y + cell_array[h][w].get_coordinates()[1]*90, cell_array[h][w].filled_figure.behaviour.index[1, 2])
+				}
+			}
+		}
+	} 
+	array_push(Game.do_every_step_list, self.TEST_draw_cells())
+	
+	/*generate_new_game_field = function(w, h, cell_size) {
 		player2_dropped.facing = -1;
 		player2_captured.facing = -1;
 	
-		generate_cards();
-	}
+	}*/
 
-	generate_cards = function() {
-		card_x = 560;
-		for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
-			new_card = instance_create_depth(card_x, 820, 0, O_Card_display);
-			new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]));
-			card_x += (700 / array_length(Player_figure_list.player_figure_list));
-		}
-	}
 	get_cell = function(xcord, ycord) {
 		if xcord >= 0 and xcord < field_width and ycord >= 0 and ycord < field_height{
-			return field[ycord][xcord];
+			return cell_array[ycord][xcord];
 		}
 		else {
 			return undefined
 		}
 	}
 
-	generate_new_game_field(field_width, field_height, size);
+	//generate_new_game_field(field_width, field_height, size);
 
 	check_clear_move_cells = function(xcord, ycord) {
 		for (i = -1; i <= 1; i++) {
@@ -65,7 +67,7 @@ function Field() constructor{
 		var is_on_player_side
 		for (i = 0; i < field_height; i++) {
 			for (m = 0; m < field_width; m++) {
-				cell = field[m][i]
+				cell = cell_array[m][i]
 				if !cell.is_filled() {
 					if player = "player1" {
 						if m > 2 {

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"Timer",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Timer",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

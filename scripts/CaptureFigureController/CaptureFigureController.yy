@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"CaptureFigureController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"CaptureFigureController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"FigureMarksController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"FigureMarksController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

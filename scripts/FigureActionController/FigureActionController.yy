@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"FigureActionController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"FigureActionController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

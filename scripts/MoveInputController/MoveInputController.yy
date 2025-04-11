@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"MoveInputController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"MoveInputController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

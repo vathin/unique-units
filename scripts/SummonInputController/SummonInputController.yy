@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"SummonInputController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"SummonInputController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
