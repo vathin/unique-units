@@ -29,7 +29,7 @@ function Field() constructor{
 			}
 		}
 	} 
-	array_push(Game.do_every_step_list, self.TEST_draw_cells())
+	array_push(Game.do_every_step_list, TEST_draw_cells())
 	
 	/*generate_new_game_field = function(w, h, cell_size) {
 		player2_dropped.facing = -1;
@@ -226,4 +226,5 @@ function Field() constructor{
 		filled_figure.set_behaviour(figure_behaviour);
 		O_Figures_counter.change_field_figures_amount(global.turn_owner, +1);
 	}
+	
 }

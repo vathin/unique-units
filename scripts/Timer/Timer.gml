@@ -90,12 +90,12 @@ function Timer() constructor{
 		bank_seconds = 0;
 		active = 1;
 		using_time_bank = 0;
-		//array_push(Game.do_every_step_list, self.TEST_draw_timer())
+		//array_push(Game.do_every_step_list, [TEST_draw_timer(), self])
 	}
 
 	reset = function() {
 		stop_count();
-		start_count();
+		start_count(Settings.turn_time);
 	}
 
 	export = function() {
