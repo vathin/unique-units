@@ -8,6 +8,8 @@ function Field() constructor{
 	size = 90*scale
 	start_x = (room_width/2) - size*3
 	start_y = (room_height/2) - size*3
+	field_x_size = size*field_width
+	field_y_size = size*field_width
 	
 	cell_array = []
 	for (i = 0; i < field_height; i++) {
@@ -29,14 +31,28 @@ function Field() constructor{
 			}
 		}
 	} 
-	array_push(Game.do_every_step_list, TEST_draw_cells())
+	array_push(Game.do_every_step_list, TEST_draw_cells)
 	
 	/*generate_new_game_field = function(w, h, cell_size) {
 		player2_dropped.facing = -1;
 		player2_captured.facing = -1;
 	
 	}*/
-
+	get_cell_xy = function(cell) {
+		return [start_x + size*cell.xcord, start_y + size*cell.ycord]
+	}
+	
+	get_cell_from_coordinates = function(check_x, check_y) {
+		if (check_x > (start_x - size/2) and check_x - (start_x - size/2) < field_x_size and
+			check_y > (start_y - size/2) and check_y - (start_y - size/2) < field_y_size) {
+				return get_cell((check_x - (start_x - size/2)) / size, (check_y - (start_y - size/2)) / size)
+			}
+		else return undefined
+	
+	}
+	check_click = function() {
+		return get_cell_from_coordinates(mouse_x, mouse_y)
+	}
 	get_cell = function(xcord, ycord) {
 		if xcord >= 0 and xcord < field_width and ycord >= 0 and ycord < field_height{
 			return cell_array[ycord][xcord];

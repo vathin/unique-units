@@ -1,5 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-in_game = false
-selected_cell = undefined
-Start_match()
+selected_cell = Game.field.check_click()
+if selected_cell != undefined {
+	show_debug_message(selected_cell.get_coordinates())
+}

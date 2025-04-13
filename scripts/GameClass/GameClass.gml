@@ -8,7 +8,7 @@ function GameClass() constructor{
 		}
 	}
 	init = function() {
-		game_loop_controller = new GameLoopController()
+		game_loop_controller = new GameLoopController();
 		field = new Field();
 		data = new userData();
 		game_data = new gameData()

@@ -7,8 +7,8 @@ function Timer() constructor{
 	current_frame = 0;
 	active = 0;
 	using_time_bank = false;
-	draw_x = 815;
-	draw_y = 190;
+	draw_x = (room_width/2)-45
+	draw_y = 100;
 	player_out_of_time = undefined;
 
 	max_time_bank = 7200;
@@ -40,7 +40,7 @@ function Timer() constructor{
 		if !using_time_bank {
 			seconds = all_time div Settings.FPS - current_frame div Settings.FPS;
 			if seconds <= 15 {draw_set_color(c_orange)}
-			if seconds = 9 {draw_x += 0.15}
+			if seconds == 9 {draw_x += 0.15}
 			if seconds < 1 {draw_set_color(c_red)}
 		}
 		else {
@@ -48,7 +48,7 @@ function Timer() constructor{
 			bank_seconds = get_player_time_bank(global.turn_owner) div Settings.FPS;
 			draw_text_transformed(random_range((draw_x + 47), (draw_x + 53)), random_range((draw_y - 10), (draw_y - 15)), bank_seconds, 1.25, 1.25, 0);
 		}
-		draw_text(draw_x, draw_y, seconds);
+		draw_text_transformed(draw_x, draw_y, seconds, 0.75, 0.75, 0);
 		draw_set_color(c_white);
 	}
 
@@ -84,13 +84,13 @@ function Timer() constructor{
 	}
 	start_count = function(time) {
 		all_time = time;
-		draw_x = 815;
 		current_frame = 0;
 		seconds = 0;
 		bank_seconds = 0;
 		active = 1;
 		using_time_bank = 0;
-		//array_push(Game.do_every_step_list, [TEST_draw_timer(), self])
+		array_push(Game.do_every_step_list, TEST_draw_timer)
+		array_push(Game.do_every_step_list, timer_function)
 	}
 
 	reset = function() {
