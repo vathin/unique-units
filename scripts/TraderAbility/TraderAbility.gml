@@ -38,7 +38,7 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	}
 	
 	execute = function() {
-		O_Figures_counter.change_field_figures_amount(using_figure.owner, +1);
+		Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, +1);
 		target_cell.create_figure(chosen_button.figure_type);
 		instance_destroy(chosen_button)
 		for (i = 0; i < 3; i++) {
@@ -86,7 +86,7 @@ function TraderAbility(using_figure, using_cell) : FigureAbilityAction() constru
 	
 	click_callback = function(button) {
 		if chosen_button != undefined {chosen_button.image_alpha = 1}
-		global.figure_to_summon = button.figure_type;
+		//global.figure_to_summon = button.figure_type;
 		sprite_draw = Behaviours.get_sprite(button.figure_type);
 		chosen_button = button;
 		chosen_button.image_alpha = 0.65;

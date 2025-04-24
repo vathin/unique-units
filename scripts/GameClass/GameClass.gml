@@ -11,6 +11,11 @@ function GameClass() constructor{
 		game_loop_controller = new GameLoopController();
 		field = new Field();
 		data = new userData();
-		game_data = new gameData()
+		game_data = new gameData();
+		Player1 = new Player(1, "local")
+		Player2 = new Player(2, "local")
+		summon_controller = undefined;
+		figure_action_controller = undefined
+		Maps_list.start(global.map)
 	}
 }

@@ -24,12 +24,17 @@ function Cell() constructor{
 		draw_mark = value
 	}
 	
+	is_marked = function() {
+		if marked return true
+		else return false
+	}
+	
 	clear = function() 
 	{
 		filled_figure = undefined;
 	}
 	
-	fill = function(new_figure, is_moving) 
+	fill = function(new_figure, is_moving=0) 
 	{
 		filled_figure = new_figure
 	}
@@ -40,7 +45,7 @@ function Cell() constructor{
 
 	is_under_control = function(player) {
 		result = false
-		neightbors = O_GameField.cell_get_neightbors(self);
+		neightbors = Game.field.cell_get_neightbors(self);
 		for (i = 0; i < array_length(neightbors); i++) {
 			if neightbors[i].is_filled() {
 				if neightbors[i].filled_figure.owner = player {
@@ -57,9 +62,9 @@ function Cell() constructor{
 			found_clear_cells = 0
 			for (i = -1; i <= 1; i++) {
 				for (m = -1; m <=1; m++) {
-					cell = O_GameField.get_cell(xcord + i, ycord +m);
+					cell = Game.field.get_cell(xcord + i, ycord +m);
 					if cell != undefined{
-						if cell != O_GameField.get_cell(xcord, ycord) {
+						if cell != Game.field.get_cell(xcord, ycord) {
 							if !cell.is_filled() {found_clear_cells++}
 							else {
 								if cell.filled_figure.state.is_dropped {found_clear_cells++}
@@ -69,7 +74,7 @@ function Cell() constructor{
 				}
 			}
 			if found_clear_cells == 0 {
-				O_Figures_counter.add_figure_to_capture(filled_figure, self);
+				Game.game_loop_controller.figures_counter.add_figure_to_capture(filled_figure, self);
 			}
 	}
 
@@ -90,8 +95,8 @@ function Cell() constructor{
 		can_be_conquested = import_data.ex_can_be_conquested;
 		ex_draw_mark = import_data.ex_draw_mark;
 		if import_data.ex_filled_figure_struct != undefined {
-			create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
-			O_Figures_counter.change_field_figures_amount(global.turn_owner, -1);
+			//create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
+			Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
 			filled_figure.import(import_data.ex_filled_figure_struct);
 		}
 	}

@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"FiguresCounter",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"FiguresCounter",
+  "parent":{
+    "name":"Counters",
+    "path":"folders/Scripts/Game/Counters.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

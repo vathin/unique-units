@@ -8,22 +8,41 @@ function GameLoopController() constructor{
 	turn_end = false;
 	can_cancel = false;
 	displaying_card = false;
-	global.input = true;
+	
 	turn_timer = new Timer()
-
 	turn_timer.start_count(Settings.turn_time)
-
-	set_can_cancel = function(value) {
-		can_cancel = value;
+	
+	figures_counter = new FiguresCounter()
+	
+	enum STATE_LIST {
+		wait,
+		summon,
+		figure_move,
+		figure_action,
+		animation,
+		opponent_turn,
+	}
+	state = STATE_LIST.wait
+	
+	get_game_state = function() {
+		return state
+	}
+	
+	set_can_cancel = function(_value) {
+		can_cancel = _value;
 	}
 
 	startInput = function() {
-		O_SummonButton.unblock()
+		//O_SummonButton.unblock()
+		state = STATE_LIST.wait
+	}
+	
+	get_player = function(_player) {
+		if _player == "player1" {return Game.Player1}
+		else return Game.Player2
 	}
 
 	end_move = function() {
-		alarm[0] = 5;
-		global.input = 0;
 		//if global.moving_figure {
 		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 		//}
@@ -33,7 +52,7 @@ function GameLoopController() constructor{
 		clear_all();
 		Maps_list.check_if_any_cell_conquested(global.map);
 		Game.Field.check_every_figure();
-		O_Figures_counter.update_turn();
+		figures_counter.update_turn();
 		//if check_win_conditions() != undefined {Game.match_controller.alarm[0] = 60}
 	}
 
@@ -58,7 +77,7 @@ function GameLoopController() constructor{
 		if global.selected_cell == undefined {
 			global.cell_click_callback.marked = 0;
 			global.selected_cell = global.cell_click_callback;
-			O_SummonInputController.start_summon(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
+			Game.summon_controller.start_summon(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 		}
 		else {
 			global.selected_cell.marked = 1;
@@ -69,18 +88,16 @@ function GameLoopController() constructor{
 	}
 	cancel_action = function() {
 			clear_all();
-			O_Figures_counter.update_turn();
+			figures_counter.update_turn();
 	}
 
 	quit_from_action = function() {
-		if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
-		if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
+		clean_controllers()
 		Game.Field.clear_all_marks(); 
-		O_SummonButton.go_away();
-		global.moving_figure = 0;
+		//O_SummonButton.go_away();
 		global.using_ability = 1;
 		global.cell_click_callback = global.selected_cell;
-		instance_create_depth(0, 0, 0, O_FigureActionController);
+		Game.figure_action_controller = new FigureActionController()
 		action = undefined;
 	}
 
@@ -92,8 +109,12 @@ function GameLoopController() constructor{
 	}
 
 	clean_controllers = function() {
-		if instance_exists(O_AbilityInputController) {instance_destroy(O_AbilityInputController)}
-		if instance_exists(O_MoveInputController) {instance_destroy(O_MoveInputController)}
+		Game.ability_input_controller = undefined
+		Game.move_input_controller = undefined
+		if Game.figure_action_controller != undefined {
+			Game.figure_action_controller.clear_buttons()
+			Game.figure_action_controller = undefined
+		}
 		global.moving_figure = 0;
 		global.using_ability = 0;
 	}
@@ -116,24 +137,19 @@ function GameLoopController() constructor{
 	}
 
 	clear_all = function() {
-		if instance_exists(O_SummonInputController) {instance_destroy(O_SummonInputController)}
+		Game.summon_controller = undefined
 		clean_controllers();
-		if instance_exists(O_FigureActionController) {
-			O_FigureActionController.clear_buttons();
-			instance_destroy(O_FigureActionController);
-		}
-		O_EndTurn.active = 1;
+		//O_EndTurn.active = 1;
 		global.selected_cell = undefined;
-		O_SummonButton.go_to_standart_mode();
-		Game.Field.clear_all_marks();
+		//O_SummonButton.go_to_standart_mode();
+		Game.field.clear_all_marks();
 		global.cell_click_callback = undefined;
 		set_can_cancel(0)
-		O_SummonButton.unblock()
+		//O_SummonButton.unblock()
 		global.cell_action = default_cell_click_action;
 		action = undefined;
 		global.able_to_summon = false;
-		global.moving_figure = false;
-		global.using_ability = false;
+		state = STATE_LIST.wait
 	}
 
 	check_win_conditions = function() {
@@ -142,11 +158,11 @@ function GameLoopController() constructor{
 			if player1_captured >= 4 {return "player1_win"}
 			if player2_captured >= 4 {return "player2_win"}
 		}
-		if O_Figures_counter.get_player_figures_amount("player1") == 0 and 
-		O_Figures_counter.player1_field_figures == 0 {return "player2_win"}
-		if O_Figures_counter.get_player_figures_amount("player2") == 0 and 
-		O_Figures_counter.player2_field_figures == 0 {return "player1_win"}
-		if O_Turn_timer.player_out_of_time != undefined {
+		if figures_counter.get_player_figures_amount("player1") == 0 and 
+		figures_counter.player1_field_figures == 0 {return "player2_win"}
+		if figures_counter.get_player_figures_amount("player2") == 0 and 
+		figures_counter.player2_field_figures == 0 {return "player1_win"}
+		if turn_timer.player_out_of_time != undefined {
 			if global.turn_owner == "player1" {return "player1_win"}
 			else {return "player2_win"}
 		}
@@ -169,7 +185,7 @@ function GameLoopController() constructor{
 			ex_player1_captured: player1_captured,
 			ex_player2_captured: player2_captured,
 			ex_timer_struct: turn_timer.export(),
-			ex_figures_counter_struct: O_Figures_counter.export(),
+			ex_figures_counter_struct: figures_counter.export(),
 			ex_gamefield: Game.Field.export(),
 			ex_player1_figures: Game.data.load("player1"),
 			ex_player2_figures: Game.data.load("player2")
@@ -179,14 +195,14 @@ function GameLoopController() constructor{
 
 	import = function(import_data) {
 		clear_all();
-		while (instance_number(O_Figure) > 0) {
+		/*while (instance_number(O_Figure) > 0) {
 			instance_destroy(instance_find(O_Figure, 0))
-			}
+			}*/
 		global.turn_owner = import_data.ex_turn_owner;
 		player1_captured = import_data.ex_player1_captured;
 		player2_captured = import_data.ex_player2_captured;
 		turn_timer.import(import_data.ex_timer_struct);
-		O_Figures_counter.import(import_data.ex_figures_counter_struct);
+		figures_counter.import(import_data.ex_figures_counter_struct);
 		Game.Field.import(import_data.ex_gamefield);
 		Game.data.save("player1", import_data.ex_player1_figures);
 		Game.data.save("player2", import_data.ex_player2_figures);

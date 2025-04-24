@@ -6,10 +6,15 @@ function Field() constructor{
 	field_width = 6;
 	scale = 0.7
 	size = 90*scale
-	start_x = (room_width/2) - size*3
+	start_x = (room_width/2) - size*2.5
 	start_y = (room_height/2) - size*3
 	field_x_size = size*field_width
 	field_y_size = size*field_width
+	selected_cell = undefined
+	
+	set_selected_cell = function(cell) {
+		selected_cell = cell
+	}
 	
 	cell_array = []
 	for (i = 0; i < field_height; i++) {
@@ -26,7 +31,10 @@ function Field() constructor{
 			{
 				draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				if (cell_array[h][w].is_filled()) {
-					draw_text(start_x + cell_array[h][w].get_coordinates()[0]*90, start_y + cell_array[h][w].get_coordinates()[1]*90, cell_array[h][w].filled_figure.behaviour.index[1, 2])
+					draw_text(start_x + size*w, start_y + size*h, cell_array[h][w].filled_figure.behaviour.index[1, 2])
+				}
+				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
+					draw_sprite_ext(S_Summon_mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				}
 			}
 		}
@@ -43,8 +51,9 @@ function Field() constructor{
 	}
 	
 	get_cell_from_coordinates = function(check_x, check_y) {
-		if (check_x > (start_x - size/2) and check_x - (start_x - size/2) < field_x_size and
-			check_y > (start_y - size/2) and check_y - (start_y - size/2) < field_y_size) {
+		xcord = (check_x - (start_x - size/2)) / size
+		ycord = (check_y - (start_y - size/2)) / size
+		if xcord > 0 and xcord < field_width and ycord > 0 and ycord < field_height {
 				return get_cell((check_x - (start_x - size/2)) / size, (check_y - (start_y - size/2)) / size)
 			}
 		else return undefined
@@ -53,6 +62,7 @@ function Field() constructor{
 	check_click = function() {
 		return get_cell_from_coordinates(mouse_x, mouse_y)
 	}
+	
 	get_cell = function(xcord, ycord) {
 		if xcord >= 0 and xcord < field_width and ycord >= 0 and ycord < field_height{
 			return cell_array[ycord][xcord];
@@ -62,7 +72,11 @@ function Field() constructor{
 		}
 	}
 
-	//generate_new_game_field(field_width, field_height, size);
+	place_figure = function(_xcord, _ycord, _behaviour ){
+		cell = get_cell(_xcord, _ycord)
+		cell.fill(new Figure())
+		cell.filled_figure.set_behaviour(_behaviour)
+	}
 
 	check_clear_move_cells = function(xcord, ycord) {
 		for (i = -1; i <= 1; i++) {
@@ -104,10 +118,10 @@ function Field() constructor{
 					if is_on_player_side or cell.is_under_control(player){
 						cell.marked = 1
 					}
-					if cell.is_under_control(O_GameLoopController.get_opponent(player)){
+					if cell.is_under_control(Game.game_loop_controller.get_opponent(player)){
 						cell.marked = 0
 					}
-					if cell.is_under_control(player) and cell.is_under_control(O_GameLoopController.get_opponent(player)) {
+					if cell.is_under_control(player) and cell.is_under_control(Game.game_loop_controller.get_opponent(player)) {
 						if ((cell.xcord = 2 or cell.xcord = 3) and (cell.ycord = 2 or cell.ycord = 3)) {
 							cell.marked = 1;
 						}
@@ -144,7 +158,6 @@ function Field() constructor{
 		if (get_cell(cell.xcord , cell.ycord +1) != undefined) {
 			array_push(neightbors, get_cell(cell.xcord , cell.ycord +1))
 		}
-		show_debug_message(neightbors)
 		return neightbors
 	}
 
@@ -240,7 +253,7 @@ function Field() constructor{
 	{
 		filled_figure = instance_create_depth(cell.x, cell.y, -1, O_Figure);
 		filled_figure.set_behaviour(figure_behaviour);
-		O_Figures_counter.change_field_figures_amount(global.turn_owner, +1);
+		Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, +1);
 	}
 	
 }

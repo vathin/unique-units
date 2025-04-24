@@ -11,14 +11,14 @@ function Maps_list() constructor{
 	
 	static start = function(map_type) {
 		check_map = maps[$ map_type];
-		O_GameField.sprite_index = get_map_sprite(map_type);
+		//O_GameField.sprite_index = get_map_sprite(map_type);
 		player1 = check_map.conquest_player1_cells;
 		player2 = check_map.conquest_player2_cells;
 		for (i = 0; i < array_length(player1); i++) {
-			O_GameField.get_cell(player1[i][0], player1[i][1]).can_be_conquested = 1;
+			Game.field.get_cell(player1[i][0], player1[i][1]).can_be_conquested = 1;
 		}
 		for (i = 0; i < array_length(player2); i++) {
-			O_GameField.get_cell(player2[i][0], player2[i][1]).can_be_conquested = 1;
+			Game.field.get_cell(player2[i][0], player2[i][1]).can_be_conquested = 1;
 		}
 	}
 	
@@ -27,20 +27,22 @@ function Maps_list() constructor{
 		player1 = check_map.conquest_player1_cells;
 		player2 = check_map.conquest_player2_cells;
 		for (i = 0; i < array_length(player1); i++) {
-			if O_GameField.get_cell(player1[i][0], player1[i][1]).is_filled() {
-				if O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.owner == "player2" 
-				and O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.state.is_active {
-					O_GameField.get_cell(player1[i][0], player1[i][1]).filled_figure.alarm[1] = 30
-					O_GameLoopController.add_captured_figure("player2");
+			cell = Game.field.get_cell(player1[i][0], player1[i][1])
+			if cell.is_filled() {
+				if cell.filled_figure.owner == "player2" 
+				and cell.filled_figure.state.is_active {
+					//cell.filled_figure.alarm[1] = 30 conquest
+					Game.game_loop_controller.add_captured_figure("player2");
 				}
 			}
 		}
 		for (i = 0; i < array_length(player2); i++) {
-			if O_GameField.get_cell(player2[i][0], player2[i][1]).is_filled() {
-				if O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.owner == "player1" 
-				and O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.state.is_active {
-					 O_GameField.get_cell(player2[i][0], player2[i][1]).filled_figure.alarm[1] = 30;
-					 O_GameLoopController.add_captured_figure("player1");
+			cell = Game.field.get_cell(player2[i][0], player2[i][1])
+			if cell.is_filled() {
+				if cell.filled_figure.owner == "player1" 
+				and cell.filled_figure.state.is_active {
+					 //cell.filled_figure.alarm[1] = 30; conquest
+					 Game.game_loop_controller.add_captured_figure("player1");
 				}
 			}
 		}

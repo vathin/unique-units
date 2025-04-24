@@ -24,6 +24,6 @@ time_end = function() {
 }
 
 start_summon = function(target_x, target_y) {
-	O_GameLoopController.set_action(new SummonAction(target_x, target_y, Behaviours.get_sprite(global.figure_to_summon)));
+	O_GameLoopController.set_action(new OLD_SummonAction(target_x, target_y, Behaviours.get_sprite(global.figure_to_summon)));
 	instance_destroy();
 }

@@ -1,40 +1,38 @@
 
-function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action() constructor{
+function OLD_SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action() constructor{
 	type = "summon"
 	target_x = _target_x;
 	target_y = _target_y;
 	figure_sprite = _figure_sprite;
 	summon_figure = _behaviour;
-	//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
-	//O_SummonButton.back = 1;
+	O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
+	O_SummonButton.back = 1;
 	
 	execute = function() {
-		new_figure = new Figure()
-		new_figure.set_behaviour(summon_figure)
-		Game.field.get_cell(target_x, target_y).fill(new_figure)
+		O_GameField.get_cell(target_x, target_y).create_figure(summon_figure)
 	}
 	draw = function() {
 		if target_x != undefined {
-			draw_sprite_ext(self.figure_sprite, 0, Game.field.get_cell_xy(target_x, target_x)[0], Game.field.get_cell_xy(target_x, target_x)[1], 
+			draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[self.target_y][self.target_x].x, O_GameField.field[self.target_y][self.target_x].y, 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
-		target_x = new_x;
-		target_y = new_y;
-		//O_EndTurn.unblock();
-		//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
-		//O_SummonButton.back = 1;
+		self.target_x = new_x;
+		self.target_y = new_y;
+		O_EndTurn.unblock();
+		O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
+		O_SummonButton.back = 1;
 	}
 	
 	back = function() {
 		if target_x != undefined {
-			Game.field.get_cell(target_x, target_y).marked = 1;
+			O_GameField.get_cell(target_x, target_y).marked = 1;
 			target_x = undefined;
 			target_y = undefined;
-			//O_EndTurn.block();
-			//O_SummonButton.change_sprite(figure_sprite, Settings.summon_button_figure_scale);
-			//O_SummonButton.back = 0;
+			O_EndTurn.block();
+			O_SummonButton.change_sprite(figure_sprite, Settings.summon_button_figure_scale);
+			O_SummonButton.back = 0;
 			global.cell_click_callback = undefined;
 		}
 	}

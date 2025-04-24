@@ -7,7 +7,7 @@ function Timer() constructor{
 	current_frame = 0;
 	active = 0;
 	using_time_bank = false;
-	draw_x = (room_width/2)-45
+	draw_x = (room_width/2)-25
 	draw_y = 100;
 	player_out_of_time = undefined;
 
