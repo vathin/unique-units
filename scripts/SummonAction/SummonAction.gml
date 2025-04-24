@@ -15,13 +15,15 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	}
 	draw = function() {
 		if target_x != undefined {
-			draw_sprite_ext(self.figure_sprite, 0, Game.field.get_cell_xy(target_x, target_x)[0], Game.field.get_cell_xy(target_x, target_x)[1], 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			//draw_sprite_ext(self.figure_sprite, 0, Game.field.get_cell_xy(target_x, target_x)[0], Game.field.get_cell_xy(target_x, target_x)[1], 
+			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			cords = Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))
+			draw_text_transformed(cords[0], cords[1], string_char_at(summon_figure,1)+string_char_at(summon_figure, 2), 0.5, 0.5, 0)
 		}
 	}
-	set_new_target_coordinates = function(new_x, new_y) {
-		target_x = new_x;
-		target_y = new_y;
+	set_new_target_coordinates = function(_new_x, _new_y) {
+		target_x = _new_x;
+		target_y = _new_y;
 		//O_EndTurn.unblock();
 		//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
 		//O_SummonButton.back = 1;
@@ -51,10 +53,10 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 		return export_data
 	}
 	
-	import = function(import_data) {
-		target_x = import_data.ex_target_x;
-		target_y = import_data.ex_target_y;
-		summon_figure = import_data.ex_summon_figure;
+	import = function(_import_data) {
+		target_x = _import_data.ex_target_x;
+		target_y = _import_data.ex_target_y;
+		summon_figure = _import_data.ex_summon_figure;
 	}
 }
 

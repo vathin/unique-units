@@ -16,7 +16,6 @@ if in_game {
 		if global.cell_click_callback != undefined {
 			draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0)
 			draw_text_transformed(room_width/2+50, room_height/1.25-10, "закончить ход", 0.55, 0.55, 0)
-			
 		}
 		
 	}

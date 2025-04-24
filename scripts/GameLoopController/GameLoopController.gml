@@ -14,13 +14,20 @@ function GameLoopController() constructor{
 	
 	figures_counter = new FiguresCounter()
 	
+	TEST_action_draw = function() {
+		if have_action() {
+			action.draw()
+		}
+	}
+	array_push(Game.do_every_step_list, TEST_action_draw)
+	
 	enum STATE_LIST {
 		wait,
 		summon,
 		figure_move,
 		figure_action,
 		animation,
-		opponent_turn,
+		enemy_turn,
 	}
 	state = STATE_LIST.wait
 	
@@ -51,7 +58,7 @@ function GameLoopController() constructor{
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
 		Maps_list.check_if_any_cell_conquested(global.map);
-		Game.Field.check_every_figure();
+		Game.field.check_every_figure();
 		figures_counter.update_turn();
 		//if check_win_conditions() != undefined {Game.match_controller.alarm[0] = 60}
 	}
@@ -133,7 +140,7 @@ function GameLoopController() constructor{
 		global.cell_click_callback = cell;
 		global.selected_cell = cell;
 		set_can_cancel(1);
-		cell.filled_figure.click();
+		O_BoardDraw.figure_click(cell.filled_figure)
 	}
 
 	clear_all = function() {

@@ -31,7 +31,8 @@ function Field() constructor{
 			{
 				draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				if (cell_array[h][w].is_filled()) {
-					draw_text(start_x + size*w, start_y + size*h, cell_array[h][w].filled_figure.behaviour.index[1, 2])
+					draw_figure = cell_array[h][w].filled_figure
+					draw_text_transformed(start_x + size*(w-0.5), start_y + size*(h-0.5), string_char_at(draw_figure.behaviour, 1)+ string_char_at(draw_figure.behaviour, 2), 0.5, 0.5, 0)
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
 					draw_sprite_ext(S_Summon_mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
@@ -138,8 +139,8 @@ function Field() constructor{
 	clear_all_marks = function() {
 		for (i = 0; i < field_height; i++) {
 			for (m = 0; m < field_width; m++) {
-				field[i][m].marked = false;
-				field[i][m].set_draw_marks(1);
+				cell_array[i][m].marked = false;
+				cell_array[i][m].set_draw_marks(1);
 			}
 		}
 	}

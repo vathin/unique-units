@@ -89,8 +89,6 @@ function Timer() constructor{
 		bank_seconds = 0;
 		active = 1;
 		using_time_bank = 0;
-		array_push(Game.do_every_step_list, TEST_draw_timer)
-		array_push(Game.do_every_step_list, timer_function)
 	}
 
 	reset = function() {
@@ -117,5 +115,7 @@ function Timer() constructor{
 		using_time_bank = import_data.ex_using_time_bank;
 		seconds = import_data.ex_seconds;
 		all_time = import_data.ex_all_time;
-}
+	}
+	array_push(Game.do_every_step_list, TEST_draw_timer)
+	array_push(Game.do_every_step_list, timer_function)
 }

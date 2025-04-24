@@ -3,6 +3,10 @@
 in_game = false
 selected_cell = undefined
 game_state = undefined
+main_button_x = [room_width/2-40, room_width/2+40]
+main_button_y = [room_height/1.25-40, room_height/1.25+40]
+end_button_x = [room_width/2 + 50, room_width/2 + 130]
+end_button_y = [room_height/1.25-40, room_height/1.25+40]
 
 figure_click = function(_figure) {
 		if _figure.state.is_active {
