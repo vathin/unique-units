@@ -5,6 +5,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	target_y = _target_y;
 	figure_sprite = _figure_sprite;
 	summon_figure = _behaviour;
+	O_BoardDraw.unblock_end_button();
 	//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
 	//O_SummonButton.back = 1;
 	
@@ -24,7 +25,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	set_new_target_coordinates = function(_new_x, _new_y) {
 		target_x = _new_x;
 		target_y = _new_y;
-		//O_EndTurn.unblock();
+		O_BoardDraw.unblock_end_button();
 		//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
 		//O_SummonButton.back = 1;
 	}
@@ -34,7 +35,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 			Game.field.get_cell(target_x, target_y).marked = 1;
 			target_x = undefined;
 			target_y = undefined;
-			//O_EndTurn.block();
+			O_BoardDraw.block_end_button();
 			//O_SummonButton.change_sprite(figure_sprite, Settings.summon_button_figure_scale);
 			//O_SummonButton.back = 0;
 			global.cell_click_callback = undefined;

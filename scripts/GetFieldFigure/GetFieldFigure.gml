@@ -1,8 +1,8 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function GetFieldFigure() constructor{
-	O_EndTurn.block();
-	O_GameField.can_cancel = 0;
+	O_BoardDraw.block_end_button();
+	Game.field.can_cancel = 0;
 	target = undefined
 	execute = function() {
 		target.filled_figure.capture();
@@ -11,7 +11,7 @@ function GetFieldFigure() constructor{
 	
 	set_target = function(new_target) {
 		target = new_target;
-		O_EndTurn.unblock();
+		O_BoardDraw.unblock_end_button();
 	}
 	
 	draw = function() {}

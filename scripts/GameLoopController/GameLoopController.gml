@@ -14,6 +14,8 @@ function GameLoopController() constructor{
 	
 	figures_counter = new FiguresCounter()
 	
+	
+	
 	TEST_action_draw = function() {
 		if have_action() {
 			action.draw()
@@ -26,6 +28,7 @@ function GameLoopController() constructor{
 		summon,
 		figure_move,
 		figure_action,
+		figure_ability,
 		animation,
 		enemy_turn,
 	}
@@ -33,6 +36,10 @@ function GameLoopController() constructor{
 	
 	get_game_state = function() {
 		return state
+	}
+	
+	set_game_state = function(_new_state) {
+		state = _new_state
 	}
 	
 	set_can_cancel = function(_value) {
@@ -118,12 +125,8 @@ function GameLoopController() constructor{
 	clean_controllers = function() {
 		Game.ability_input_controller = undefined
 		Game.move_input_controller = undefined
-		if Game.figure_action_controller != undefined {
-			Game.figure_action_controller.clear_buttons()
-			Game.figure_action_controller = undefined
-		}
-		global.moving_figure = 0;
-		global.using_ability = 0;
+		Game.figure_action_controller = undefined
+		state = STATE_LIST.wait
 	}
 
 	default_cell_click_action = function(cell) {
@@ -146,7 +149,7 @@ function GameLoopController() constructor{
 	clear_all = function() {
 		Game.summon_controller = undefined
 		clean_controllers();
-		//O_EndTurn.active = 1;
+		O_BoardDraw.block_end_button();
 		global.selected_cell = undefined;
 		//O_SummonButton.go_to_standart_mode();
 		Game.field.clear_all_marks();

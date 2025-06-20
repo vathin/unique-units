@@ -1,16 +1,20 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Field() constructor{
-	
 	field_height = 6;
 	field_width = 6;
-	scale = 0.7
-	size = 90*scale
-	start_x = (room_width/2) - size*2.5
-	start_y = (room_height/2) - size*3
-	field_x_size = size*field_width
-	field_y_size = size*field_width
-	selected_cell = undefined
+	scale = 0.7;
+	size = 90*scale;
+	start_x = (room_width/2) - size*2.5;
+	start_y = (room_height/2) - size*3;
+	field_x_size = size*field_width;
+	field_y_size = size*field_width;
+	selected_cell = undefined;
+	player1_captured = new CapturedFiguresCounter("Player1");
+	player2_captured = new CapturedFiguresCounter("Player2");
+	player1_dropped = new DroppedFiguresCounter("Player1");
+	player2_dropped = new DroppedFiguresCounter("Player2")
+	
 	
 	set_selected_cell = function(cell) {
 		selected_cell = cell
@@ -197,6 +201,7 @@ function Field() constructor{
 			for (m = 0; m < field_height; m++) {
 				if get_cell(m, i).is_filled() {
 					get_cell(m, i).update_filled_figure_state();
+					if get_cell(m, i).filled_figure.state.is_dropped {get_cell(m, i).clear()}
 				}
 			}
 		}

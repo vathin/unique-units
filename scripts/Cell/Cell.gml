@@ -6,7 +6,6 @@ function Cell() constructor{
 	draw_mark = true;
 	marked = false;
 	filled_figure = undefined;
-	var obj;
 	xcord = 0;
 	ycord = 0;
 	
@@ -34,7 +33,7 @@ function Cell() constructor{
 		filled_figure = undefined;
 	}
 	
-	fill = function(new_figure, is_moving=0) 
+	fill = function(new_figure) 
 	{
 		filled_figure = new_figure
 	}
@@ -96,6 +95,8 @@ function Cell() constructor{
 		ex_draw_mark = import_data.ex_draw_mark;
 		if import_data.ex_filled_figure_struct != undefined {
 			//create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
+			filled_figure = new Figure()
+			filled_figure.behaviour = import_data.ex_filled_figure_struct.ex_behaviour
 			Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
 			filled_figure.import(import_data.ex_filled_figure_struct);
 		}

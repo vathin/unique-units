@@ -8,15 +8,27 @@ if in_game {
 	}*/
 	draw_set_font(F_test)
 	
-	game_state = Game.game_loop_controller.get_game_state()
+
+	if end_button {
+		draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);
+	}
 	switch game_state{
 	case STATE_LIST.wait:
-		draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0)
+		draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
+		break;
+	case STATE_LIST.figure_action:
+		if Game.figure_action_controller.figure_can_move {
+			draw_text_transformed(room_width/2-65, room_height/1.25-10, "передв.", 0.55, 0.55, 0);
+		}
+		if Game.figure_action_controller.figure_have_ability{
+			draw_text_transformed(room_width/2+25, room_height/1.25-10, "способ.", 0.55, 0.55, 0);
+		}
+		break;
 	case STATE_LIST.summon:
 		if global.cell_click_callback != undefined {
-			draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0)
-			draw_text_transformed(room_width/2+50, room_height/1.25-10, "закончить ход", 0.55, 0.55, 0)
+			draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
 		}
-		
+		break;
 	}
+	
 }

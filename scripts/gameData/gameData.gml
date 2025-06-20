@@ -3,7 +3,7 @@
 function gameData() constructor{
 	save_action = function(save_data) {
 		file = file_text_open_write("gameActionData.json");
-		file_text_write_string(file, json_stringify(save_data));
+		file_text_write_string(file, json_stringify(save_data)); //!!
 		file_text_close(file);
 	}
 	load_action = function() {

@@ -6,44 +6,45 @@ enum ArcherMoveAbility_Cell {
 	available
 }
 
-function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructor{
-	self.from_x = from_x;
-	self.from_y = from_y;
+function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) constructor{
+	self.from_x = _from_x;
+	self.from_y = _from_y;
 	self.figure_sprite = S_Archer;
-	self.to_x = to_x;
-	self.to_y = to_y;
+	self.to_x = _to_x;
+	self.to_y = _to_y;
 	moving_figure = undefined;
 	found_move_cells = false;
 	cells_to_check = [];
-	using_figure = O_GameField.get_cell(from_x, from_y).filled_figure;
+	using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
 	draw_previous_cell = false;
+	if Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
 	
 	init = function() {
 		if to_x != undefined {
-			O_GameField.get_cell(to_x, to_y).set_draw_marks(0);
+			Game.field.get_cell(to_x, to_y).set_draw_marks(0);
 		}
 		clear();
 	}
 	execute = function() {
-		O_GameField.get_cell(to_x, to_y).fill(using_figure);
-		O_GameField.get_cell(from_x, from_y).clear();
+		Game.field.get_cell(to_x, to_y).fill(using_figure);
+		Game.field.get_cell(from_x, from_y).clear();
 	}
 	draw = function() {
 		if to_x != undefined {
-			draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			//draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
+			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 		if draw_previous_cell{
-			draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
+			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
-		if to_x != undefined {O_GameField.get_cell(to_x, to_y).set_draw_marks(1)}
+		if to_x != undefined {Game.field.get_cell(to_x, to_y).set_draw_marks(1)}
 		self.to_x = new_x;
 		self.to_y = new_y;
-		O_GameField.get_cell(new_x, new_y).set_draw_marks(0);
-		O_EndTurn.unblock();
+		Game.field.get_cell(new_x, new_y).set_draw_marks(0);
+		O_BoardDraw.unblock_end_button()
 	}
 	
 	check_clear_cells = function(cell_x, cell_y) {
@@ -55,25 +56,25 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		}
 		for (i = -1; i <= 1; i++) {
 			for (m = -1; m <= 1; m++) {
-				cell = O_GameField.get_cell(cell_x + i, cell_y + m);
+				cell = Game.field.get_cell(cell_x + i, cell_y + m);
 				if cell != undefined {
-					if cell.is_filled() and cell != O_GameField.get_cell(from_x, from_y){
+					if cell.is_filled() and cell != Game.field.get_cell(from_x, from_y){
 						found_cells = 1
 					}
 				}
 			}
 		}
-		if O_GameField.get_cell(cell_x + 1, cell_y) != undefined and O_GameField.get_cell(cell_x + 1, cell_y).is_filled() {closed ++}
-		if O_GameField.get_cell(cell_x - 1, cell_y) != undefined and O_GameField.get_cell(cell_x - 1, cell_y).is_filled() {closed ++}
-		if O_GameField.get_cell(cell_x, cell_y + 1) != undefined and O_GameField.get_cell(cell_x, cell_y + 1).is_filled() {closed ++}
-		if O_GameField.get_cell(cell_x, cell_y - 1) != undefined and O_GameField.get_cell(cell_x, cell_y - 1).is_filled() {closed ++}
+		if Game.field.get_cell(cell_x + 1, cell_y) != undefined and Game.field.get_cell(cell_x + 1, cell_y).is_filled() {closed ++}
+		if Game.field.get_cell(cell_x - 1, cell_y) != undefined and Game.field.get_cell(cell_x - 1, cell_y).is_filled() {closed ++}
+		if Game.field.get_cell(cell_x, cell_y + 1) != undefined and Game.field.get_cell(cell_x, cell_y + 1).is_filled() {closed ++}
+		if Game.field.get_cell(cell_x, cell_y - 1) != undefined and Game.field.get_cell(cell_x, cell_y - 1).is_filled() {closed ++}
 		if closed == 4 {return false}
 		return found_cells
 	}
 	
 	check_all_cells = function() {
-		var start_cell = O_GameField.get_cell(from_x, from_y);
-		O_GameField.clear_all_marks();
+		var start_cell = Game.field.get_cell(from_x, from_y);
+		Game.field.clear_all_marks();
 		add_neighbor_cells_to_queue(start_cell);
 		
 		while (array_length(cells_to_check) != 0) { 
@@ -85,7 +86,7 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		for (i = 0; i < 6; i++) {
 			for (m = 0; m < 6; m++) {
 				if cell_array[m][i] = ArcherMoveAbility_Cell.available {
-					O_GameField.get_cell(m, i).marked = 1;
+					Game.field.get_cell(m, i).marked = 1;
 				}
 			}
 		}
@@ -129,7 +130,7 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		return false
 	}
 	is_cell_filled = function(x, y, except_of = undefined) {
-		var cell = O_GameField.get_cell(x, y);
+		var cell = Game.field.get_cell(x, y);
 		
 		if (cell == undefined)
 			return false;
@@ -140,10 +141,10 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 		return cell.is_filled();
 	}
 	add_neighbor_cells_to_queue = function(from_cell) {
-		add_cell_to_queue(O_GameField.get_cell(from_cell.xcord - 1, from_cell.ycord));
-		add_cell_to_queue(O_GameField.get_cell(from_cell.xcord + 1, from_cell.ycord));
-		add_cell_to_queue(O_GameField.get_cell(from_cell.xcord, from_cell.ycord + 1));
-		add_cell_to_queue(O_GameField.get_cell(from_cell.xcord, from_cell.ycord - 1));
+		add_cell_to_queue(Game.field.get_cell(from_cell.xcord - 1, from_cell.ycord));
+		add_cell_to_queue(Game.field.get_cell(from_cell.xcord + 1, from_cell.ycord));
+		add_cell_to_queue(Game.field.get_cell(from_cell.xcord, from_cell.ycord + 1));
+		add_cell_to_queue(Game.field.get_cell(from_cell.xcord, from_cell.ycord - 1));
 	}
 	add_cell_to_queue = function(new_cell) {
 		if (new_cell == undefined)
@@ -162,19 +163,19 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 
 	
 	get_and_check_cell = function(old_cell, cell_x, cell_y) {
-		new_cell = O_GameField.get_cell(cell_x, cell_y)
+		new_cell = Game.field.get_cell(cell_x, cell_y)
 		if new_cell != undefined and new_cell != old_cell and check_cell(new_cell){
 			if new_cell.is_filled() {
 				array_push(cells_to_check, new_cell);
 				}
 			else {
 				cell_array[new_cell.xcord][new_cell.ycord] = 2;
-				if old_cell = O_GameField.get_cell(from_x, from_y) {
+				if old_cell = Game.field.get_cell(from_x, from_y) {
 					cell_array[cell_x][cell_y] = 0;
 				}
 				for (j = -1; j <= 1; j++) {
 					for (k = -1; k <= 1; k++) {
-						hook_cell = O_GameField.get_cell(new_cell.xcord + j, new_cell.ycord + k);
+						hook_cell = Game.field.get_cell(new_cell.xcord + j, new_cell.ycord + k);
 						if hook_cell != undefined and cell_array[hook_cell.xcord][hook_cell.ycord] = 0 and hook_cell.is_filled(){
 							array_push(cells_to_check, hook_cell)
 							check_cell(hook_cell);
@@ -200,13 +201,13 @@ function ArcherMoveAbility(from_x, from_y, to_x, to_y, figure_sprite) constructo
 	
 	back = function() {
 		if to_x != undefined {
-			O_GameField.field[to_y][to_x].set_draw_marks(1)
+			Game.field.field[to_y][to_x].set_draw_marks(1)
 			to_x = undefined;
 			to_y = undefined;
-			O_EndTurn.block();
+			Game.field.block();
 		}
 		else {
-			O_GameLoopController.quit_from_action();
+			Game.game_loop_controller.quit_from_action();
 		}
 	}
 	
