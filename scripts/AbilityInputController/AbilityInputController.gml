@@ -32,7 +32,7 @@ function AbilityInputController() constructor{
 	ability.check_ability_targets(1, 1);
 
 	if Game.game_loop_controller.can_cancel {
-		//O_SummonButton.alarm[0] = 1;
+		O_BoardDraw.unblock_end_button()
 	}
 
 	back = function() {

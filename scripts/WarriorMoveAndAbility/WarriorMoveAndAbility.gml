@@ -1,6 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) : FigureAbilityAction() constructor{
+function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined) : FigureAbilityAction() constructor{
 	from_x = _from_x;
 	from_y = _from_y;
 	to_x = _to_x;

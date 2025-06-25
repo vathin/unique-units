@@ -1,6 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) : FigureAbilityAction() constructor{
+function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined) : FigureAbilityAction() constructor{
 	self.from_x = _from_x;
 	self.from_y = _from_y;
 	self.to_x = _to_x;

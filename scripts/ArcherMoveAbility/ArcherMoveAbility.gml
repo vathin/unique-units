@@ -25,6 +25,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		}
 		clear();
 	}
+	
 	execute = function() {
 		Game.field.get_cell(to_x, to_y).fill(using_figure);
 		Game.field.get_cell(from_x, from_y).clear();
@@ -222,17 +223,17 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 			ex_from_y: from_y,
 			ex_to_x: to_x,
 			ex_to_y: to_y,
-			ex_using_figure: using_figure,
+			ex_using_figure: undefined,
 			ex_turn_owner: global.turn_owner
 		}
 		return export_data
 	}
-	import = function(import_data) {
-		from_x = import_data.ex_from_x;
-		from_y = import_data.ex_from_y;
-		to_x = import_data.ex_to_x;
-		to_y = import_data.ex_to_y;
-		using_figure = import_data.ex_using_figure;
+	import = function(_import_data) {
+		from_x = _import_data.ex_from_x;
+		from_y = _import_data.ex_from_y;
+		to_x = _import_data.ex_to_x;
+		to_y = _import_data.ex_to_y;
+		using_figure = (Game.field.get_cell(_import_data.ex_to_x, _import_data.ex_to_y)).filled_figure;
 	}
 }
 

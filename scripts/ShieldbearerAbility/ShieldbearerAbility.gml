@@ -1,5 +1,5 @@
 
-function ShieldbearerAbility(_using_figure, _using_cell) : FigureAbilityAction() constructor{
+function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
 	using_figure = _using_figure;
 	using_cell = _using_cell;
 	target_figure = undefined;
@@ -107,9 +107,9 @@ function ShieldbearerAbility(_using_figure, _using_cell) : FigureAbilityAction()
 		export_data = {
 			ex_action: ShieldbearerAbility,
 			ex_type: "act_ability",
-			ex_using_figure: using_figure,
+			ex_using_figure: undefined,
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
-			ex_target_figure: target_figure,
+			ex_target_figure: undefined,
 			ex_target_cell: [target_cell.xcord, target_cell.ycord],
 			ex_fill_cell: [fill_cell.xcord, fill_cell.ycord],
 			ex_turn_owner: global.turn_owner
@@ -118,10 +118,12 @@ function ShieldbearerAbility(_using_figure, _using_cell) : FigureAbilityAction()
 	}
 	
 	import = function(_import_data) {
-		using_figure = _import_data.ex_using_figure;
+		//using_figure = _import_data.ex_using_figure;
 		using_cell = Game.field.get_cell(_import_data.ex_using_cell[0], _import_data.ex_using_cell[1]);
-		target_figure = _import_data.ex_target_figure;
+		using_figure = using_cell.filled_figure
+		//target_figure = _import_data.ex_target_figure;
 		target_cell = Game.field.get_cell(_import_data.ex_target_cell[0], _import_data.ex_target_cell[1]);
+		target_figure = target_cell.filled_figure
 		fill_cell = Game.field.get_cell(_import_data.ex_fill_cell[0], _import_data.ex_fill_cell[1]);
 	}
 }

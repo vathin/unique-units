@@ -1,5 +1,5 @@
 
-function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() constructor{
+function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureAbilityAction() constructor{
 	self.using_figure = using_figure;
 	self.using_cell = using_cell;
 	cell_for_move = undefined;
@@ -84,7 +84,7 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 		export_data = {
 			ex_action : SpearmanAbility,
 			ex_type : "act_ability",
-			ex_using_figure: using_figure,
+			ex_using_figure: undefined,
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
 			ex_cell_for_move: [cell_for_move.xcord, cell_for_move.ycord],
 			ex_turn_owner: global.turn_owner
@@ -93,8 +93,9 @@ function SpearmanAbility(using_figure, using_cell) : FigureAbilityAction() const
 	}
 	
 	import = function(import_data) {
-		using_figure = import_data.ex_using_figure;
+		//using_figure = import_data.ex_using_figure;
 		using_cell = Game.field.get_cell(import_data.ex_using_cell[0], import_data.ex_using_cell[1]);
 		cell_for_move = Game.field.get_cell(import_data.ex_cell_for_move[0], import_data.ex_cell_for_move[1]);
+		using_figure = using_cell.filled_figure;
 	}
 }
