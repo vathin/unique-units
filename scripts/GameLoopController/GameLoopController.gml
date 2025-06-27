@@ -67,7 +67,10 @@ function GameLoopController() constructor{
 		Maps_list.check_if_any_cell_conquested(global.map);
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
-		//if check_win_conditions() != undefined {Game.match_controller.alarm[0] = 60}
+		if check_win_conditions() != undefined {
+			show_message(check_win_conditions());
+			game_end();
+		}
 	}
 
 	set_action = function(new_action) {
@@ -107,7 +110,7 @@ function GameLoopController() constructor{
 
 	quit_from_action = function() {
 		clean_controllers()
-		Game.Field.clear_all_marks(); 
+		Game.field.clear_all_marks(); 
 		//O_SummonButton.go_away();
 		global.using_ability = 1;
 		global.cell_click_callback = global.selected_cell;
@@ -123,10 +126,11 @@ function GameLoopController() constructor{
 	}
 
 	clean_controllers = function() {
-		Game.ability_input_controller = undefined
-		Game.move_input_controller = undefined
-		Game.figure_action_controller = undefined
-		state = STATE_LIST.wait
+		Game.ability_input_controller = undefined;
+		Game.move_input_controller = undefined;
+		Game.figure_action_controller = undefined;
+		Game.summon_controller = undefined;
+		state = STATE_LIST.wait;
 	}
 
 	default_cell_click_action = function(cell) {
@@ -147,15 +151,12 @@ function GameLoopController() constructor{
 	}
 
 	clear_all = function() {
-		Game.summon_controller = undefined
 		clean_controllers();
 		O_BoardDraw.block_end_button();
 		global.selected_cell = undefined;
-		//O_SummonButton.go_to_standart_mode();
 		Game.field.clear_all_marks();
 		global.cell_click_callback = undefined;
 		set_can_cancel(0)
-		//O_SummonButton.unblock()
 		global.cell_action = default_cell_click_action;
 		action = undefined;
 		global.able_to_summon = false;
@@ -205,9 +206,6 @@ function GameLoopController() constructor{
 
 	import = function(import_data) {
 		clear_all();
-		/*while (instance_number(O_Figure) > 0) {
-			instance_destroy(instance_find(O_Figure, 0))
-			}*/
 		global.turn_owner = import_data.ex_turn_owner;
 		player1_captured = import_data.ex_player1_captured;
 		player2_captured = import_data.ex_player2_captured;

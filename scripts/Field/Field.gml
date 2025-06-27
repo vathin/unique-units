@@ -36,7 +36,10 @@ function Field() constructor{
 				draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				if (cell_array[h][w].is_filled()) {
 					draw_figure = cell_array[h][w].filled_figure
-					draw_text_transformed(start_x + size*(w-0.5), start_y + size*(h-0.5), string_char_at(draw_figure.behaviour, 1)+ string_char_at(draw_figure.behaviour, 2), 0.5, 0.5, 0)
+					if draw_figure.state.is_conquesting {draw_set_alpha(0.65)}
+					draw_text_transformed(start_x + size*(w-0.5), start_y + size*(h-0.5),
+					string_char_at(draw_figure.behaviour, 1)+ string_char_at(draw_figure.behaviour, 2), 0.5, 0.5, 0);
+					draw_set_alpha(1);
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
 					draw_sprite_ext(S_Summon_mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)

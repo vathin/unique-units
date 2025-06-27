@@ -72,7 +72,8 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	set_target = function(_target_figure, _target_cell) {
 		if target_cell != undefined {target_cell.set_draw_marks(1)}
 		target_cell = _target_cell;
-		target_cell.set_draw_marks(0)
+		target_cell.set_draw_marks(0);
+		O_BoardDraw.unblock_end_button();
 	}
 	
 	check_ability_targets = function(check, a) {
@@ -103,6 +104,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			if target_cell!= undefined{
 				target_cell.set_draw_marks(1);
 				target_cell = undefined;
+				O_BoardDraw.block_end_button();
 			}
 			else {
 				Game.figure_action_controller = new FigureActionController()

@@ -31,7 +31,7 @@ function Maps_list() constructor{
 			if cell.is_filled() {
 				if cell.filled_figure.owner == "player2" 
 				and cell.filled_figure.state.is_active {
-					//cell.filled_figure.alarm[1] = 30 conquest
+					cell.filled_figure.conquest();
 					Game.game_loop_controller.add_captured_figure("player2");
 				}
 			}
@@ -41,12 +41,13 @@ function Maps_list() constructor{
 			if cell.is_filled() {
 				if cell.filled_figure.owner == "player1" 
 				and cell.filled_figure.state.is_active {
-					 //cell.filled_figure.alarm[1] = 30; conquest
+					 cell.filled_figure.conquest();
 					 Game.game_loop_controller.add_captured_figure("player1");
 				}
 			}
 		}
 	}
+	
 }
 
 new Maps_list();

@@ -29,11 +29,11 @@ function FiguresCounter() constructor {
 		if array_length(figures_to_capture) > 0 {
 			while array_length(figures_to_capture) > 0 {
 				capture_figure = array_pop(figures_to_capture);
-				capture_figure[0].alarm[2] = Settings.move_animation_length+1;
 				capture_figure[0].state.is_active = 0;
 				if capture_figure[0].owner == "player1" {Game.game_loop_controller.player2_captured ++}
 				else {Game.game_loop_controller.player1_captured ++}
 				capture_figure[1].clear();
+				capture_figure[0].capture();
 			}
 		}
 	}

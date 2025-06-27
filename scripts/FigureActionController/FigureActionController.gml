@@ -56,6 +56,7 @@ function FigureActionController() constructor{
 				Game.game_loop_controller.state = STATE_LIST.figure_ability;
 				Game.ability_input_controller = new AbilityInputController();
 				Game.ability_input_controller = undefined;
+				O_BoardDraw.block_end_button();
 			}
 			destroy_self();
 		}

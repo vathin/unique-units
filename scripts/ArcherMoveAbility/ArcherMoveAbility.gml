@@ -205,7 +205,8 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 			Game.field.field[to_y][to_x].set_draw_marks(1)
 			to_x = undefined;
 			to_y = undefined;
-			Game.field.block();
+			//Game.field.block();
+			O_BoardDraw.block_end_button();
 		}
 		else {
 			Game.game_loop_controller.quit_from_action();

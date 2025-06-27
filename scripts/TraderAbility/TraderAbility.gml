@@ -122,8 +122,11 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			global.cell_click_callback.set_draw_marks(1);
 			global.cell_click_callback = cell;
 			cell.set_draw_marks(0)
-			if !Game.game_loop_controller.have_action() {Game.ability_input_controller.start_ability()}
-			Game.game_loop_controller.action.target_cell = cell
+			if !Game.game_loop_controller.have_action() {
+				Game.ability_input_controller.start_ability();
+				O_BoardDraw.block_end_button();
+			}
+			Game.game_loop_controller.action.target_cell = cell;
 			//O_BoardDraw.unblock_end_button()
 		}
 	}

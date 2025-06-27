@@ -7,9 +7,9 @@ main_button_x = [room_width/2-40, room_width/2+40]
 main_button_y = [room_height/1.25-40, room_height/1.25+40]
 end_button_x = [room_width/2-55, room_width/2 + 50]
 end_button_y = [room_height/1.25, room_height/1.25+80]
-move_button_x = [room_width/2-70, room_width/2 -10]
+move_button_x = [room_width/2-100, room_width/2 -40]
 move_button_y = [room_height/1.25-30, room_height/1.25+30]
-ability_button_x = [room_width/2+25, room_width/2 +85]
+ability_button_x = [room_width/2+55, room_width/2 +115]
 ability_button_y = [room_height/1.25-30, room_height/1.25+30]
 end_button = false
 

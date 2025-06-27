@@ -21,6 +21,7 @@ function AbilityInputController() constructor{
 	start_ability = function() {
 		Game.game_loop_controller.set_action(ability);
 		Game.ability_input_controller = undefined;
+		O_BoardDraw.unblock_end_button();
 	}
 
 	//O_SummonButton.change_sprite(S_AbilityButton, 1.63);
@@ -32,7 +33,7 @@ function AbilityInputController() constructor{
 	ability.check_ability_targets(1, 1);
 
 	if Game.game_loop_controller.can_cancel {
-		O_BoardDraw.unblock_end_button()
+		
 	}
 
 	back = function() {
@@ -41,7 +42,7 @@ function AbilityInputController() constructor{
 			global.cell_click_callback = global.selected_cell;
 			Game.figure_action_controller = new FigureActionController()
 			//O_SummonButton.go_away();
-			Game.ability_input_controller = undefined
+			Game.ability_input_controller = undefined;
 		}
 	}
 }
