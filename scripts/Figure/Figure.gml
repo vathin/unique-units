@@ -27,12 +27,12 @@ function Figure() constructor{
 		//sprite_index = Behaviours.get_sprite(behaviour);
 	}
 	update_stats = function() {
-		/*if owner == "player1" {
-			image_index = 0;
+		if owner == "player1" {
+			//image_index = 0;
 		}
 		else {
-			image_index = 1;
-		}*/
+			//image_index = 1;
+		}
 	}
 	update_stats()
 	
@@ -107,8 +107,8 @@ function Figure() constructor{
 		state.is_captured = 1;
 		//image_xscale = Settings.figure_scale*0.75;
 		//image_yscale = Settings.figure_scale*0.75;
-		place = Game.field.get_place("capture", Game.game_loop_controller.get_opponent(owner));
-		place.add_figure(self);
+		//place = Game.field.get_place("capture", Game.game_loop_controller.get_opponent(owner));
+		//place.add_figure(self);
 		if is_on_field {
 			Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
 		}
@@ -117,7 +117,8 @@ function Figure() constructor{
 	conquest = function() {
 		state.is_active = 0;
 		state.is_conquesting = 1;
-		Game.field.player2_captured.get_new_figure(Game.game_loop_controller.get_opponent(owner));
+		place = Game.field.get_place("capture", owner);
+		place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
 		//ov_animation = instance_create_depth(0, 0, 0, O_OverturnFigureAnimation);
 		//ov_animation.start_animation(1, 1, 1, 1, 30, self);
 		Game.game_loop_controller.check_win_conditions();

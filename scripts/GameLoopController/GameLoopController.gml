@@ -62,6 +62,7 @@ function GameLoopController() constructor{
 		//}
 		execute_action();
 		turn_timer.reset();
+		
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
 		Maps_list.check_if_any_cell_conquested(global.map);
@@ -211,7 +212,7 @@ function GameLoopController() constructor{
 		player2_captured = import_data.ex_player2_captured;
 		turn_timer.import(import_data.ex_timer_struct);
 		figures_counter.import(import_data.ex_figures_counter_struct);
-		Game.Field.import(import_data.ex_gamefield);
+		Game.field.import(import_data.ex_gamefield);
 		Game.data.save("player1", import_data.ex_player1_figures);
 		Game.data.save("player2", import_data.ex_player2_figures);
 	}

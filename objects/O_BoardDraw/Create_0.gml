@@ -3,14 +3,16 @@
 in_game = false
 selected_cell = undefined
 game_state = undefined
-main_button_x = [room_width/2-40, room_width/2+40]
-main_button_y = [room_height/1.25-40, room_height/1.25+40]
-end_button_x = [room_width/2-55, room_width/2 + 50]
-end_button_y = [room_height/1.25, room_height/1.25+80]
-move_button_x = [room_width/2-100, room_width/2 -40]
-move_button_y = [room_height/1.25-30, room_height/1.25+30]
-ability_button_x = [room_width/2+55, room_width/2 +115]
-ability_button_y = [room_height/1.25-30, room_height/1.25+30]
+main_button_x = [room_width/2-40, room_width/2+40];
+main_button_y = [room_height/1.25-40, room_height/1.25+40];
+end_button_x = [room_width/2-55, room_width/2 + 50];
+end_button_y = [room_height/1.25, room_height/1.25+80];
+move_button_x = [room_width/2-100, room_width/2 -40];
+move_button_y = [room_height/1.25-30, room_height/1.25+30];
+ability_button_x = [room_width/2+55, room_width/2 +115];
+ability_button_y = [room_height/1.25-30, room_height/1.25+30];
+drop_cord = [room_width/2 - 250, room_height/2-40];
+capture_cord = [room_width/2 + 195, room_height/2-40]
 end_button = false
 
 
@@ -49,6 +51,27 @@ block_end_button = function() {
 
 unblock_end_button = function() {
 	end_button = true
+}
+
+drop_draw = function() {
+	draw_text_transformed(drop_cord[0] + 25, drop_cord[1] + 40, 
+	array_length(Game.field.player1_dropped.figures), 0.65, 0.6, 0);
+	draw_text_transformed(drop_cord[0] + 25, drop_cord[1] - 43,
+	array_length(Game.field.player2_dropped.figures), 0.65, 0.6, 0);
+}
+
+capture_draw = function() {
+	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] + 40, 
+	array_length(Game.field.player1_captured.figures), 0.65, 0.6, 0);
+	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] - 43, 
+	array_length(Game.field.player2_captured.figures), 0.65, 0.6, 0);
+}
+
+figure_counters_draw = function() {
+	drop_draw();
+	capture_draw();
+	draw_text_transformed(drop_cord[0], drop_cord[1], "СБРОС", 0.55, 0.55, 0);
+	draw_text_transformed(capture_cord[0], capture_cord[1], "ПЛЕН", 0.55, 0.55, 0);
 }
 
 Start_match()

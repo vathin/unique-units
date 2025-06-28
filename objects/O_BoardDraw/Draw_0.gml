@@ -8,6 +8,8 @@ if in_game {
 	}*/
 	draw_set_font(F_test)
 	
+	
+	figure_counters_draw();
 
 	if end_button {
 		draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);

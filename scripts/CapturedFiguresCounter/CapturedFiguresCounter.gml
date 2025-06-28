@@ -6,21 +6,22 @@ function CapturedFiguresCounter(_owner) constructor{
 
 	add_figure = function(new_figure) {
 		array_push(figures, new_figure);
-		figures_to_add = new_figure
+		figures_to_add = new_figure;
 	}
 	
 	get_new_figure = function(player) {
 		global.cell_click_callback = undefined;
-		if Game.game_loop_controller.figures_counter.get_player_figures_amount(player) = 0 {
-			FigureCapture()
+		if Game.game_loop_controller.figures_counter.get_player_figures_amount(player) == 0 {
+			FigureCapture();
 		}
 		else {
 			load_data = Game.data.load(player);
 			behaviour = array_pop(load_data.player_figures);
 			Game.data.save(player, load_data);
-			captured_figure = new Figure()
+			captured_figure = new Figure();
 			captured_figure.set_behaviour(behaviour);
 			captured_figure.capture(0);
+			add_figure(captured_figure);
 		}
 	}
 
