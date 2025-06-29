@@ -15,9 +15,9 @@ function CapturedFiguresCounter(_owner) constructor{
 			FigureCapture();
 		}
 		else {
-			load_data = Game.data.load(player);
+			load_data = Game.user_data.load(player);
 			behaviour = array_pop(load_data.player_figures);
-			Game.data.save(player, load_data);
+			Game.user_data.save(player, load_data);
 			captured_figure = new Figure();
 			captured_figure.set_behaviour(behaviour);
 			captured_figure.capture(0);
@@ -29,19 +29,18 @@ function CapturedFiguresCounter(_owner) constructor{
 		figures_structs = []
 		for (i = 0; i < array_length(figures); i++) {array_push(figures_structs, figures[i].export())}
 		export_data = {
-			ex_figures: figures,
 			ex_figures_structs: figures_structs
 		}
 		return export_data
 	}
 
-	import = function(import_data) {
-		new_figures = import_data.ex_figures;
+	import = function(_import_data) {
+		//new_figures = _import_data.ex_figures;
 		figures = []
-		for (i = 0; i < array_length(new_figures); i++) {
+		for (i = 0; i < array_length(_import_data.ex_figures_structs); i++) {
 			new_figure = new Figure()
-			new_figure.import(import_data.ex_figures_structs[i])
-			figures[i] = new_figure;
+			new_figure.import(_import_data.ex_figures_structs[i])
+			array_push(figures, new_figure);
 		}
 	}
 }

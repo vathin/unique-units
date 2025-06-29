@@ -53,8 +53,8 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	
 	export = function() {
 		export_data = {
-			action: WarriorAbility,
-			type: "act_ability",
+			ex_action: WarriorAbility,
+			ex_type: "act_ability",
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
 			ex_target_cell: [target_cell.xcord, target_cell.ycord],
 			ex_using_figure: undefined,

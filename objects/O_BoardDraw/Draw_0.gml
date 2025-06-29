@@ -19,7 +19,12 @@ if in_game {
 	}
 	switch game_state{
 	case STATE_LIST.wait:
-		draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
+		draw_text_transformed(main_button_x[1] + 55, main_button_y[0] + 25,
+		("Доступно:" + string(Game.game_loop_controller.figures_counter.get_summon_figures_amount(global.turn_owner))),
+		0.75, 0.75, 0);
+		if Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
+			draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
+		}
 		break;
 	case STATE_LIST.figure_action:
 		if Game.figure_action_controller.figure_can_move {

@@ -3,9 +3,9 @@
 function SummonInputController() constructor{
 	Game.game_loop_controller.state = STATE_LIST.summon
 	Game.game_loop_controller.set_can_cancel(0);
-	load_data = Game.data.load(global.turn_owner);
+	load_data = Game.user_data.load(global.turn_owner);
 	figure_to_summon = array_pop(load_data.player_figures)
-	Game.data.save(global.turn_owner, load_data)
+	Game.user_data.save(global.turn_owner, load_data)
 	//O_SummonButton.change_sprite(Behaviours.get_sprite(figure_to_summon), Settings.summon_button_figure_scale);
 	global.mark = S_Summon_mark;
 	Game.field.check_controlled_summon_cells(global.turn_owner);

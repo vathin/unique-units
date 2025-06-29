@@ -202,7 +202,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	
 	back = function() {
 		if to_x != undefined {
-			Game.field.field[to_y][to_x].set_draw_marks(1)
+			Game.field.get_cell(to_x, to_y).set_draw_marks(1)
 			to_x = undefined;
 			to_y = undefined;
 			//Game.field.block();

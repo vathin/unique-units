@@ -170,10 +170,10 @@ function GameLoopController() constructor{
 			if player1_captured >= 4 {return "player1_win"}
 			if player2_captured >= 4 {return "player2_win"}
 		}
-		if figures_counter.get_player_figures_amount("player1") == 0 and 
-		figures_counter.player1_field_figures == 0 {return "player2_win"}
-		if figures_counter.get_player_figures_amount("player2") == 0 and 
-		figures_counter.player2_field_figures == 0 {return "player1_win"}
+		if figures_counter.get_summon_figures_amount("player1") == 0 and 
+		figures_counter.get_field_figures("player1") == 0 {return "player2_win"}
+		if figures_counter.get_summon_figures_amount("player2") == 0 and 
+		figures_counter.get_field_figures("player2") == 0 {return "player1_win"}
 		if turn_timer.player_out_of_time != undefined {
 			if global.turn_owner == "player1" {return "player1_win"}
 			else {return "player2_win"}
@@ -198,9 +198,9 @@ function GameLoopController() constructor{
 			ex_player2_captured: player2_captured,
 			ex_timer_struct: turn_timer.export(),
 			ex_figures_counter_struct: figures_counter.export(),
-			ex_gamefield: Game.Field.export(),
-			ex_player1_figures: Game.data.load("player1"),
-			ex_player2_figures: Game.data.load("player2")
+			ex_gamefield: Game.field.export(),
+			ex_player1_figures: Game.user_data.load("player1"),
+			ex_player2_figures: Game.user_data.load("player2")
 		}
 		return export_data
 	}
@@ -213,25 +213,31 @@ function GameLoopController() constructor{
 		turn_timer.import(import_data.ex_timer_struct);
 		figures_counter.import(import_data.ex_figures_counter_struct);
 		Game.field.import(import_data.ex_gamefield);
-		Game.data.save("player1", import_data.ex_player1_figures);
-		Game.data.save("player2", import_data.ex_player2_figures);
+		Game.user_data.save("player1", import_data.ex_player1_figures);
+		Game.user_data.save("player2", import_data.ex_player2_figures);
 	}
 
 	import_action = function(import_struct) {
 		clear_all();
 		global.turn_owner = import_struct.ex_turn_owner;
-		if import_struct.ex_type == "act_ability" {
+		switch import_struct.ex_type{
+		case "act_ability":
 			action = new import_struct.ex_action(import_struct.ex_using_figure, import_struct.ex_using_cell);
 			action.import(import_struct);
-		}
-		else if import_struct.ex_type == "move_ability" {
+			break;
+		case "move_ability": 
 			action = new import_struct.ex_action(import_struct.ex_from_x, import_struct.ex_from_y, 
 			import_struct.ex_to_x, import_struct.ex_to_y, undefined);
-			action.import();
-		}
-		else if import_struct.ex_type == "summon" {
+			action.import(import_struct);
+			break;
+		case "summon": 
 			action = new import_struct.ex_action(import_struct.ex_target_x, import_struct.ex_target_y, undefined);
-			action.import();
+			action.import(import_struct);
+			break;
+		case "get_field_figure":
+			action = new import_struct.ex_action();
+			action.import(import_struct);
+			break;
 		}
 		end_move();
 	}

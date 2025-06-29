@@ -31,16 +31,14 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	//change_move_button_to_summon();
 	
 	execute = function() {
-		global.moving_figure = 1;
-		Game.field.get_cell(to_x, to_y).fill(using_figure, 1);
-		Game.field.get_cell(from_x, from_y).clear();
+		//global.moving_figure = 1;
 		if using_ability {
 			//using_figure.start_move_animation(Game.field.get_cell(to_x, to_y), Settings.move_animation_length)
-			using_figure.state.is_active = 0;
-			using_figure.state.is_dropped = 1;
 			using_figure.drop()
 			target_cell.filled_figure.drop()
 		}
+		Game.field.get_cell(to_x, to_y).fill(using_figure, 1);
+		Game.field.get_cell(from_x, from_y).clear();
 	}
 	
 	draw = function() {
@@ -51,7 +49,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				//draw_sprite_ext(S_Back_Action_Target, 0, target_cell.x, target_cell.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			}
 		}
-		if global.moving_figure and draw_previous_cell{
+		if target_cell == undefined and draw_previous_cell{
 			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
 			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			if using_figure.previous_move_cell.marked {using_figure.previous_move_cell.marked = 0}
@@ -117,8 +115,6 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				global.cell_click_callback = Game.field.get_cell(to_x, to_y);
 				Game.field.check_clear_move_cells(from_x, from_y);
 				change_move_button_to_summon();
-				global.using_ability = 0;
-				global.moving_figure = 1;
 				Game.game_loop_controller.state = STATE_LIST.figure_move
 				Game.field.get_cell(to_x, to_y).set_draw_marks(0);
 			}
@@ -141,8 +137,8 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		if (target_cell != undefined) {ex_target_cell_cord = [target_cell.xcord, target_cell.ycord]}
 		else {ex_target_cell_cord = [undefined, undefined]}
 		export_data = {
-			action: WarriorMoveAndAbility,
-			type: "move_action",
+			ex_action: WarriorMoveAndAbility,
+			ex_type: "move_action",
 			ex_from_x: from_x,
 			ex_from_y: from_y,
 			ex_to_x: to_x,
@@ -156,5 +152,11 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	import = function(_import_data) {
 		using_ability = _import_data.ex_using_ability;
 		target_cell = Game.field.get_cell(_import_data.target_cell[0], _import_data.target_cell[1]);
+		to_x = _import_data.ex_to_x;
+		to_y = _import_data.ex_to_y;
+		from_x = _import_data.ex_from_x;
+		from_y =  _import_data.ex_from_y;
+		using_cell = Game.field.get_cell(from_x, from_y);
+		using_figure = using_cell.filled_figure;
 	}
 }

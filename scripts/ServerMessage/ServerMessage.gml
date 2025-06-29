@@ -37,7 +37,7 @@ function ServerMessage(_type="Unknown", _data={}) constructor {
 	static Parse = function(_text) {
 		var json = json_parse(_text);
 		var msg = new ServerMessage(json.type);
-		msg.data = json.data;
+		msg.user_data = json.user_data;
 		msg.ID = json.ID;
 		msg.reqid = json.reqid;
 		return msg;

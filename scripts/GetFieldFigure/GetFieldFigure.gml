@@ -3,10 +3,14 @@
 function GetFieldFigure() constructor{
 	O_BoardDraw.block_end_button();
 	Game.field.can_cancel = 0;
-	target = undefined
+	target = undefined;
+	
 	execute = function() {
 		target.filled_figure.capture();
-		global.cell_click_callback.clear();
+		place = Game.field.get_place("capture", 
+		Game.game_loop_controller.get_opponent(target.filled_figure.owner));
+		place.add_figure(target.filled_figure);
+		target.clear();
 	}
 	
 	set_target = function(new_target) {
@@ -15,4 +19,16 @@ function GetFieldFigure() constructor{
 	}
 	
 	draw = function() {}
+	
+	export = function() {
+		export_data = {
+			ex_action: GetFieldFigure,
+			ex_type: "get_field_figure",
+			ex_target: [target.xcord, target.ycord]
+		}
+	}
+	
+	import = function(_import_data) {
+		target = Game.field.get_cell(_import_data.ex_target[0], _import_data.ex_target[1]);
+	}
 }

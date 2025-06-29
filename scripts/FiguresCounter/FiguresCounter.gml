@@ -12,16 +12,16 @@ function FiguresCounter() constructor {
 	}
 
 	get_field_figures = function(player) {
-		if player = "player1" {return player1_field_figures}
+		if player == "player1" {return player1_field_figures}
 		else {return player2_field_figures}
 	}
 	
 	get_player_figures_amount = function(player) {
-		return array_length(Game.data.load(player).player_figures);
+		return array_length(Game.user_data.load(player).player_figures);
 	}
 
 	change_field_figures_amount = function(player, amount) {
-		if player = "player1" {player1_field_figures += amount}
+		if player == "player1" {player1_field_figures += amount}
 		else {player2_field_figures += amount}
 	}
 
@@ -40,7 +40,7 @@ function FiguresCounter() constructor {
 	}
 
 	update_turn = function() {
-		current_player_figures = array_length(Game.data.load(global.turn_owner).player_figures);
+		current_player_figures = array_length(Game.user_data.load(global.turn_owner).player_figures);
 		if current_player_figures <= 0 or (get_field_figures(global.turn_owner) >= Settings.max_field_figures){
 			Game.game_loop_controller.get_player(global.turn_owner).able_to_summon = 0
 		}
@@ -51,7 +51,7 @@ function FiguresCounter() constructor {
 	}
 
 	get_summon_figures_amount = function(player) {
-		if player = "player1" {
+		if player == "player1" {
 			if get_player_figures_amount(player) < Settings.max_field_figures - player1_field_figures {return get_player_figures_amount(player)}
 			else {return Settings.max_field_figures - player1_field_figures}}
 		else {

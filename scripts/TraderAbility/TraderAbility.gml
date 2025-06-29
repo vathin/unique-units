@@ -22,7 +22,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	create_buttons = function() {
 		Game.game_loop_controller.set_can_cancel(0);
-		load_data = Game.data.load(using_figure.owner);
+		load_data = Game.user_data.load(using_figure.owner);
 		for (i = 0; i < 3; i ++) {
 			//new_button = instance_create_depth(figure_button_x, figure_button_y, 0, O_TraderAbilityButton);
 			//new_button.set_sprite(array_pop(load_data.player_figures));
@@ -33,7 +33,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		
 		figure_button_x = room_width/2 - figure_button_x_offset
 		
-		Game.data.save(using_figure.owner, load_data);
+		Game.user_data.save(using_figure.owner, load_data);
 	}
 	
 	TEST_draw_buttons = function() {
@@ -100,7 +100,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 
 	check_ability_targets = function(a, b) {
 		Game.field.check_controlled_summon_cells(global.turn_owner);
-		load_data = Game.data.load(global.turn_owner);
+		load_data = Game.user_data.load(global.turn_owner);
 		if array_length(load_data.player_figures) < 3 and !global.using_ability{
 			Game.field.clear_all_marks();
 		}
