@@ -42,7 +42,7 @@ function Field() constructor{
 					draw_set_alpha(1);
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
-					draw_sprite_ext(S_Summon_mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
+					draw_sprite_ext(global.mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				}
 			}
 		}
@@ -209,13 +209,37 @@ function Field() constructor{
 			}
 		}
 	}
+	
+	get_player_field_figures = function(_owner) {
+		field_figures = []
+		for (i = 0; i < field_width; i++) {
+			for (m = 0; m < field_height; m++) {
+				cell = get_cell(m, i);
+				if cell.is_filled() and cell.filled_figure.owner == _owner {
+					array_push(field_figures, cell.filled_figure)
+				}
+			}
+		}
+		return field_figures
+	}
+	
+	get_active_player_field_figures = function(_owner) {
+		figures = get_player_field_figures(_owner);
+		active_figures = [];
+		for (i = 0; i < array_length(figures); i++) {
+			if figures[i].state.is_active {
+				array_push(active_figures, figures[i]);
+			}
+		}
+		return active_figures
+	}
 
-	get_filled_cells = function(player) {
+	get_filled_cells = function(_player) {
 		cells = [];
 		for (i = 0; i < field_width; i++) {
 			for (m = 0; m < field_height; m++) {
 				cell = get_cell(m, i)
-				if cell.is_filled() and cell.filled_figure.owner = player{
+				if cell.is_filled() and cell.filled_figure.owner == _player{
 					array_push(cells, cell);
 				}
 			}

@@ -51,7 +51,7 @@ function Figure() constructor{
 				clear_previous_ability_cell();
 			}
 		}
-		else {previous_ability_counter --}
+		else {previous_ability_counter--}
 		if !instance_exists(previous_ability_target) or previous_ability_target.state.is_dropped {
 			clear_previous_ability_cell()
 		}

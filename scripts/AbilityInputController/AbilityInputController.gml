@@ -32,10 +32,6 @@ function AbilityInputController() constructor{
 	ability = new create_ability(using_figure, global.selected_cell);
 	ability.check_ability_targets(1, 1);
 
-	if Game.game_loop_controller.can_cancel {
-		
-	}
-
 	back = function() {
 		if Game.game_loop_controller.can_cancel {
 			Game.field.clear_all_marks();

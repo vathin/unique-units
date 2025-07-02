@@ -72,6 +72,12 @@ function GameLoopController() constructor{
 			show_message(check_win_conditions());
 			game_end();
 		}
+		if figures_counter.get_summon_figures_amount(global.turn_owner) == 0 and
+		Game.field.get_active_player_field_figures(global.turn_owner) == 0 {
+			//пропуск хода
+			global.turn_owner = get_opponent(global.turn_owner);
+		}
+		mark_active_figures();
 	}
 
 	set_action = function(new_action) {
@@ -92,12 +98,15 @@ function GameLoopController() constructor{
 	}
 
 	choose_cell_for_summon = function() {
+		global.cell_click_callback.filled_figure_status.set_status("will_be_summoned", 1)
 		if global.selected_cell == undefined {
 			global.cell_click_callback.marked = 0;
+			
 			global.selected_cell = global.cell_click_callback;
 			Game.summon_controller.start_summon(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 		}
 		else {
+			global.selected_cell.filled_figure_status.set_status("will_be_summoned", 0)
 			global.selected_cell.marked = 1;
 			global.selected_cell = global.cell_click_callback;
 			global.cell_click_callback.marked = 0;
@@ -107,6 +116,14 @@ function GameLoopController() constructor{
 	cancel_action = function() {
 			clear_all();
 			figures_counter.update_turn();
+	}
+	
+	mark_active_figures = function() {
+		cells = Game.field.get_filled_cells(global.turn_owner)
+		for (i = 0; i < array_length(cells); i++) {
+			if cells[i].filled_figure.state.is_active {cells[i].marked = 1}
+		}
+		global.mark = S_Controlled_mark;
 	}
 
 	quit_from_action = function() {
@@ -157,11 +174,12 @@ function GameLoopController() constructor{
 		global.selected_cell = undefined;
 		Game.field.clear_all_marks();
 		global.cell_click_callback = undefined;
-		set_can_cancel(0)
+		set_can_cancel(0);
 		global.cell_action = default_cell_click_action;
 		action = undefined;
 		global.able_to_summon = false;
-		state = STATE_LIST.wait
+		state = STATE_LIST.wait;
+		mark_active_figures();
 	}
 
 	check_win_conditions = function() {
@@ -177,6 +195,16 @@ function GameLoopController() constructor{
 		if turn_timer.player_out_of_time != undefined {
 			if global.turn_owner == "player1" {return "player1_win"}
 			else {return "player2_win"}
+		}
+		out_of_figures = 0
+		if figures_counter.get_summon_figures_amount("player1") == 0 and 
+		Game.field.get_active_player_field_figures("player1") == 0 {out_of_figures++}
+		if figures_counter.get_summon_figures_amount("player2") == 0 and 
+		Game.field.get_active_player_field_figures("player2") == 0 {out_of_figures++}
+		if out_of_figures == 2 {
+			if player1_captured > player2_captured {return "player1_win"}
+			if player2_captured > player1_captured {return "player2_win"}
+			if player1_captured == player2_captured {return "draw"}
 		}
 	
 		return undefined

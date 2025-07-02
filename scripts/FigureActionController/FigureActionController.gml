@@ -50,13 +50,13 @@ function FigureActionController() constructor{
 				global.moving_figure = 0;
 				global.using_ability = 1;
 				Game.game_loop_controller.action.using_ability = 1;
-				Game.field.clear_all_marks();
 				global.mark = S_Ability_mark;
-				Game.game_loop_controller.action.check_ability_targets(1, 1);
 				Game.game_loop_controller.state = STATE_LIST.figure_ability;
 				Game.ability_input_controller = new AbilityInputController();
 				Game.ability_input_controller = undefined;
 				O_BoardDraw.block_end_button();
+				Game.field.clear_all_marks();
+				Game.game_loop_controller.action.check_ability_targets(1, 1);
 			}
 			destroy_self();
 		}

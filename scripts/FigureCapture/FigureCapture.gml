@@ -8,6 +8,9 @@ function FigureCapture() {
 	for (i = 0; i < array_length(cell_array); i++) {
 		cell_array[i].marked = 1
 	}
+	if !Game.field.is_any_cell_marked() {
+		
+	}
 	global.cell_action = function(cell){
 		if cell.marked {
 			if global.cell_click_callback != undefined{global.cell_click_callback.set_draw_marks(1)}

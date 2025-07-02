@@ -6,7 +6,7 @@ game_state = undefined
 main_button_x = [room_width/2-40, room_width/2+40];
 main_button_y = [room_height/1.25-40, room_height/1.25+40];
 end_button_x = [room_width/2-55, room_width/2 + 50];
-end_button_y = [room_height/1.25, room_height/1.25+80];
+end_button_y = [room_height/1.25+35, room_height/1.25+80];
 move_button_x = [room_width/2-100, room_width/2 -40];
 move_button_y = [room_height/1.25-30, room_height/1.25+30];
 ability_button_x = [room_width/2+55, room_width/2 +115];
@@ -21,6 +21,7 @@ figure_click = function(_figure) {
 			game_state = Game.game_loop_controller.get_game_state()
 			if game_state == STATE_LIST.wait {
 				global.selected_cell = global.cell_click_callback;
+				Game.field.clear_all_marks();
 				Game.figure_action_controller = new FigureActionController()
 			}
 			else{
@@ -28,7 +29,7 @@ figure_click = function(_figure) {
 					if Game.game_loop_controller.have_action() {
 						Game.game_loop_controller.action.set_new_target_coordinates(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 					}
-					else {
+					else if (Game.move_input_controller != undefined){
 						Game.move_input_controller.start_move(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 					}
 				}

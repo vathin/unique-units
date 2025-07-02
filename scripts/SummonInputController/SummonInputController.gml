@@ -2,6 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function SummonInputController() constructor{
 	Game.game_loop_controller.state = STATE_LIST.summon
+	Game.field.clear_all_marks();
 	Game.game_loop_controller.set_can_cancel(0);
 	load_data = Game.user_data.load(global.turn_owner);
 	figure_to_summon = array_pop(load_data.player_figures)

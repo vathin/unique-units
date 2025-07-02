@@ -1,6 +1,7 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Cell() constructor{
+	filled_figure_status = new FilledFigureStatus();
 	standart_scale = 1;
 	can_be_conquested = false;
 	draw_mark = true;
@@ -9,46 +10,46 @@ function Cell() constructor{
 	xcord = 0;
 	ycord = 0;
 	
-	set_coordinates = function(new_xcord, new_ycord) {
-		xcord = new_xcord;
-		ycord = new_ycord;
+	set_coordinates = function(_new_xcord, _new_ycord) {
+		xcord = _new_xcord;
+		ycord = _new_ycord;
 	}
 	
 	get_coordinates = function() {
 		return [xcord, ycord]
 	}
 	
-	set_draw_marks = function(value) 
+	set_draw_marks = function(_value) 
 	{
-		draw_mark = value
+		draw_mark = _value
 	}
 	
 	is_marked = function() {
-		if marked return true
-		else return false
+		return marked;
 	}
 	
 	clear = function() 
 	{
 		filled_figure = undefined;
+		filled_figure_status.start();
 	}
 	
-	fill = function(new_figure) 
+	fill = function(_new_figure) 
 	{
-		filled_figure = new_figure
+		filled_figure = _new_figure
 	}
 	
 	is_filled = function() {
 		return filled_figure != undefined
 	}
 
-	is_under_control = function(player) {
+	is_under_control = function(_player) {
 		result = false
 		neightbors = Game.field.cell_get_neightbors(self);
 		for (i = 0; i < array_length(neightbors); i++) {
 			if neightbors[i].is_filled() {
-				if neightbors[i].filled_figure.owner = player {
-					result = 1
+				if neightbors[i].filled_figure.owner = _player {
+					result = 1;
 				}
 			}
 		}
@@ -89,16 +90,16 @@ function Cell() constructor{
 		return export_data
 	}
 
-	import = function(import_data) {
+	import = function(_import_data) {
 		clear();
-		can_be_conquested = import_data.ex_can_be_conquested;
-		ex_draw_mark = import_data.ex_draw_mark;
-		if import_data.ex_filled_figure_struct != undefined {
+		can_be_conquested = _import_data.ex_can_be_conquested;
+		ex_draw_mark = _import_data.ex_draw_mark;
+		if _import_data.ex_filled_figure_struct != undefined {
 			//create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
 			filled_figure = new Figure()
-			filled_figure.behaviour = import_data.ex_filled_figure_struct.ex_behaviour
+			filled_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour
 			Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
-			filled_figure.import(import_data.ex_filled_figure_struct);
+			filled_figure.import(_import_data.ex_filled_figure_struct);
 		}
 	}
 }

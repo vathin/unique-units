@@ -105,18 +105,20 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				O_BoardDraw.block_end_button();
 			}
 			else {
-				Game.figure_action_controller = new FigureActionController()
+				Game.figure_action_controller = new FigureActionController();
 				Game.figure_action_controller.revert_move_and_ability();
 				Game.figure_action_controller.move_and_ability = 1;
 				Game.figure_action_controller.figure_can_move = 0;
 				using_ability = 0;
 				if target_cell != undefined {target_cell.set_draw_marks(1)}
 				target_cell = undefined;
+				O_BoardDraw.unblock_end_button();
 				global.cell_click_callback = Game.field.get_cell(to_x, to_y);
 				Game.field.check_clear_move_cells(from_x, from_y);
-				change_move_button_to_summon();
-				Game.game_loop_controller.state = STATE_LIST.figure_move
 				Game.field.get_cell(to_x, to_y).set_draw_marks(0);
+				move_controller = new MoveInputController();
+				move_controller = undefined;
+				Game.game_loop_controller.state = STATE_LIST.figure_action
 			}
 		}
 		else {
