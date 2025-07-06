@@ -124,12 +124,13 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		else {
 			if to_x != undefined {
 				Game.field.get_cell(to_x, to_y).set_draw_marks(1)
+				Game.figure_action_controller.figure_have_ability = 0;
 				to_x = undefined;
 				to_y = undefined;
-				Game.figure_action_controller.figure_have_ability = 1;
+				O_BoardDraw.block_end_button();
 			}
 			else {
-				Game.figure_action_controller = undefined
+				Game.figure_action_controller.destroy_self();
 				Game.game_loop_controller.quit_from_action();
 			}
 		}
