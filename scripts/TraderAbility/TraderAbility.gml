@@ -52,21 +52,19 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	TEST_buttons_check = function() {
 		if mouse_check_button_pressed(mb_left) {
 			if target_cell != undefined {
-				if mouse_y > figure_button_y - 45 and mouse_y < figure_button_y + 45 {
-					if mouse_x > figure_button_x - 45 and mouse_x < figure_button_x + 45 {
+				if mouse_y > figure_button_y - 25 and mouse_y < figure_button_y + 45 {
+					if mouse_x > figure_button_x - 40 and mouse_x < figure_button_x + 50 {
 						chosen_button = 0;
-						O_BoardDraw.unblock_end_button();
 					} 
-					if mouse_x > figure_button_x - 45 + figure_button_x_offset and
-					mouse_x < figure_button_x + 45 + figure_button_x_offset {
+					if mouse_x > figure_button_x - 40 + figure_button_x_offset and
+					mouse_x < figure_button_x + 50 + figure_button_x_offset {
 						chosen_button = 1;
-						O_BoardDraw.unblock_end_button();
 					} 
-					if mouse_x > figure_button_x - 45 + 2*figure_button_x_offset and 
-					mouse_x < figure_button_x + 45 + 2*figure_button_x_offset{
+					if mouse_x > figure_button_x - 40 + 2*figure_button_x_offset and 
+					mouse_x < figure_button_x + 50 + 2*figure_button_x_offset{
 						chosen_button = 2;
-						O_BoardDraw.unblock_end_button();
 					} 
+					if chosen_button != undefined {O_BoardDraw.unblock_end_button()}
 				}
 			}
 		}

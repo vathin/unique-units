@@ -12,7 +12,8 @@ move_button_y = [room_height/1.25-30, room_height/1.25+30];
 ability_button_x = [room_width/2+55, room_width/2 +115];
 ability_button_y = [room_height/1.25-30, room_height/1.25+30];
 drop_cord = [room_width/2 - 250, room_height/2-40];
-capture_cord = [room_width/2 + 195, room_height/2-40]
+capture_cord = [room_width/2 + 195, room_height/2-40];
+turn_owner_cord = [room_width/1.85, room_height/6.45];
 end_button = false
 
 
@@ -73,6 +74,11 @@ figure_counters_draw = function() {
 	capture_draw();
 	draw_text_transformed(drop_cord[0], drop_cord[1], "СБРОС", 0.55, 0.55, 0);
 	draw_text_transformed(capture_cord[0], capture_cord[1], "ПЛЕН", 0.55, 0.55, 0);
+}
+
+turn_owner_draw = function() {
+	draw_text_transformed(turn_owner_cord[0], turn_owner_cord[1], 
+	("Ход игрока " + string_char_at(global.turn_owner, string_length(global.turn_owner))), 0.65, 0.65, 0);
 }
 
 Start_match()
