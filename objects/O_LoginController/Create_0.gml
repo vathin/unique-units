@@ -86,7 +86,7 @@ Server.add_reaction(function(msg)
 	{
 		reason = "succsessfull registration"
 	}
-	else if msg_type == ServerMessageType.RegistrationRefuse
+	else if msg.type == ServerMessageType.RegistrationRefuse
 	{
 		reason = msg.data.description
 	}

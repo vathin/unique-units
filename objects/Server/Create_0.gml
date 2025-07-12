@@ -19,11 +19,6 @@ disconnected_callback = function() {
 connected_callback = function() {
 	show_debug_message("connected");
 	connected = true;
-	
-	send(new ServerMessage(ServerMessageType.Login, {
-		email: "vishnya@yandex.ru",
-		password: "12345678"
-	}))
 }
 connect_failure_callback = function() {
 	show_debug_message("connect failure!")
