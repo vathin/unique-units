@@ -11,7 +11,15 @@ if active
 }
 
 if logged_in {
-	draw_set_font(F_turn_timer)
-	draw_text(50, 50, _nickname)
+	if room == R_Main_menu {
+		invite_button_draw();
+		invite_button_check();
+		draw_set_font(F_turn_timer)
+		draw_text(50, 50, _nickname)
+	}
+	if room == R_Invite {
+		invite_cancel_button_draw();
+		invite_cancel_button_check();
+	}
 }
 
