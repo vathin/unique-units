@@ -116,19 +116,20 @@ get_text_data = function() {
 	_password = PasswordTextField.get_text()
 }
 
-//login 123456789
-//email dadada@1234.com
-//passsword 123456789
+//test3
+//test3@a
+//test3
 
-//123123123
-//sabaka@yemail.com
-//1234aa
+//test4
+//test4@a
+//test4
 
 Server.add_reaction(function(msg)
 {
 	if msg.type == ServerMessageType.LoginAccept {
 		logged_in = true
 		close_window()
+		show_debug_message(msg.data);
 	}
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
@@ -136,7 +137,8 @@ Server.add_reaction(function(msg)
 	}
 	else if msg.type == ServerMessageType.RegistrationAccept
 	{
-		reason = "succsessfull registration"
+		reason = "succsessfull registration";
+		logged_in = 1;
 		close_window();
 	}
 	else if msg.type == ServerMessageType.RegistrationRefuse
@@ -150,8 +152,10 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.InviteCancelled {
 		room_goto(R_Main_menu)
 		reason = "ошибка";
+		show_debug_message(msg.data)
 	}
 	else if msg.type == ServerMessageType.InviteCancel {
-		//room_goto(R_Invite)
+		//room_goto(R_Main_menu);
+		reason = "отмена";
 	}
 })
