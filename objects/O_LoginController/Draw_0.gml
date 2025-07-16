@@ -16,6 +16,10 @@ if logged_in {
 		invite_button_check();
 		draw_set_font(F_turn_timer)
 		draw_text(50, 50, _nickname)
+		if invited {
+			invite_accept_window_draw();
+			invite_accept_window_check();
+		}
 	}
 	if room == R_Invite {
 		invite_cancel_button_draw();

@@ -9,6 +9,7 @@ logged_in = false;
 active = false;
 reason = "";
 enemy = undefined;
+invited = false;
 
 login_x = login_window_x-x_offset;
 login_y = login_window_y-75-y_offset;
@@ -64,14 +65,14 @@ invite_button_check = function() {
 	and mouse_x < room_width - 415 + 340 
 	and mouse_y > 40 and mouse_y < 125 {
 		if invite_text_field != undefined and invite_text_field.get_text() != ""{
-			Server.send(new ServerMessage(ServerMessageType.Invite, {reciever: invite_text_field.get_text()}));
+			Server.send(new ServerMessage(ServerMessageType.Invite, {reciever: invite_text_field.get_text(), sender: _id}));
 			enemy = invite_text_field.get_text();
 			instance_destroy(invite_text_field);
 			invite_text_field = undefined;
 			room_goto(R_Invite);
 		}
 		else {
-			invite_text_field = instance_create_depth(room_width - 215, 225, -1, O_TextInputField);
+			invite_text_field = instance_create_depth(room_width - 215, 185, -1, O_TextInputField);
 			reason = "";
 		}
 		}
@@ -88,16 +89,49 @@ invite_cancel_button_draw = function() {
 invite_cancel_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
 	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
-		Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _nickname, reciever: enemy}));
+		Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
 		enemy = undefined;
 		room_goto(R_Main_menu);
 	}
 }
 
-create_window()
-_nickname = undefined
-_email = undefined
-_password = undefined
+invite_accept_window_draw = function() {
+	window_x = room_width - 415;
+	window_y = 220
+	draw_set_alpha(0.35);
+	draw_set_font(F_test);
+	draw_rectangle(window_x, window_y, window_x + 340, window_y + 200, 0);
+	draw_rectangle_color(window_x + 20, window_y + 120, window_x + 155, window_y + 160, c_lime, c_lime, c_lime, c_lime, 0);
+	draw_rectangle_color(window_x + 185, window_y + 120, window_x + 320, window_y + 160, c_red, c_red, c_red, c_red, 0);
+	draw_set_alpha(1);
+	draw_set_halign(fa_center);
+	draw_text(window_x + 170, window_y + 10, "ПРИГЛАШЕНИЕ В ИГРУ");
+	draw_text(window_x + 170, window_y + 50, "ОТ: " + string(enemy));
+	draw_text(window_x + 87, window_y + 122, "принять");
+	draw_text(window_x + 253, window_y + 122, "отклонить");
+	draw_set_halign(fa_left);
+}
+
+invite_accept_window_check = function() {
+	if mouse_check_button_pressed(mb_left) {
+		window_x = room_width - 415;
+		window_y = 220;
+		if mouse_x > window_x + 20 and mouse_x < window_x + 155 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
+			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: _id}));
+			invited = 0;
+		}
+		else if mouse_x > window_x + 185 and mouse_x < window_x + 320 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
+			Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id}));
+			invited = 0;
+		}
+	}
+}
+
+create_window();
+_nickname = undefined;
+_email = undefined;
+_password = undefined;
+_id = undefined;
 
 send_data = function(type) {
 	show_debug_message(type)
@@ -129,7 +163,8 @@ Server.add_reaction(function(msg)
 	if msg.type == ServerMessageType.LoginAccept {
 		logged_in = true
 		close_window()
-		show_debug_message(msg.data);
+		show_debug_message(msg.data.playerData.id);
+		_id = msg.data.playerData.id;
 	}
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
@@ -139,6 +174,8 @@ Server.add_reaction(function(msg)
 	{
 		reason = "succsessfull registration";
 		logged_in = 1;
+		show_debug_message(msg.data.playerData.id);
+		_id = msg.data.playerData.id;
 		close_window();
 	}
 	else if msg.type == ServerMessageType.RegistrationRefuse
@@ -157,5 +194,11 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.InviteCancel {
 		//room_goto(R_Main_menu);
 		reason = "отмена";
+	}
+	else if msg.type == ServerMessageType.Invite {
+		if msg.data.invite.sender != _id {
+			enemy = msg.data.invite.sender;
+			invited = 1;
+		}
 	}
 })
