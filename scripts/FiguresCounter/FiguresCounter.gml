@@ -12,7 +12,7 @@ function FiguresCounter() constructor {
 	}
 
 	get_field_figures = function(player) {
-		if player == "player1" {return player1_field_figures}
+		if player == Game.Player1.player_id {return player1_field_figures}
 		else {return player2_field_figures}
 	}
 	
@@ -21,7 +21,7 @@ function FiguresCounter() constructor {
 	}
 
 	change_field_figures_amount = function(player, amount) {
-		if player == "player1" {player1_field_figures += amount}
+		if player == Game.Player1.player_id {player1_field_figures += amount}
 		else {player2_field_figures += amount}
 	}
 
@@ -51,7 +51,7 @@ function FiguresCounter() constructor {
 	}
 
 	get_summon_figures_amount = function(player) {
-		if player == "player1" {
+		if player == Game.Player1.player_id {
 			if get_player_figures_amount(player) < Settings.max_field_figures - player1_field_figures {return get_player_figures_amount(player)}
 			else {return Settings.max_field_figures - player1_field_figures}}
 		else {

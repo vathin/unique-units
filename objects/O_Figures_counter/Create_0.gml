@@ -10,7 +10,7 @@ add_figure_to_capture = function(new_figure, owning_cell) {
 }
 
 get_field_figures = function(player) {
-	if player = "player1" {return player1_field_figures}
+	if player = Game.Player1.player_id {return player1_field_figures}
 	else {return player2_field_figures}
 }
 get_player_figures_amount = function(player) {
@@ -18,7 +18,7 @@ get_player_figures_amount = function(player) {
 }
 
 change_field_figures_amount = function(player, amount) {
-	if player = "player1" {player1_field_figures += amount}
+	if player = Game.Player1.player_id {player1_field_figures += amount}
 	else {player2_field_figures += amount}
 }
 
@@ -28,7 +28,7 @@ update_captured_figures_array = function() {
 			capture_figure = array_pop(figures_to_capture);
 			capture_figure[0].alarm[2] = Settings.move_animation_length+1;
 			capture_figure[0].state.is_active = 0;
-			if capture_figure[0].owner == "player1" {O_GameLoopController.player2_captured ++}
+			if capture_figure[0].owner == Game.Player1.player_id {O_GameLoopController.player2_captured ++}
 			else {O_GameLoopController.player1_captured ++}
 			capture_figure[1].clear();
 		}
@@ -44,7 +44,7 @@ update_turn = function() {
 }
 
 get_summon_figures_amount = function(player) {
-	if player = "player1" {
+	if player = Game.Player1.player_id {
 		if get_player_figures_amount(player) < Settings.max_field_figures - player1_field_figures {return get_player_figures_amount(player)}
 		else {return Settings.max_field_figures - player1_field_figures}}
 	else {

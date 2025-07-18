@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"Start_online_match",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Start_online_match",
+  "parent":{
+    "name":"Game",
+    "path":"folders/Scripts/Game.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

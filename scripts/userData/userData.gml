@@ -13,7 +13,7 @@ function userData() constructor {
 	
 	
 	load = function(player) {
-		if player = "player1" {
+		if player = Game.Player1.player_id {
 			try {
 				file = file_text_open_read("player1_data.json");
 				data = json_parse(file_text_read_string(file))
@@ -24,7 +24,7 @@ function userData() constructor {
 				return standart_data_struct
 			}
 		}
-		if player = "player2" {
+		if player = Game.Player2.player_id {
 			try {
 				file = file_text_open_read("player2_data.json");
 				data = json_parse(file_text_read_string(file))
@@ -39,22 +39,22 @@ function userData() constructor {
 	}
 	
 	save = function(player, data_struct) {
-		if player = "player1" {
+		if player = Game.Player1.player_id {
 				file = file_text_open_write("player1_data.json");
 				data = json_stringify(data_struct);
 				file_text_write_string(file, data)
 				file_text_close(file);
 		}
-		if player = "player2" {
+		if player = Game.Player2.player_id {
 				file = file_text_open_write("player2_data.json");
 				data = json_stringify(data_struct);
 				file_text_write_string(file, data)
 				file_text_close(file);
 		}
 	}
-	save("player1", standart_data_struct);
+	save(Game.Player1.player_id, standart_data_struct);
 	randomize();
 	standart_data_struct.player_figures = array_shuffle(standart_data_struct.player_figures)
-	save("player2", standart_data_struct);
+	save(Game.Player2.player_id, standart_data_struct);
 
 }

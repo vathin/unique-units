@@ -10,10 +10,10 @@ function Field() constructor{
 	field_x_size = size*field_width;
 	field_y_size = size*field_width;
 	selected_cell = undefined;
-	player1_captured = new CapturedFiguresCounter("Player1");
-	player2_captured = new CapturedFiguresCounter("Player2");
-	player1_dropped = new DroppedFiguresCounter("Player1");
-	player2_dropped = new DroppedFiguresCounter("Player2")
+	player1_captured = new CapturedFiguresCounter(Game.Player1.player_id);
+	player2_captured = new CapturedFiguresCounter(Game.Player2.player_id);
+	player1_dropped = new DroppedFiguresCounter(Game.Player1.player_id);
+	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id)
 	
 	
 	set_selected_cell = function(cell) {
@@ -26,6 +26,10 @@ function Field() constructor{
 			cell_array[i][m] = new Cell()
 			cell_array[i][m].set_coordinates(m, i)
 		}
+	}
+	update_cords = function() {
+		start_x = (room_width/2) - size*2.5;
+		start_y = (room_height/2) - size*3;
 	}
 	
 	TEST_draw_cells = function() {
@@ -107,7 +111,7 @@ function Field() constructor{
 			for (m = 0; m < field_width; m++) {
 				cell = cell_array[m][i]
 				if !cell.is_filled() {
-					if player = "player1" {
+					if player = Game.Player1.player_id {
 						if m > 2 {
 							is_on_player_side = 1
 						}
@@ -182,7 +186,7 @@ function Field() constructor{
 
 	get_place = function(type, player) {
 		if type = "drop" {
-			if player = "player1" {
+			if player = Game.Player1.player_id {
 				return player1_dropped;
 			}
 			else {
@@ -190,7 +194,7 @@ function Field() constructor{
 			}
 		}
 		if type = "capture" {
-			if player = "player1" {
+			if player = Game.Player1.player_id {
 				return player1_captured;
 			}
 			else {

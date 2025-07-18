@@ -53,25 +53,25 @@ function Timer() constructor{
 	}
 
 	add_player_time_bank = function(value, player) {
-		if player == "player1" and player1_time_bank < max_time_bank{
+		if player == Game.Player1.player_id and player1_time_bank < max_time_bank{
 			player1_time_bank += value
 			if player1_time_bank > max_time_bank {player1_time_bank = max_time_bank}
 		}
-		if player == "player2" and player2_time_bank < max_time_bank{
+		if player == Game.Player2.player_id and player2_time_bank < max_time_bank{
 			player2_time_bank += value
 			if player2_time_bank > max_time_bank {player2_time_bank = max_time_bank}
 		}
 	}
 
 	get_player_time_bank = function(player) {
-		if player == "player1" {return player1_time_bank}
+		if player == Game.Player1.player_id {return player1_time_bank}
 		else {return player2_time_bank}
 	}
 	use_time_bank = function(player) {
-		if player == "player1"{
+		if player == Game.Player1.player_id{
 			player1_time_bank--;
 		}
-		if player == "player2"{
+		if player == Game.Player2.player_id{
 			player2_time_bank--;
 		}
 		if !using_time_bank {using_time_bank = 1}

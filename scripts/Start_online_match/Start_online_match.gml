@@ -1,6 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function Start_match(){
+function Start_online_match(_server_id, _enemy, _role){
 	global.cell_click_callback = undefined;
 	global.selected_cell = undefined;
 	global.able_to_summon = false;
@@ -9,11 +9,9 @@ function Start_match(){
 	global.figure_to_summon = undefined;
 	global.map = "map1";
 	
-	//#macro Game global.game
-	//Game = undefined
-	//Game = new GameClass()
-	///Game.init()
-	//O_BoardDraw.in_game = true
+	#macro Game global.game
+	Game = undefined;
+	Game = new GameClass();
+	Game.start_online(_server_id, _enemy, _role);
 	
-
 }

@@ -14,7 +14,7 @@ previous_move_counter = 0;
 standart_scale = Settings.figure_scale;
 
 
-if owner = "player1" {
+if owner = Game.Player1.player_id {
 	image_index = 0;
 }
 else {
@@ -31,7 +31,7 @@ set_behaviour = function(new_behaviour) {
 	sprite_index = Behaviours.get_sprite(behaviour);
 }
 update_stats = function() {
-	if owner == "player1" {
+	if owner == Game.Player1.player_id {
 		image_index = 0;
 	}
 	else {

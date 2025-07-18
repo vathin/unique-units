@@ -11,7 +11,7 @@ get_new_figure = function(player) {
 		load_data = O_App.data.load(player);
 		behaviour = array_pop(load_data.player_figures);
 		O_App.data.save(player, load_data);
-		if player = "player1" {captured_figure = instance_create_depth(1142, 930, 2, O_Figure)}
+		if player = Game.Player1.player_id {captured_figure = instance_create_depth(1142, 930, 2, O_Figure)}
 		else {captured_figure = instance_create_depth(480, 200, -1, O_Figure)}
 		captured_figure.set_behaviour(behaviour);
 		captured_figure.capture(0);

@@ -5,7 +5,7 @@ if have_action() {
 	action.draw();
 }
 draw_set_font(F_test);
-if global.turn_owner = "player1" {
+if global.turn_owner = Game.Player1.player_id {
 	draw_text(955, 30, "ходит игрок 1");
 }
 else {

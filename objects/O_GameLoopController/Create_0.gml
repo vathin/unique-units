@@ -1,6 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
-global.turn_owner = "player1";
+global.turn_owner = Game.Player1.player_id;
 player1_captured = 0;
 player2_captured = 0;
 action = undefined;
@@ -44,11 +44,11 @@ have_action = function() {
 }
 
 get_opponent = function(player) {
-	if player = "player1" {
-		return "player2"
+	if player = Game.Player1.player_id {
+		return Game.Player2.player_id
 	}
 	else {
-		return "player1"
+		return Game.Player1.player_id
 	}
 }
 
@@ -140,12 +140,12 @@ check_win_conditions = function() {
 		if player1_captured >= 4 {return "player1_win"}
 		if player2_captured >= 4 {return "player2_win"}
 	}
-	if O_Figures_counter.get_player_figures_amount("player1") == 0 and 
+	if O_Figures_counter.get_player_figures_amount(Game.Player1.player_id) == 0 and 
 	O_Figures_counter.player1_field_figures == 0 {return "player2_win"}
-	if O_Figures_counter.get_player_figures_amount("player2") == 0 and 
+	if O_Figures_counter.get_player_figures_amount(Game.Player2.player_id) == 0 and 
 	O_Figures_counter.player2_field_figures == 0 {return "player1_win"}
 	if O_Turn_timer.player_out_of_time != undefined {
-		if global.turn_owner == "player1" {return "player1_win"}
+		if global.turn_owner == Game.Player1.player_id {return "player1_win"}
 		else {return "player2_win"}
 	}
 	
@@ -153,7 +153,7 @@ check_win_conditions = function() {
 }
 
 add_captured_figure = function(player) {
-	if player = "player1" {
+	if player = Game.Player1.player_id {
 		player1_captured ++;
 	}
 	else {
@@ -169,8 +169,8 @@ export = function() {
 		ex_timer_struct: O_Turn_timer.export(),
 		ex_figures_counter_struct: O_Figures_counter.export(),
 		ex_gamefield: O_GameField.export(),
-		ex_player1_figures: O_App.data.load("player1"),
-		ex_player2_figures: O_App.data.load("player2")
+		ex_player1_figures: O_App.data.load(Game.Player1.player_id),
+		ex_player2_figures: O_App.data.load(Game.Player2.player_id)
 	}
 	return export_data
 }
@@ -186,8 +186,8 @@ import = function(import_data) {
 	O_Turn_timer.import(import_data.ex_timer_struct);
 	O_Figures_counter.import(import_data.ex_figures_counter_struct);
 	O_GameField.import(import_data.ex_gamefield);
-	O_App.data.save("player1", import_data.ex_player1_figures);
-	O_App.data.save("player2", import_data.ex_player2_figures);
+	O_App.data.save(Game.Player1.player_id, import_data.ex_player1_figures);
+	O_App.data.save(Game.Player2.player_id, import_data.ex_player2_figures);
 }
 
 import_action = function(import_struct) {

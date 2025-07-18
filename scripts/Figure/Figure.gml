@@ -27,7 +27,7 @@ function Figure() constructor{
 		//sprite_index = Behaviours.get_sprite(behaviour);
 	}
 	update_stats = function() {
-		if owner == "player1" {
+		if owner == Game.Player1.player_id {
 			//image_index = 0;
 		}
 		else {

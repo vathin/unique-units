@@ -10,6 +10,8 @@ active = false;
 reason = "";
 enemy = undefined;
 invited = false;
+role = undefined;
+server_id = undefined;
 
 login_x = login_window_x-x_offset;
 login_y = login_window_y-75-y_offset;
@@ -117,7 +119,7 @@ invite_accept_window_check = function() {
 		window_x = room_width - 415;
 		window_y = 220;
 		if mouse_x > window_x + 20 and mouse_x < window_x + 155 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
-			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: _id}));
+			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
 			invited = 0;
 		}
 		else if mouse_x > window_x + 185 and mouse_x < window_x + 320 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
@@ -200,5 +202,13 @@ Server.add_reaction(function(msg)
 			enemy = msg.data.invite.sender;
 			invited = 1;
 		}
+	}
+	else if msg.type == ServerMessageType.GameStart {
+		room_goto(R_Test);
+		enemy = msg.data.opponent;
+		Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
+	}
+	else if msg.type == ServerMessageType.GameplayTurn {
+		Game.get_turn(msg.turn.fieldState, msg.turn.turn);
 	}
 })

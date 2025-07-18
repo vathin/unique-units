@@ -29,20 +29,20 @@ function Maps_list() constructor{
 		for (i = 0; i < array_length(player1); i++) {
 			cell = Game.field.get_cell(player1[i][0], player1[i][1])
 			if cell.is_filled() {
-				if cell.filled_figure.owner == "player2" 
+				if cell.filled_figure.owner == Game.Player2.player_id 
 				and cell.filled_figure.state.is_active {
 					cell.filled_figure.conquest();
-					Game.game_loop_controller.add_captured_figure("player2");
+					Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);
 				}
 			}
 		}
 		for (i = 0; i < array_length(player2); i++) {
 			cell = Game.field.get_cell(player2[i][0], player2[i][1])
 			if cell.is_filled() {
-				if cell.filled_figure.owner == "player1" 
+				if cell.filled_figure.owner == Game.Player1.player_id 
 				and cell.filled_figure.state.is_active {
 					 cell.filled_figure.conquest();
-					 Game.game_loop_controller.add_captured_figure("player1");
+					 Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
 				}
 			}
 		}

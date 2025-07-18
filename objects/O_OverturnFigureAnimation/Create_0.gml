@@ -9,7 +9,7 @@ stop_animation = function() {
 animate = function(){
 	if animate_figure.state.is_dropped {stop_animation()}
 	animate_figure.overturning = 1;
-	if animate_figure.owner == "player2" {ov_sprite_frame = 1}
+	if animate_figure.owner == Game.Player2.player_id {ov_sprite_frame = 1}
 	if animation_frame > animation_length / 2 {
 		animate_figure.image_xscale += Settings.figure_scale / (animation_length/2);
 		animate_figure.overturning = 0;

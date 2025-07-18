@@ -90,7 +90,7 @@ check_controlled_summon_cells = function(player){
 		for (m = 0; m < field_width; m++) {
 			cell = field[m][i]
 			if !cell.is_filled() {
-				if player = "player1" {
+				if player = Game.Player1.player_id {
 					if m > 2 {
 						is_on_player_side = 1
 					}
@@ -166,7 +166,7 @@ is_any_cell_marked = function() {
 
 get_place = function(type, player) {
 	if type = "drop" {
-		if player = "player1" {
+		if player = Game.Player1.player_id {
 			return player1_dropped;
 		}
 		else {
@@ -174,7 +174,7 @@ get_place = function(type, player) {
 		}
 	}
 	if type = "capture" {
-		if player = "player1" {
+		if player = Game.Player1.player_id {
 			return player1_captured;
 		}
 		else {

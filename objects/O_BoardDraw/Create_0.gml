@@ -1,6 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
-in_game = false
+in_game = 1
 selected_cell = undefined
 game_state = undefined
 main_button_x = [room_width/2-40, room_width/2+40];
@@ -81,4 +81,4 @@ turn_owner_draw = function() {
 	("Ход игрока " + string_char_at(global.turn_owner, string_length(global.turn_owner))), 0.65, 0.65, 0);
 }
 
-Start_match()
+Game.init();
