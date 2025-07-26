@@ -98,7 +98,7 @@ function Cell() constructor{
 			//create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
 			filled_figure = new Figure()
 			filled_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour
-			Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
+			//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
 			filled_figure.import(_import_data.ex_filled_figure_struct);
 		}
 	}

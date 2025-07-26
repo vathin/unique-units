@@ -10,11 +10,13 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	target_cell = undefined;
 	using_figure = using_cell.filled_figure;
 	using_ability = false;
-	Game.figure_action_controller = new FigureActionController();
+	if using_figure.owner == O_LoginController._id {
+		Game.figure_action_controller = new FigureActionController();
+		Game.figure_action_controller.move_and_ability = 1;
+		Game.figure_action_controller.figure_can_move = 0;
+	}
 	Game.move_input_controller = undefined
 	Game.game_loop_controller.state = STATE_LIST.figure_action
-	Game.figure_action_controller.move_and_ability = 1;
-	Game.figure_action_controller.figure_can_move = 0;
 	Game.field.check_clear_move_cells(_from_x, _from_y);
 	Game.field.get_cell(_from_x, _from_y).set_draw_marks(0);
 	Game.field.get_cell(_to_x, _to_y).set_draw_marks(0);
@@ -90,12 +92,15 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		return(found_cells)
 	}
 	
-	if !check_ability_targets(0, 0) {
-		Game.figure_action_controller.figure_have_ability = 0
+	if using_figure.owner == O_LoginController._id {
+		if !check_ability_targets(0, 0) {
+			Game.figure_action_controller.figure_have_ability = 0
 		}
-	else {
-		Game.figure_action_controller.figure_have_ability = 1
+		else {
+			Game.figure_action_controller.figure_have_ability = 1
 		}
+	}
+	
 	
 	back = function() {
 		if using_ability {
@@ -138,10 +143,10 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	
 	export = function() {
 		if (target_cell != undefined) {ex_target_cell_cord = [target_cell.xcord, target_cell.ycord]}
-		else {ex_target_cell_cord = [undefined, undefined]}
+		else {ex_target_cell_cord = undefined}
 		export_data = {
 			ex_action: WarriorMoveAndAbility,
-			ex_type: "move_action",
+			ex_type: "move_ability",
 			ex_from_x: from_x,
 			ex_from_y: from_y,
 			ex_to_x: to_x,
@@ -154,7 +159,9 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	}
 	import = function(_import_data) {
 		using_ability = _import_data.ex_using_ability;
-		target_cell = Game.field.get_cell(_import_data.target_cell[0], _import_data.target_cell[1]);
+		if _import_data.ex_target_cell != undefined {
+			target_cell = Game.field.get_cell(_import_data.ex_target_cell[0], _import_data.ex_target_cell[1]);
+		}
 		to_x = _import_data.ex_to_x;
 		to_y = _import_data.ex_to_y;
 		from_x = _import_data.ex_from_x;

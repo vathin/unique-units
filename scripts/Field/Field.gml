@@ -185,6 +185,7 @@ function Field() constructor{
 	}
 
 	get_place = function(type, player) {
+		show_debug_message("0")
 		if type = "drop" {
 			if player = Game.Player1.player_id {
 				return player1_dropped;
@@ -195,9 +196,11 @@ function Field() constructor{
 		}
 		if type = "capture" {
 			if player = Game.Player1.player_id {
+				show_debug_message("1");
 				return player1_captured;
 			}
 			else {
+				show_debug_message("1");
 				return player2_captured;
 			}
 		}
@@ -284,13 +287,6 @@ function Field() constructor{
 		player1_captured.import(import_data.ex_player1_captured);
 		player2_captured.import(import_data.ex_player2_captured);
 		global.map = import_data.ex_map;
-	}
-	
-	create_figure = function(figure_behaviour, cell) 
-	{
-		filled_figure = instance_create_depth(cell.x, cell.y, -1, O_Figure);
-		filled_figure.set_behaviour(figure_behaviour);
-		Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, +1);
 	}
 	
 }

@@ -162,18 +162,18 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			ex_action: TraderAbility,
 			ex_type: "act_ability",
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
-			ex_using_cell: undefined,
 			ex_buttons: buttons,
 			ex_chosen_button: chosen_button,
 			ex_target_cell: [target_cell.xcord, target_cell.ycord],
-			ex_turn_owner: global.turn_owner
+			ex_turn_owner: global.turn_owner,
+			ex_using_figure: undefined
 		}
 		return export_data
 	}
 	
 	import = function(_import_data) {
 		buttons = _import_data.ex_buttons;
-		using_cell = Game.field.get_Cell(_import_data.ex_using_cell[0], _import_data.ex_using_cell[1]);
+		using_cell = Game.field.get_cell(_import_data.ex_using_cell[0], _import_data.ex_using_cell[1]);
 		using_figure = using_cell.filled_figure;
 		chosen_button = _import_data.ex_chosen_button;
 		target_cell = Game.field.get_cell(_import_data.ex_target_cell[0], _import_data.ex_target_cell[1]);

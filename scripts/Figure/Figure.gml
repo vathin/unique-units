@@ -119,9 +119,10 @@ function Figure() constructor{
 		state.is_conquesting = 1;
 		place = Game.field.get_place("capture", owner);
 		place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
+		//place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
 		//ov_animation = instance_create_depth(0, 0, 0, O_OverturnFigureAnimation);
 		//ov_animation.start_animation(1, 1, 1, 1, 30, self);
-		Game.game_loop_controller.check_win_conditions();
+		//Game.game_loop_controller.check_win_conditions();
 	}
 
 	click_while_conquesting = function() {

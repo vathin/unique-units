@@ -6,6 +6,7 @@ function GetFieldFigure() constructor{
 	target = undefined;
 	
 	execute = function() {
+		array_push(Game.game_loop_controller.action_export_data, self)
 		target.filled_figure.capture();
 		place = Game.field.get_place("capture", 
 		Game.game_loop_controller.get_opponent(target.filled_figure.owner));

@@ -1,12 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function GameLoopController() constructor{
-	if Game.role == "host" {
-		global.turn_owner = Game.Player1.player_id;
-	}
-	else {
-		global.turn_owner = Game.Player2.player_id;
-	}
 	player1_captured = 0;
 	player2_captured = 0;
 	action = undefined;
@@ -14,12 +8,14 @@ function GameLoopController() constructor{
 	can_cancel = false;
 	displaying_card = false;
 	change_turn_owner = 1;
+	export_data = [];
+	action_export_data = [];
+	ready_to_send = 1;
 	
 	turn_timer = new Timer();
 	turn_timer.start_count(Settings.turn_time);
 	
 	figures_counter = new FiguresCounter();
-	
 	
 	
 	TEST_action_draw = function() {
@@ -40,7 +36,7 @@ function GameLoopController() constructor{
 	}
 	state = STATE_LIST.wait;
 	if Game.online_match {
-		if Game.role == "guest" {
+		if global.turn_owner == O_LoginController.enemy {
 			state = STATE_LIST.enemy_turn;
 		}
 	}
@@ -71,8 +67,14 @@ function GameLoopController() constructor{
 		//if global.moving_figure {
 		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 		//}
-		if O_LoginController._id == global.turn_owner {
-			Game.send_turn(export(), action.export());
+		if ready_to_send {
+			if O_LoginController._id == global.turn_owner{
+				action_export_data = [action.export()]
+				export_data = [export(), action_export_data]
+			}
+			else {
+				export_data = undefined;
+			}
 		}
 		execute_action();
 		turn_timer.reset();
@@ -82,13 +84,6 @@ function GameLoopController() constructor{
 		Maps_list.check_if_any_cell_conquested(global.map);
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
-		if check_win_conditions() != undefined {
-			show_message(check_win_conditions());
-			game_end();
-		}
-		if !change_turn_owner {
-			global.turn_owner = get_opponent(global.turn_owner);
-		}
 		if Game.online_match {
 			if global.turn_owner == O_LoginController._id {
 				state = STATE_LIST.wait;
@@ -97,11 +92,21 @@ function GameLoopController() constructor{
 				state = STATE_LIST.enemy_turn;
 			}
 		}
-		if state != STATE_LIST.enemy_turn {
-			mark_active_figures();
+		if export_data != undefined {
+			if ready_to_send {
+				Game.send_turn(export_data[0], export_data[1])
+			}
 		}
-		change_turn_owner = 1;
-		
+		if check_win_conditions() != undefined {
+			if Game.role == "host"
+			//show_message(check_win_conditions());
+			Server.send(new ServerMessage(ServerMessageType.GameEnd, {matchID: Game.server_id, winner: check_win_conditions}))
+		}
+		if state == STATE_LIST.enemy_turn {
+			Game.field.clear_all_marks();
+		}
+		ready_to_send = 1;
+		Maps_list.check_if_any_cell_conquested(global.map)
 	}
 
 	set_action = function(new_action) {
@@ -162,7 +167,7 @@ function GameLoopController() constructor{
 
 	execute_action = function() {
 		if have_action() {
-			Game.game_data.save_action(action.export())
+			//Game.game_data.save_action(action.export())
 			action.execute();
 		}
 	}
@@ -209,16 +214,16 @@ function GameLoopController() constructor{
 	check_win_conditions = function() {
 		if player1_captured >= 4 and player2_captured >= 4 {return "draw"}
 		else {
-			if player1_captured >= 4 {return "player1_win"}
-			if player2_captured >= 4 {return "player2_win"}
+			if player1_captured >= 4 {return Game.Player1.player_id}
+			if player2_captured >= 4 {return Game.Player2.player_id}
 		}
 		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and 
-		figures_counter.get_field_figures(Game.Player1.player_id) == 0 {return "player2_win"}
+		figures_counter.get_field_figures(Game.Player1.player_id) == 0 {return Game.Player2.player_id}
 		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and 
-		figures_counter.get_field_figures(Game.Player2.player_id) == 0 {return "player1_win"}
+		figures_counter.get_field_figures(Game.Player2.player_id) == 0 {return Game.Player1.player_id}
 		if turn_timer.player_out_of_time != undefined {
-			if global.turn_owner == Game.Player1.player_id {return "player1_win"}
-			else {return "player2_win"}
+			if global.turn_owner == Game.Player1.player_id {return Game.Player1.player_id}
+			else {return Game.Player2.player_id}
 		}
 		out_of_figures = 0
 		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and 
@@ -226,8 +231,8 @@ function GameLoopController() constructor{
 		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and 
 		Game.field.get_active_player_field_figures(Game.Player2.player_id) == 0 {out_of_figures++}
 		if out_of_figures == 2 {
-			if player1_captured > player2_captured {return "player1_win"}
-			if player2_captured > player1_captured {return "player2_win"}
+			if player1_captured > player2_captured {return Game.Player1.player_id}
+			if player2_captured > player1_captured {return Game.Player2.player_id}
 			if player1_captured == player2_captured {return "draw"}
 		}
 	
@@ -253,7 +258,6 @@ function GameLoopController() constructor{
 			ex_gamefield: Game.field.export(),
 			ex_player1_figures: Game.user_data.load(Game.Player1.player_id),
 			ex_player2_figures: Game.user_data.load(Game.Player2.player_id),
-			ex_change_turn_owner: change_turn_owner,
 			ex_state: state
 		}
 		return export_data
@@ -269,19 +273,19 @@ function GameLoopController() constructor{
 		Game.field.import(import_data.ex_gamefield);
 		Game.user_data.save(Game.Player1.player_id, import_data.ex_player1_figures);
 		Game.user_data.save(Game.Player2.player_id, import_data.ex_player2_figures);
-		change_turn_owner = import_data.ex_change_turn_owner;
-		state = import_data.state;
+
+		//state = import_data.ex_state;
 	}
 
 	import_action = function(import_struct) {
 		clear_all();
-		global.turn_owner = import_struct.ex_turn_owner;
+		//global.turn_owner = import_struct.ex_turn_owner;
 		switch import_struct.ex_type{
 		case "act_ability":
-			action = new import_struct.ex_action(import_struct.ex_using_figure, import_struct.ex_using_cell);
+			action = new import_struct.ex_action();
 			action.import(import_struct);
 			break;
-		case "move_ability": 
+		case "move_ability":
 			action = new import_struct.ex_action(import_struct.ex_from_x, import_struct.ex_from_y, 
 			import_struct.ex_to_x, import_struct.ex_to_y, undefined);
 			action.import(import_struct);
@@ -295,6 +299,7 @@ function GameLoopController() constructor{
 			action.import(import_struct);
 			break;
 		}
+		ready_to_send = 0;
 		end_move();
 	}
 

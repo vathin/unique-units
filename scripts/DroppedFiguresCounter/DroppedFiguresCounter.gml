@@ -22,9 +22,9 @@ function DroppedFiguresCounter(_owner) constructor{
 	import = function(_import_data) {
 		figures = []
 		for (i = 0; i < array_length(_import_data.ex_figures_structs); i++) {
-			new_figure = new Figure()
-			new_figure.import(_import_data.ex_figures_structs[i])
-			array_push(figures, new_figure);
+			new_figure = new Figure();
+			new_figure.import(_import_data.ex_figures_structs[i]);
+			add_figure(new_figure);
 		}
 	}
 }

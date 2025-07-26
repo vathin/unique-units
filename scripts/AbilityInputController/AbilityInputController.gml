@@ -10,7 +10,7 @@ function AbilityInputController() constructor{
 				if cell.is_filled() {O_BoardDraw.figure_click(cell.filled_figure)}
 				else {
 					if !Game.game_loop_controller.have_action() {Game.ability_input_controller.start_ability()}
-					Game.game_loop_controller.action.set_target(cell)
+					Game.game_loop_controller.action.set_target(cell);
 				}
 			}
 		}

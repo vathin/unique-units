@@ -27,14 +27,23 @@ function GameClass() constructor{
 	get_turn = function(_field_data, _action_data) {
 		if _field_data.ex_turn_owner != O_LoginController._id{
 			Game.game_loop_controller.import(_field_data);
-			Game.game_loop_controller.import_action(_action_data);
+			Game.game_loop_controller.import_action(_action_data[0]);
+			if array_length(_action_data) > 1 {
+				Game.game_loop_controller.import_action(_action_data[1])
+			}
 		}
 	}
 	
 	init = function() {
 		if online_match {
-			Player1 = new Player(O_LoginController._id, "local");
-			Player2 = new Player(O_LoginController.enemy, "online");
+			if role == "host" {
+				Player1 = new Player(O_LoginController._id, "local");
+				Player2 = new Player(O_LoginController.enemy, "online");
+			}
+			else {
+				Player1 = new Player(O_LoginController.enemy, "online");
+				Player2 = new Player(O_LoginController._id, "local");
+			}
 		}
 		else {
 			Player1 = new Player(1, "local");

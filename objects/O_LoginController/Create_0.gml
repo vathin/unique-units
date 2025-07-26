@@ -206,9 +206,10 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.GameStart {
 		room_goto(R_Test);
 		enemy = msg.data.opponent;
+		global.turn_owner = msg.data.turn
 		Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
 	}
 	else if msg.type == ServerMessageType.GameplayTurn {
-		Game.get_turn(msg.turn.fieldState, msg.turn.turn);
+		Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
 	}
 })

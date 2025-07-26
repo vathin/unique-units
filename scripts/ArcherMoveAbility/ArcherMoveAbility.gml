@@ -234,7 +234,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		from_y = _import_data.ex_from_y;
 		to_x = _import_data.ex_to_x;
 		to_y = _import_data.ex_to_y;
-		using_figure = (Game.field.get_cell(_import_data.ex_to_x, _import_data.ex_to_y)).filled_figure;
+		using_figure = (Game.field.get_cell(_import_data.ex_from_x, _import_data.ex_from_y)).filled_figure;
 	}
 }
 

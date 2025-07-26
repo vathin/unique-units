@@ -84,7 +84,6 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 		export_data = {
 			ex_action : SpearmanAbility,
 			ex_type : "act_ability",
-			ex_using_figure: undefined,
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
 			ex_cell_for_move: [cell_for_move.xcord, cell_for_move.ycord],
 			ex_turn_owner: global.turn_owner

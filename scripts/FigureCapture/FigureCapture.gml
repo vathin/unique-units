@@ -3,6 +3,7 @@
 function FigureCapture() {
 	global.turn_owner = Game.game_loop_controller.get_opponent(global.turn_owner);
 	Game.game_loop_controller.set_action(new GetFieldFigure())
+	Game.game_loop_controller.ready_to_send = 0
 	cell_array = Game.field.get_filled_cells(Game.game_loop_controller.get_opponent(global.turn_owner));
 	global.mark = S_Ability_mark;
 	for (i = 0; i < array_length(cell_array); i++) {
