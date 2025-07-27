@@ -10,8 +10,8 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	draw_previous_move = 0;
 	
 	execute = function() {
-		target_cell.filled_figure.add_previous_move_cell(target_cell);
-		using_cell.filled_figure.add_previous_ability_cell(fill_cell, target_figure);
+		//target_cell.filled_figure.add_previous_move_cell(target_cell);
+		//using_cell.filled_figure.add_previous_ability_cell(fill_cell, target_figure);
 		//target_figure.start_move_animation(fill_cell, Settings.ability_animation_length)
 		fill_cell.fill(target_figure);
 		target_cell.clear();

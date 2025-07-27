@@ -95,7 +95,6 @@ function Cell() constructor{
 		can_be_conquested = _import_data.ex_can_be_conquested;
 		ex_draw_mark = _import_data.ex_draw_mark;
 		if _import_data.ex_filled_figure_struct != undefined {
-			//create_figure(import_data.ex_filled_figure_struct.ex_behaviour);
 			filled_figure = new Figure()
 			filled_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour
 			//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);

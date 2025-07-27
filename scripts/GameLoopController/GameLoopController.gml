@@ -81,7 +81,7 @@ function GameLoopController() constructor{
 		
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
-		Maps_list.check_if_any_cell_conquested(global.map);
+		Game.field.check_if_any_cell_conquested();
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
 		if Game.online_match {
@@ -106,7 +106,6 @@ function GameLoopController() constructor{
 			Game.field.clear_all_marks();
 		}
 		ready_to_send = 1;
-		Maps_list.check_if_any_cell_conquested(global.map)
 	}
 
 	set_action = function(new_action) {

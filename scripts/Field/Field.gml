@@ -145,6 +145,31 @@ function Field() constructor{
 			}
 		}
 	}
+	
+	check_if_any_cell_conquested = function() {
+		_player1 = Maps_list.get_cells_for_conquest()[0]
+		_player2 = Maps_list.get_cells_for_conquest()[1]
+		for (i = 0; i < array_length(_player1); i++) {
+			cell = get_cell(_player1[i][0], _player1[i][1])
+			if cell.is_filled() {
+				if cell.filled_figure.owner == Game.Player2.player_id 
+				and cell.filled_figure.state.is_active {
+					cell.filled_figure.conquest();
+					Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);
+				}
+			}
+		}
+		for (i = 0; i < array_length(_player2); i++) {
+			cell = get_cell(_player2[i][0], _player2[i][1])
+			if cell.is_filled() {
+				if cell.filled_figure.owner == Game.Player1.player_id 
+				and cell.filled_figure.state.is_active {
+					 cell.filled_figure.conquest();
+					 Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
+				}
+			}
+		}
+	}
 
 
 	clear_all_marks = function() {

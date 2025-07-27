@@ -14,8 +14,9 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 	
 	
 	execute = function() {
-		to_move.fill(Game.field.get_cell(from_x, from_y).filled_figure, 1);
+		using_figure = Game.field.get_cell(from_x, from_y).filled_figure;
 		from_move.clear();
+		to_move.fill(using_figure, 1);
 	}
 	
 	draw = function() {

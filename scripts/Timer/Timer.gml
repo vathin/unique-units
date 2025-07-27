@@ -100,8 +100,8 @@ function Timer() constructor{
 		export_data = {
 			ex_player1_time_bank: player1_time_bank,
 			ex_player2_time_bank: player2_time_bank,
-			ex_current_frame: current_frame,
-			ex_using_time_bank: using_time_bank,
+			//ex_current_frame: current_frame,
+			//ex_using_time_bank: using_time_bank,
 			ex_seconds: seconds,
 			ex_all_time: all_time
 		}
@@ -111,8 +111,8 @@ function Timer() constructor{
 	import = function(import_data) {
 		player1_time_bank = import_data.ex_player1_time_bank;
 		player2_time_bank = import_data.ex_player2_time_bank;
-		current_frame = import_data.ex_current_frame;
-		using_time_bank = import_data.ex_using_time_bank;
+		//current_frame = import_data.ex_current_frame;
+		//using_time_bank = import_data.ex_using_time_bank;
 		seconds = import_data.ex_seconds;
 		all_time = import_data.ex_all_time;
 	}

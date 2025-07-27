@@ -81,7 +81,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	}
 	
 	execute = function() {
-		Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, +1);
+		Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, 1);
 		new_field_figure = new Figure()
 		new_field_figure.set_behaviour(array_get(buttons, chosen_button))
 		target_cell.fill(new_field_figure)

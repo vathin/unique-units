@@ -22,10 +22,14 @@ function Maps_list() constructor{
 		}
 	}
 	
-	static check_if_any_cell_conquested = function(map) {
-		check_map = maps[$ map];
-		player1 = check_map.conquest_player1_cells;
-		player2 = check_map.conquest_player2_cells;
+	static get_cells_for_conquest = function() {
+		return [player1, player2]
+	}
+	
+/*	static check_if_any_cell_conquested = function(map) {
+		//check_map = maps[$ map];
+		//player1 = check_map.conquest_player1_cells;
+		//player2 = check_map.conquest_player2_cells;
 		for (i = 0; i < array_length(player1); i++) {
 			cell = Game.field.get_cell(player1[i][0], player1[i][1])
 			if cell.is_filled() {
@@ -46,7 +50,7 @@ function Maps_list() constructor{
 				}
 			}
 		}
-	}
+	}*/
 	
 }
 

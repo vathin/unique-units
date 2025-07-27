@@ -139,7 +139,7 @@ function Figure() constructor{
 
 	export = function() {
 		export_data = {
-			ex_state: state,
+			ex_state: state.export(),
 			ex_owner: owner,
 			ex_behaviour: behaviour,
 			ex_previous_ability_cell: previous_ability_cell,
@@ -152,7 +152,7 @@ function Figure() constructor{
 	}
 
 	import = function(import_data) {
-		state = import_data.ex_state;
+		state.import(import_data.ex_state);
 		owner = import_data.ex_owner;
 		set_behaviour(import_data.ex_behaviour);
 		previous_ability_cell = import_data.ex_previous_ability_cell;
@@ -160,6 +160,6 @@ function Figure() constructor{
 		previous_move_cell = import_data.ex_previous_move_cell;
 		previous_ability_counter = import_data.ex_previous_ability_counter;
 		previous_move_counter = import_data.ex_previous_move_counter;
-		update_stats();
+		//update_stats();
 	}
 }
