@@ -14,7 +14,10 @@ ability_button_y = [room_height/1.25-30, room_height/1.25+30];
 drop_cord = [room_width/2 - 250, room_height/2-40];
 capture_cord = [room_width/2 + 195, room_height/2-40];
 turn_owner_cord = [room_width/1.85, room_height/6.45];
-end_button = false
+end_button = false;
+button_overlay_sprite = undefined;
+button_overlay_subimg = 0;
+button_overlay_scale = 1
 
 
 figure_click = function(_figure) {
@@ -64,9 +67,9 @@ drop_draw = function() {
 
 capture_draw = function() {
 	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] + 40, 
-	array_length(Game.field.player1_captured.figures), 0.65, 0.6, 0);
+	/*array_length(Game.field.player1_captured.figures)*/Game.game_loop_controller.player1_captured, 0.65, 0.6, 0);
 	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] - 43, 
-	array_length(Game.field.player2_captured.figures), 0.65, 0.6, 0);
+	/*array_length(Game.field.player2_captured.figures)*/Game.game_loop_controller.player2_captured, 0.65, 0.6, 0);
 }
 
 figure_counters_draw = function() {
@@ -79,6 +82,22 @@ figure_counters_draw = function() {
 turn_owner_draw = function() {
 	draw_text_transformed(turn_owner_cord[0], turn_owner_cord[1], 
 	("Ход игрока " + string_char_at(global.turn_owner, string_length(global.turn_owner))), 0.65, 0.65, 0);
+}
+
+clear_button_overlay = function() {
+	button_overlay_sprite = undefined;
+	button_overlay_subimg = 0;
+}
+
+set_button_overlay = function(_sprite, _subimg = 0) {
+	button_overlay_sprite = _sprite;
+	button_overlay_subimg = _subimg;
+	button_overlay_scale = (main_button_x[1] - main_button_x[0])/sprite_get_width(_sprite)
+}
+
+clear = function() {
+	clear_button_overlay();
+	block_end_button();
 }
 
 Game.init();

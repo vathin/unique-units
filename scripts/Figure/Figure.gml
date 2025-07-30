@@ -3,6 +3,7 @@
 function Figure() constructor{	
 	state = new Figure_state();
 	state.is_active = 1; 
+	image = 0;
 	in_move = false;
 	overturning = false;
 	owner = global.turn_owner;
@@ -12,7 +13,12 @@ function Figure() constructor{
 	previous_ability_counter = 0;
 	previous_move_counter = 0;
 	behaviour = undefined;
-	standart_scale = Settings.figure_scale;
+	draw_x = 0;
+	draw_y = 0;
+	draw_alpha = 1;
+	draw_xscale = Settings.figure_scale;
+	draw_yscale = Settings.figure_scale;
+	animation_queue = [];
 
 
 	/*
@@ -28,13 +34,13 @@ function Figure() constructor{
 	}
 	update_stats = function() {
 		if owner == Game.Player1.player_id {
-			//image_index = 0;
+			image = 0;
 		}
 		else {
-			//image_index = 1;
+			image = 1;
 		}
 	}
-	update_stats()
+	update_stats();
 	
 	clear_previous_move_cell = function() {
 		previous_move_cell = undefined;
@@ -84,8 +90,33 @@ function Figure() constructor{
 	}
 
 	add_previous_move_cell = function(add_cell) {
-		previous_move_cell = add_cell;
+		previous_move_cell = Game.field.get_cell(add_cell[0], add_cell[1]);
 		previous_move_counter = 2;
+	}
+	
+	add_animation = function(_new_animation) {
+		array_push(animation_queue, _new_animation)
+	}
+	
+	have_animation = function() {
+		return (array_length(animation_queue) > 0)
+	}
+
+	get_current_animation_controller = function() {
+		return animation_queue[0];
+	}
+	
+	animate = function() {
+		animation = get_current_animation_controller();
+		draw_x = animation.figure_x;
+		draw_y = animation.figure_y;
+		draw_alpha = animation.figure_alpha;
+		draw_xscale = animation.figure_xscale;
+		draw_yscale = animation.figure_yscale;
+		animation.update_animation();
+		if animation.animation_frame >= animation.animation_length {
+			array_delete(animation_queue, 0, 1);
+		}
 	}
 
 	revert_counter = function() {
@@ -99,7 +130,7 @@ function Figure() constructor{
 		//image_xscale = Settings.figure_scale*0.75;
 		//image_yscale = Settings.figure_scale*0.75;
 		place = Game.field.get_place("drop", owner)
-		place.add_figure(self);
+		place.add_figure(self, 1);
 		Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
 	}
 	capture = function(is_on_field) {
@@ -146,7 +177,9 @@ function Figure() constructor{
 			ex_previous_ability_target: previous_ability_target,
 			ex_previous_move_cell: previous_move_cell,
 			ex_previous_ability_counter: previous_ability_counter,
-			ex_previous_move_counter: previous_move_counter
+			ex_previous_move_counter: previous_move_counter,
+			ex_draw_x: draw_x,
+			ex_draw_y: draw_y,
 		}
 		return export_data
 	}
@@ -160,6 +193,8 @@ function Figure() constructor{
 		previous_move_cell = import_data.ex_previous_move_cell;
 		previous_ability_counter = import_data.ex_previous_ability_counter;
 		previous_move_counter = import_data.ex_previous_move_counter;
-		//update_stats();
+		draw_x = import_data.ex_draw_x;
+		draw_y = import_data.ex_draw_y;
+		update_stats();
 	}
 }

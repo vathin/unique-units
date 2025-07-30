@@ -13,7 +13,7 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	
 	draw = function() {
 		if target_figure != undefined {
-			//draw_sprite_ext(S_Back_Action_Target, 0, target_figure.x, target_figure.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			draw_sprite_ext(S_Back_Action_Target, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 		}
 	}
 	

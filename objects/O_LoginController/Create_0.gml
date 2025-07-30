@@ -97,6 +97,22 @@ invite_cancel_button_check = function() {
 	}
 }
 
+end_game_back_button_draw = function() {
+	draw_set_alpha(0.35)
+	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
+	draw_set_alpha(1);
+	draw_set_halign(fa_center);
+	draw_text(room_width/2, room_height / 1.25, "В МЕНЮ");
+	draw_set_halign(fa_left);
+}
+end_game_back_button_check = function() {
+	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
+	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
+		enemy = undefined;
+		room_goto(R_Main_menu);
+	}
+}
+
 invite_accept_window_draw = function() {
 	window_x = room_width - 415;
 	window_y = 220
@@ -134,6 +150,7 @@ _nickname = undefined;
 _email = undefined;
 _password = undefined;
 _id = undefined;
+var _winner
 
 send_data = function(type) {
 	show_debug_message(type)
@@ -210,6 +227,15 @@ Server.add_reaction(function(msg)
 		Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
 	}
 	else if msg.type == ServerMessageType.GameplayTurn {
-		Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
+		if msg.data.turn.fieldState.ex_turn_owner != _id {
+			Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
+		}
+	}
+	else if msg.type == ServerMessageType.GameEnd {
+		_winner = msg.data.winner;
+		if _winner == "" {winner = "draw"}
+		Game.end_game()
+		Room_goto(R_Game_end);
+		
 	}
 })

@@ -7,11 +7,12 @@ enum ArcherMoveAbility_Cell {
 }
 
 function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) constructor{
-	self.from_x = _from_x;
-	self.from_y = _from_y;
-	self.figure_sprite = S_Archer;
-	self.to_x = _to_x;
-	self.to_y = _to_y;
+	from_x = _from_x;
+	from_y = _from_y;
+	figure_sprite = S_Archer;
+	figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image;
+	to_x = _to_x;
+	to_y = _to_y;
 	moving_figure = undefined;
 	found_move_cells = false;
 	cells_to_check = [];
@@ -32,8 +33,8 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	}
 	draw = function() {
 		if to_x != undefined {
-			//draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[0],
+			Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 		if draw_previous_cell{
 			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,

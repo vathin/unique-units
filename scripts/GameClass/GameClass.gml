@@ -11,6 +11,7 @@ function GameClass() constructor{
 	var server_id;
 	var opponent;
 	var role;
+	user_data = new userData();
 	
 	
 	start_online = function(_server_id, _opponent, _role) {
@@ -49,14 +50,23 @@ function GameClass() constructor{
 			Player1 = new Player(1, "local");
 			Player2 = new Player(2, "local")
 		}
+		user_data.reset()
 		game_loop_controller = new GameLoopController();
 		field = new Field();
-		user_data = new userData();
 		game_data = new gameData();
 		summon_controller = undefined;
 		figure_action_controller = undefined;
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
 		Maps_list.start(global.map)
+	}
+	
+	end_game = function() {
+		online_match = 0;
+		game_loop_controller.clear_all();
+		game_loop_controller = undefined;
+		field = undefined;
+		Player1 = undefined;
+		Player2 = undefined;
 	}
 }

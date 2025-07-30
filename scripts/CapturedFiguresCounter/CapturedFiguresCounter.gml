@@ -4,7 +4,17 @@ function CapturedFiguresCounter(_owner) constructor{
 	owner = _owner
 	//last_added_figure = undefined;
 
-	add_figure = function(new_figure) {
+	add_figure = function(new_figure, animation) {
+		if !animation {
+			new_figure.draw_x = O_BoardDraw.capture_cord[0]
+			new_figure.draw_y = O_BoardDraw.capture_cord[1]
+		}
+		else {
+			figure_animation = new MoveAnimationController();
+			figure_animation.start_animation(new_figure.draw_x, new_figure.draw_y, O_BoardDraw.capture_cord[0],
+			O_BoardDraw.capture_cord[1], Settings.move_animation_length*2);
+			new_figure.add_animation(figure_animation)
+		}
 		array_push(figures, new_figure);
 		figures_to_add = new_figure;
 	}
@@ -23,7 +33,7 @@ function CapturedFiguresCounter(_owner) constructor{
 			captured_figure.owner = player;
 			captured_figure.set_behaviour(behaviour);
 			captured_figure.capture(0);
-			add_figure(captured_figure);
+			add_figure(captured_figure, false);
 		}
 	}
 
@@ -41,7 +51,7 @@ function CapturedFiguresCounter(_owner) constructor{
 		for (i = 0; i < array_length(_import_data.ex_figures_structs); i++) {
 			new_figure = new Figure();
 			new_figure.import(_import_data.ex_figures_structs[i]);
-			add_figure(new_figure)
+			add_figure(new_figure, false)
 		}
 	}
 }

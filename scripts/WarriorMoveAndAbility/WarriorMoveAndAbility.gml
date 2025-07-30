@@ -5,7 +5,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	from_y = _from_y;
 	to_x = _to_x;
 	to_y = _to_y;
-	figure_sprite = _figure_sprite;
+	figure_sprite = S_Warrior;
 	using_cell = Game.field.get_cell(_from_x, _from_y);
 	target_cell = undefined;
 	using_figure = using_cell.filled_figure;
@@ -34,21 +34,29 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	
 	execute = function() {
 		//global.moving_figure = 1;
+		to_move = Game.field.get_cell(to_x, to_y);
+		from_move = Game.field.get_cell(from_x, from_y)
+		figure_animation = new MoveAnimationController();
+		figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
+		Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
+		using_figure.add_animation(figure_animation);
+		
+		to_move.fill(using_figure, 1);
+		from_move.clear();
 		if using_ability {
-			//using_figure.start_move_animation(Game.field.get_cell(to_x, to_y), Settings.move_animation_length)
 			using_figure.drop()
 			target_cell.filled_figure.drop()
 		}
-		Game.field.get_cell(to_x, to_y).fill(using_figure, 1);
-		Game.field.get_cell(from_x, from_y).clear();
 	}
 	
 	draw = function() {
 		if to_x != undefined {
-			//draw_sprite_ext(self.figure_sprite, 0, O_GameField.field[to_y][to_x].x, O_GameField.field[to_y][to_x].y, 
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			draw_sprite_ext(figure_sprite, using_figure.image, Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[0],
+			Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[1], 
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 			if target_cell != undefined {
-				//draw_sprite_ext(S_Back_Action_Target, 0, target_cell.x, target_cell.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+				draw_sprite_ext(S_Back_Action_Target, 0, Game.field.get_cell_xy(target_cell)[0],
+				Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			}
 		}
 		if target_cell == undefined and draw_previous_cell{

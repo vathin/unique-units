@@ -5,6 +5,8 @@ function Field() constructor{
 	field_width = 6;
 	scale = 0.7;
 	size = 90*scale;
+	map_sprite = Maps_list.get_map_sprite(global.map);
+	map_scale = size*field_width/2126;
 	start_x = (room_width/2) - size*2.5;
 	start_y = (room_height/2) - size*3;
 	field_x_size = size*field_width;
@@ -33,16 +35,27 @@ function Field() constructor{
 	}
 	
 	TEST_draw_cells = function() {
+		draw_sprite_ext(map_sprite, 0, room_width/2, room_height/2-size/2, map_scale, map_scale, 0, c_white, 1);
+		
 		for (var h = 0; h < field_height; h++) 
 		{
 			for (var w = 0; w < field_width; w++) 
 			{
-				draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
+				//draw_sprite_ext(S_square, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
 				if (cell_array[h][w].is_filled()) {
-					draw_figure = cell_array[h][w].filled_figure
-					if draw_figure.state.is_conquesting {draw_set_alpha(0.65)}
-					draw_text_transformed(start_x + size*(w-0.5), start_y + size*(h-0.5),
-					string_char_at(draw_figure.behaviour, 1)+ string_char_at(draw_figure.behaviour, 2), 0.5, 0.5, 0);
+					draw_cell = cell_array[h][w]
+					draw_figure = draw_cell.filled_figure;
+					if draw_figure.have_animation() {
+						draw_figure.animate();
+					}
+					draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
+					if draw_figure.state.is_conquesting {
+						var _draw_alpha = 1
+						if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {_draw_alpha = 0.3}
+						draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+						draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+					}
 					draw_set_alpha(1);
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
@@ -50,7 +63,34 @@ function Field() constructor{
 				}
 			}
 		}
-	} 
+		other_figures = []
+		for (i = 0; i < array_length(player1_dropped.figures); i++) {
+			array_push(other_figures, player1_dropped.figures[i]);
+		}
+		for (i = 0; i < array_length(Game.field.player2_dropped.figures); i++) {
+			array_push(other_figures, player2_dropped.figures[i]);
+		}
+		for (i = 0; i < array_length(Game.field.player1_captured.figures); i++) {
+			array_push(other_figures, player1_captured.figures[i]);
+		}
+		for (i = 0; i < array_length(Game.field.player2_captured.figures); i++) {
+			array_push(other_figures, player2_captured.figures[i]);
+		} 
+		for (i = 0; i < array_length(other_figures); i++) {
+			draw_figure = other_figures[i]
+			if draw_figure.have_animation() {
+				draw_figure.animate()
+			}
+			draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+			draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
+			if draw_figure.state.is_conquesting {
+				var _draw_alpha = 1
+				if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {_draw_alpha = 0.3}
+				draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+				draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+			}
+		}
+	}
 	array_push(Game.do_every_step_list, TEST_draw_cells)
 	
 	/*generate_new_game_field = function(w, h, cell_size) {

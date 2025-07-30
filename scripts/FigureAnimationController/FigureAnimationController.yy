@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"FigureAnimationController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"FigureAnimationController",
+  "parent":{
+    "name":"animation",
+    "path":"folders/Scripts/animation.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

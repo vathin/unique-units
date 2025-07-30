@@ -10,8 +10,8 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	draw_previous_move = 0;
 	
 	execute = function() {
-		//target_cell.filled_figure.add_previous_move_cell(target_cell);
-		//using_cell.filled_figure.add_previous_ability_cell(fill_cell, target_figure);
+		//target_cell.filled_figure.add_previous_move_cell([target_cell.xcord, target_cell.ycord]);
+		//using_cell.filled_figure.add_previous_ability_cell([fill_cell.xcord, fill_cell.ycord], target_figure);
 		//target_figure.start_move_animation(fill_cell, Settings.ability_animation_length)
 		fill_cell.fill(target_figure);
 		target_cell.clear();
@@ -19,11 +19,11 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	
 	draw = function() {
 		if selected {
-			//draw_sprite_ext(target_figure.sprite_index, 0, fill_cell.x, fill_cell.y, 
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			draw_sprite_ext(Behaviours.get_sprite(target_figure.behaviour), target_figure.image, Game.field.get_cell_xy(fill_cell)[0], Game.field.get_cell_xy(fill_cell)[1], 
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 		if target_figure != undefined {
-			//draw_sprite_ext(S_Back_Action_Target, 0, target_figure.x, target_figure.y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			draw_sprite_ext(S_Back_Action_Target, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			if draw_previous_ability{
 				//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_ability_cell.x, using_figure.previous_ability_cell.y,
 				//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)

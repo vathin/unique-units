@@ -25,5 +25,12 @@ if logged_in {
 		invite_cancel_button_draw();
 		invite_cancel_button_check();
 	}
+	if room == R_Game_end {
+		draw_set_halign(fa_center);
+		draw_text(room_width/2, room_height/2.65, "Победитель: " + _winner)
+		end_game_back_button_draw();
+		end_game_back_button_check();
+		draw_set_halign(fa_left);
+	}
 }
 

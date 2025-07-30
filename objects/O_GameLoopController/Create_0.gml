@@ -132,6 +132,7 @@ clear_all = function() {
 	global.able_to_summon = false;
 	global.moving_figure = false;
 	global.using_ability = false;
+	
 }
 
 check_win_conditions = function() {

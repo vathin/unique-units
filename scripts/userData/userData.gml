@@ -12,6 +12,7 @@ function userData() constructor {
 	standart_data_struct.player_figures = array_shuffle(standart_data_struct.player_figures);
 	
 	
+	
 	load = function(player) {
 		if player = Game.Player1.player_id {
 			try {
@@ -52,9 +53,16 @@ function userData() constructor {
 				file_text_close(file);
 		}
 	}
-	save(Game.Player1.player_id, standart_data_struct);
-	randomize();
-	standart_data_struct.player_figures = array_shuffle(standart_data_struct.player_figures)
-	save(Game.Player2.player_id, standart_data_struct);
+
+	
+	reset = function(_player1_figures = standart_data_struct,
+	_player2_figures = standart_data_struct) {
+		save(Game.Player1.player_id, _player1_figures);
+		randomize();
+		_player2_figures.player_figures = array_shuffle(_player2_figures.player_figures)
+		save(Game.Player2.player_id, _player2_figures);
+	}
+	
+
 
 }

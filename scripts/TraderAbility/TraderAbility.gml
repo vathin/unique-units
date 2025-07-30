@@ -2,7 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
 	figure_button_x = room_width/2 - 130;
-	figure_button_y = room_height/1.25 - 50;
+	figure_button_y = room_height/1.25 - 35;
 	figure_button_x_offset = 130;
 	using_figure = _using_figure;
 	using_cell = _using_cell;
@@ -17,7 +17,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		//O_SummonButton.back = 0;
 		//O_SummonButton.y = O_SummonButton.standart_y + 75;
 		//O_SummonButton.change_sprite(O_SummonButton.standart_sprite, 0.2);
-		//O_SummonButton.image_index = 2
+		//O_SummonButton.image_index = 2;
 	}
 	
 	create_buttons = function() {
@@ -36,18 +36,18 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		Game.user_data.save(using_figure.owner, load_data);
 	}
 	
-	TEST_draw_buttons = function() {
+	/*TEST_draw_buttons = function() {
 		if buttons != [] {
 			for (i = 0; i < 3; i ++) {
 				if chosen_button == i  or target_cell == undefined{draw_set_alpha(0.5)}
-				draw_text(figure_button_x + figure_button_x_offset*i-10, figure_button_y-10, 
-				(string_char_at(buttons[i], 0) + string_char_at(buttons[i], 2)));
+				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
+				figure_scale*1.2, figure_scale*1.2, 0, c_white, 1/(1+(chosen_button == i  or target_cell == undefined)));
 				draw_set_alpha(1);
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
 		{array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
-	}
+	}*/
 	
 	TEST_buttons_check = function() {
 		if mouse_check_button_pressed(mb_left) {
@@ -74,7 +74,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	if Game.game_loop_controller.state == STATE_LIST.figure_ability {
 		create_buttons();
-		array_push(Game.do_every_step_list, TEST_draw_buttons);
+		//array_push(Game.do_every_step_list, TEST_draw_buttons);
 		array_push(Game.do_every_step_list, TEST_buttons_check);
 		Game.game_loop_controller.set_can_cancel(0);
 		//change_summon_button();
@@ -82,18 +82,20 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	execute = function() {
 		Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, 1);
-		new_field_figure = new Figure()
-		new_field_figure.set_behaviour(array_get(buttons, chosen_button))
-		target_cell.fill(new_field_figure)
-		array_delete(buttons, chosen_button, 1)
+		new_field_figure = new Figure();
+		new_field_figure.set_behaviour(array_get(buttons, chosen_button));
+		target_cell.fill(new_field_figure);
+		array_delete(buttons, chosen_button, 1);
 		for (i = 0; i < 2; i++) {
-			new_figure = new Figure()
+			new_figure = new Figure();
 			new_figure.set_behaviour(buttons[0]);
 			new_figure.drop();
 			array_delete(buttons, 0, 1);
 		}
-		array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_draw_buttons), 1);
-		array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_buttons_check), 1);
+		if Game.game_loop_controller.state == STATE_LIST.figure_ability {
+			//array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_draw_buttons), 1);
+			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_buttons_check), 1);
+		}
 	}
 
 	check_ability_targets = function(a, b) {
@@ -109,10 +111,20 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	}
 	
 	draw = function() {
-		//if chosen_button != undefined and target_cell != undefined{
-			//draw_sprite_ext(sprite_draw, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
-		//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
-		//}
+		if target_cell != undefined{
+			if chosen_button != undefined {
+				draw_sprite_ext(Behaviours.get_sprite(buttons[chosen_button]), using_figure.image, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
+				Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			}
+			draw_sprite_ext(S_Back_chosen, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.75);
+		}
+		if buttons != [] {
+			for (i = 0; i < 3; i ++) {
+				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
+				Settings.figure_scale*1.2, Settings.figure_scale*1.2, 0, c_white, 1/(1+(chosen_button == i  or target_cell == undefined)));
+			}
+		}
 	}
 	
 	global.cell_action = function(cell) {
@@ -158,11 +170,15 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	
 	export = function() {
+		ex_buttons = []
+		for (i = 0; i < 3; i++) {
+			ex_buttons_array[i] = buttons[i]
+		}
 		export_data = {
 			ex_action: TraderAbility,
 			ex_type: "act_ability",
 			ex_using_cell: [using_cell.xcord, using_cell.ycord],
-			ex_buttons: buttons,
+			ex_buttons: ex_buttons_array,
 			ex_chosen_button: chosen_button,
 			ex_target_cell: [target_cell.xcord, target_cell.ycord],
 			ex_turn_owner: global.turn_owner,

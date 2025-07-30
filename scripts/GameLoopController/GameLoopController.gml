@@ -23,7 +23,6 @@ function GameLoopController() constructor{
 			action.draw();
 		}
 	}
-	array_push(Game.do_every_step_list, TEST_action_draw)
 	
 	enum STATE_LIST {
 		wait,
@@ -99,8 +98,8 @@ function GameLoopController() constructor{
 		}
 		if check_win_conditions() != undefined {
 			if Game.role == "host"
-			//show_message(check_win_conditions());
-			Server.send(new ServerMessage(ServerMessageType.GameEnd, {matchID: Game.server_id, winner: check_win_conditions}))
+			show_message(check_win_conditions());
+			Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}))
 		}
 		if state == STATE_LIST.enemy_turn {
 			Game.field.clear_all_marks();
@@ -155,7 +154,8 @@ function GameLoopController() constructor{
 	}
 
 	quit_from_action = function() {
-		clean_controllers()
+		clean_controllers();
+		O_BoardDraw.clear();
 		Game.field.clear_all_marks(); 
 		//O_SummonButton.go_away();
 		global.using_ability = 1;
@@ -198,7 +198,7 @@ function GameLoopController() constructor{
 
 	clear_all = function() {
 		clean_controllers();
-		O_BoardDraw.block_end_button();
+		O_BoardDraw.clear();
 		global.selected_cell = undefined;
 		Game.field.clear_all_marks();
 		global.cell_click_callback = undefined;
@@ -211,7 +211,7 @@ function GameLoopController() constructor{
 	}
 
 	check_win_conditions = function() {
-		if player1_captured >= 4 and player2_captured >= 4 {return "draw"}
+		if player1_captured >= 4 and player2_captured >= 4 {return ""}
 		else {
 			if player1_captured >= 4 {return Game.Player1.player_id}
 			if player2_captured >= 4 {return Game.Player2.player_id}
@@ -232,7 +232,7 @@ function GameLoopController() constructor{
 		if out_of_figures == 2 {
 			if player1_captured > player2_captured {return Game.Player1.player_id}
 			if player2_captured > player1_captured {return Game.Player2.player_id}
-			if player1_captured == player2_captured {return "draw"}
+			if player1_captured == player2_captured {return ""}
 		}
 	
 		return undefined
@@ -242,7 +242,7 @@ function GameLoopController() constructor{
 		if player = Game.Player1.player_id {
 			player1_captured ++;
 		}
-		else {
+		else if player == Game.Player2.player_id{
 			player2_captured ++;
 		}
 	}

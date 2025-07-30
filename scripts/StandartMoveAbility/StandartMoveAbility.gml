@@ -1,28 +1,34 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined) : FigureAbilityAction() constructor{
-	self.from_x = _from_x;
-	self.from_y = _from_y;
-	self.to_x = _to_x;
-	self.to_y = _to_y;
-	self.figure_sprite = _figure_sprite;
+	from_x = _from_x;
+	from_y = _from_y;
+	to_x = _to_x;
+	to_y = _to_y;
+	figure_sprite = Behaviours.get_sprite(Game.field.get_cell(from_x, from_y).filled_figure.behaviour);
+	figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image
 	Game.field.get_cell(_to_x, _to_y).set_draw_marks(0)
 	from_move = Game.field.get_cell(_from_x, _from_y);
 	to_move = Game.field.get_cell(_to_x, _to_y);
 	draw_previous_cell = false;
-	O_BoardDraw.unblock_end_button()
+	O_BoardDraw.unblock_end_button();
+	
 	
 	
 	execute = function() {
 		using_figure = Game.field.get_cell(from_x, from_y).filled_figure;
 		from_move.clear();
-		to_move.fill(using_figure, 1);
+		to_move.fill(using_figure, true);
+		figure_animation = new MoveAnimationController();
+		figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
+		Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
+		using_figure.add_animation(figure_animation);
 	}
 	
 	draw = function() {
 		if to_x != undefined {
-			//draw_sprite_ext(self.figure_sprite, 0, to_move.x, to_move.y, 
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], 
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
 		if draw_previous_cell{
 			//draw_sprite_ext(S_cycle_rule, 0, from_move.filled_figure.previous_move_cell.x, from_move.filled_figure.previous_move_cell.y,
@@ -35,8 +41,8 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 			from_move.filled_figure.previous_move_cell.marked = 0;
 		}
 		if to_x != undefined {to_move.set_draw_marks(1)}
-		self.to_x = _new_x;
-		self.to_y = _new_y;
+		to_x = _new_x;
+		to_y = _new_y;
 		to_move = Game.field.get_cell(_new_x, _new_y);
 		to_move.set_draw_marks(0)
 		O_BoardDraw.unblock_end_button()

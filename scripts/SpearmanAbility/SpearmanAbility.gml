@@ -2,6 +2,9 @@
 function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureAbilityAction() constructor{
 	self.using_figure = using_figure;
 	self.using_cell = using_cell;
+	if using_figure != undefined {
+		figure_sprite = Behaviours.get_sprite(using_figure.behaviour)
+	}
 	cell_for_move = undefined;
 	target_figure = undefined;
 	draw_previous_move_cell = false;
@@ -19,8 +22,9 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 	
 	draw = function() {
 		if global.cell_click_callback != using_cell{
-			//draw_sprite_ext(using_figure.sprite_index, 0, global.cell_click_callback.x, global.cell_click_callback.y, 
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			draw_sprite_ext(figure_sprite, using_cell.filled_figure.image, Game.field.get_cell_xy(cell_for_move)[0], 
+			Game.field.get_cell_xy(cell_for_move)[1], 
+			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 			if using_figure.previous_ability_cell != undefined and !using_figure.previous_ability_cell.is_filled(){
 				//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_ability_cell.x, using_figure.previous_ability_cell.y,
 				//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)

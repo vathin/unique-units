@@ -34,9 +34,13 @@ function Cell() constructor{
 		filled_figure_status.start();
 	}
 	
-	fill = function(_new_figure) 
+	fill = function(_new_figure, animation) 
 	{
-		filled_figure = _new_figure
+		filled_figure = _new_figure;
+		if !animation {
+			filled_figure.draw_x = Game.field.get_cell_xy(self)[0];
+			filled_figure.draw_y = Game.field.get_cell_xy(self)[1];
+		}
 	}
 	
 	is_filled = function() {

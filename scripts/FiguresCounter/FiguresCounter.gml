@@ -29,12 +29,11 @@ function FiguresCounter() constructor {
 		if array_length(figures_to_capture) > 0 {
 			while array_length(figures_to_capture) > 0 {
 				capture_figure = array_pop(figures_to_capture);
-				Game.game_loop_controller.add_captured_figure(Game.game_loop_controller.get_opponent
-				(capture_figure[0].owner));
+				Game.game_loop_controller.add_captured_figure(Game.game_loop_controller.get_opponent(capture_figure[0].owner));
+				capture_figure[0].capture(1);
 				capture_figure[1].clear();
-				capture_figure[0].capture();
 				place = Game.field.get_place("capture", Game.game_loop_controller.get_opponent(capture_figure[0].owner));
-				place.add_figure(capture_figure[0])
+				place.add_figure(capture_figure[0], 1)
 			}
 		}
 	}

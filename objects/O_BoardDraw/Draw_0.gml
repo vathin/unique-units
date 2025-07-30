@@ -11,7 +11,10 @@ if in_game {
 	
 	figure_counters_draw();
 	turn_owner_draw();
-
+	
+	if Game.game_loop_controller.have_action() {
+		Game.game_loop_controller.action.draw();
+	}
 	if end_button {
 		draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);
 	}
@@ -36,6 +39,11 @@ if in_game {
 		}
 		break;
 	case STATE_LIST.summon:
+		if button_overlay_sprite != undefined {
+			draw_sprite_ext(button_overlay_sprite, button_overlay_subimg, 
+			(main_button_x[0]+main_button_x[1])/2, (main_button_y[0] + main_button_y[1])/2,
+			button_overlay_scale, button_overlay_scale, 0, c_white, 1)
+		}
 		if global.cell_click_callback != undefined {
 			draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
 		}
