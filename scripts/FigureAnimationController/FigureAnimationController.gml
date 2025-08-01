@@ -15,7 +15,7 @@ function FigureAnimationController() constructor{
 	figure_y = 0;
 	percent = 0;
 
-	start_animation = function(_x_from, _y_from, _x_to, _y_to, _animation_length) {
+	start_animation = function(_x_from, _y_from, _x_to, _y_to, _animation_length, _figure_scale = Settings.figure_scale) {
 		x_from = _x_from;
 		y_from = _y_from;
 		x_to = _x_to;
@@ -23,9 +23,13 @@ function FigureAnimationController() constructor{
 		figure_x = x_from;
 		figure_y = y_from;
 		animation_length = _animation_length;
+		figure_xscale = _figure_scale;
+		figure_yscale = _figure_scale;
 		animation_frame = 0;
 		percent = 0;
 	}
+	
+
 	
 	//animate = function() {
 	//}

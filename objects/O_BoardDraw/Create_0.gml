@@ -73,8 +73,8 @@ capture_draw = function() {
 }
 
 figure_counters_draw = function() {
-	drop_draw();
-	capture_draw();
+	//drop_draw();
+	//capture_draw();
 	draw_text_transformed(drop_cord[0], drop_cord[1], "СБРОС", 0.55, 0.55, 0);
 	draw_text_transformed(capture_cord[0], capture_cord[1], "ПЛЕН", 0.55, 0.55, 0);
 }

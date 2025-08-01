@@ -85,11 +85,15 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		new_field_figure = new Figure();
 		new_field_figure.set_behaviour(array_get(buttons, chosen_button));
 		target_cell.fill(new_field_figure);
-		array_delete(buttons, chosen_button, 1);
-		for (i = 0; i < 2; i++) {
-			new_figure = new Figure();
-			new_figure.set_behaviour(buttons[0]);
-			new_figure.drop();
+		//array_delete(buttons, chosen_button, 1);
+		for (i = 0; i < 3; i++) {
+			if i != chosen_button{
+				new_figure = new Figure();
+				new_figure.set_behaviour(buttons[0]);
+				new_figure.draw_x = figure_button_x + figure_button_x_offset*i;
+				new_figure.draw_y = figure_button_y;
+				new_figure.drop();
+			}
 			array_delete(buttons, 0, 1);
 		}
 		if Game.game_loop_controller.state == STATE_LIST.figure_ability {

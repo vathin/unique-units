@@ -36,7 +36,7 @@ function Field() constructor{
 	
 	TEST_draw_cells = function() {
 		draw_sprite_ext(map_sprite, 0, room_width/2, room_height/2-size/2, map_scale, map_scale, 0, c_white, 1);
-		
+		up_figures = [];
 		for (var h = 0; h < field_height; h++) 
 		{
 			for (var w = 0; w < field_width; w++) 
@@ -46,17 +46,20 @@ function Field() constructor{
 					draw_cell = cell_array[h][w]
 					draw_figure = draw_cell.filled_figure;
 					if draw_figure.have_animation() {
-						draw_figure.animate();
+						//draw_figure.animate();
+						array_push(up_figures, draw_figure)
 					}
-					draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
-					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
-					if draw_figure.state.is_conquesting {
-						var _draw_alpha = 1
-						if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {_draw_alpha = 0.3}
-						draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
-						draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+					else {
+						draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+						draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
+						if draw_figure.state.is_conquesting {
+							var _draw_alpha = 1
+							if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {_draw_alpha = 0.3}
+							draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+							draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+						}
 					}
-					draw_set_alpha(1);
+					
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
 					draw_sprite_ext(global.mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
@@ -79,16 +82,33 @@ function Field() constructor{
 		for (i = 0; i < array_length(other_figures); i++) {
 			draw_figure = other_figures[i]
 			if draw_figure.have_animation() {
-				draw_figure.animate()
+				//draw_figure.animate()
+				array_push(up_figures, draw_figure)
 			}
+			else {
+				draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+				draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
+				if draw_figure.state.is_conquesting {
+					var _draw_alpha = 1
+					draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+				}
+			}
+		}
+		for (i = 0; i < array_length(up_figures); i++) {
+			draw_figure = up_figures[i];
 			draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 			draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
-			if draw_figure.state.is_conquesting {
-				var _draw_alpha = 1
-				if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {_draw_alpha = 0.3}
-				draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
-				draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+			if draw_figure.state.is_conquesting and draw_figure.have_animation() 
+			and draw_figure.get_current_animation_controller().anim_type == "overturn"{
+				controller = draw_figure.get_current_animation_controller();
+				if controller.draw_spr_2 {
+					var _draw_alpha = 1
+					draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
+					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
+				}
 			}
+			if draw_figure.have_animation() {draw_figure.animate()}
 		}
 	}
 	array_push(Game.do_every_step_list, TEST_draw_cells)
@@ -192,9 +212,12 @@ function Field() constructor{
 		for (i = 0; i < array_length(_player1); i++) {
 			cell = get_cell(_player1[i][0], _player1[i][1])
 			if cell.is_filled() {
-				if cell.filled_figure.owner == Game.Player2.player_id 
-				and cell.filled_figure.state.is_active {
-					cell.filled_figure.conquest();
+				var _figure = cell.filled_figure
+				if _figure.owner == Game.Player2.player_id and _figure.state.is_active {
+					figure_animation = new OverturnAnimationController();
+					figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
+					_figure.add_animation(figure_animation)
+					_figure.conquest();
 					Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);
 				}
 			}
@@ -202,10 +225,13 @@ function Field() constructor{
 		for (i = 0; i < array_length(_player2); i++) {
 			cell = get_cell(_player2[i][0], _player2[i][1])
 			if cell.is_filled() {
-				if cell.filled_figure.owner == Game.Player1.player_id 
-				and cell.filled_figure.state.is_active {
-					 cell.filled_figure.conquest();
-					 Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
+				var _figure = cell.filled_figure
+				if _figure.owner == Game.Player1.player_id and _figure.state.is_active {
+					figure_animation = new OverturnAnimationController();
+					figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
+					_figure.add_animation(figure_animation)
+					_figure.conquest();
+					Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
 				}
 			}
 		}

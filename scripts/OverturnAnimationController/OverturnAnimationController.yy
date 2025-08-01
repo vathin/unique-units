@@ -1,0 +1,13 @@
+{
+  "$GMScript":"",
+  "%Name":"OverturnAnimationController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"OverturnAnimationController",
+  "parent":{
+    "name":"animation",
+    "path":"folders/Scripts/animation.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

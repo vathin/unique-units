@@ -5,29 +5,45 @@ function DroppedFiguresCounter(_owner) constructor{
 	owner = _owner;
 	//last_added_figure = undefined;
 
-	add_figure = function(new_figure, animation) {
-		array_push(figures, new_figure);
-		figures_to_add = new_figure;
-		if animation {
-			var from_x = new_figure.draw_x;
-			var from_y = new_figure.draw_y;
-			if new_figure.have_animation() {
-				from_x = array_get(new_figure.animation_queue, array_length(new_figure.animation_queue)-1).x_to;
-				from_y = array_get(new_figure.animation_queue, array_length(new_figure.animation_queue)-1).y_to;
+	add_figure = function(_new_figure, _animation) {
+		array_push(figures, _new_figure);
+		sort(_animation);
+		
+	}
+	
+	sort = function(_use_animation = true) {
+		figure_y_offset = 0;
+		figure_x_offset = 0;
+		for (i = 0; i < array_length(figures); i++) {
+			if i == 6 or i == 12{
+				figure_x_offset -= 58;
+				figure_y_offset = 0;
 			}
-			figure_animation = new MoveAnimationController();
-			figure_animation.start_animation(from_x, from_y, O_BoardDraw.drop_cord[0], 
-			O_BoardDraw.drop_cord[1], Settings.move_animation_length*2);
-			new_figure.add_animation(figure_animation);
-		}
-		else {
-			new_figure.draw_x = O_BoardDraw.drop_cord[0]
-			new_figure.draw_y = O_BoardDraw.drop_cord[1]
+			if figures[i].owner == Game.Player1.player_id {facing = 1}
+			else {facing = -1}
+			new_figure_x = O_BoardDraw.drop_cord[0] + 30 + figure_x_offset;
+			new_figure_y = O_BoardDraw.drop_cord[1] + 7 + 55*facing + figure_y_offset*facing;
+			figure_y_offset += 32;
+			if _use_animation {
+				if (new_figure_x != figures[i].draw_x or new_figure_y != figures[i].draw_y) {
+				//!(figures[i].have_animation() 
+				//and (figures[i].get_last_animation_controller().x_to == new_figure_x
+				//or figures[i].get_last_animation_controller().y_to == new_figure_y)){
+					figure_animation = new MoveAnimationController();
+					figure_animation.start_animation(figures[i].draw_x, figures[i].draw_y, new_figure_x, 
+					new_figure_y, point_distance(figures[i].draw_x, figures[i].draw_y, new_figure_x, new_figure_y)/5, Settings.figure_scale/1.2);
+					figures[i].add_animation(figure_animation);
+				}
+			}
+			else {
+				figures[i].draw_x = new_figure_x;
+				figures[i].draw_y = new_figure_y;
+			}
 		}
 	}
 
 	export = function() {
-		figures_structs = []
+		figures_structs = [];
 		for (i = 0; i < array_length(figures); i++) {array_push(figures_structs, figures[i].export())}
 		export_data = {
 			ex_figures_structs: figures_structs
@@ -36,11 +52,12 @@ function DroppedFiguresCounter(_owner) constructor{
 	}
 
 	import = function(_import_data) {
-		figures = []
+		figures = [];
 		for (i = 0; i < array_length(_import_data.ex_figures_structs); i++) {
 			new_figure = new Figure();
 			new_figure.import(_import_data.ex_figures_structs[i]);
-			add_figure(new_figure, false);
+			figures[i] = new_figure;
 		}
+		sort(0);
 	}
 }

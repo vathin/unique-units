@@ -28,9 +28,16 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	}
 	
 	execute = function() {
-		Game.field.get_cell(to_x, to_y).fill(using_figure);
-		Game.field.get_cell(from_x, from_y).clear();
+		using_cell = Game.field.get_cell(from_x, from_y);
+		cell_for_move = Game.field.get_cell(to_x, to_y);
+		cell_for_move.fill(using_figure);
+		using_cell.clear();
+		figure_animation = new MoveAnimationController();
+		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
+		Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length);
+		using_figure.add_animation(figure_animation);
 	}
+	
 	draw = function() {
 		if to_x != undefined {
 			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[0],

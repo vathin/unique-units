@@ -15,6 +15,10 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 		//target_figure.start_move_animation(fill_cell, Settings.ability_animation_length)
 		fill_cell.fill(target_figure);
 		target_cell.clear();
+		figure_animation = new MoveAnimationController();
+		figure_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
+		Game.field.get_cell_xy(fill_cell)[0], Game.field.get_cell_xy(fill_cell)[1], Settings.move_animation_length*1.2);
+		target_figure.add_animation(figure_animation);
 	}
 	
 	draw = function() {

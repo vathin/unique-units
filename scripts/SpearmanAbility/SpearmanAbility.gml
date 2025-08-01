@@ -10,9 +10,14 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 	draw_previous_move_cell = false;
 	
 	execute = function() {
-		using_cell.filled_figure.start_move_animation(cell_for_move, Settings.ability_animation_length)
+		//using_cell.filled_figure.start_move_animation(cell_for_move, Settings.ability_animation_length)
+		using_figure = using_cell.filled_figure
 		cell_for_move.fill(using_cell.filled_figure, 1);
 		using_cell.clear();
+		figure_animation = new MoveAnimationController();
+		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
+		Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length*1.8);
+		using_figure.add_animation(figure_animation);
 	}
 	
 	set_target = function(useless_data, useless_data2) {

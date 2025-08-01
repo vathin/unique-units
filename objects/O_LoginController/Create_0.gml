@@ -235,7 +235,7 @@ Server.add_reaction(function(msg)
 		_winner = msg.data.winner;
 		if _winner == "" {winner = "draw"}
 		Game.end_game()
-		Room_goto(R_Game_end);
+		room_goto(R_Game_end);
 		
 	}
 })

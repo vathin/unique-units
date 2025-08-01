@@ -1,3 +1,4 @@
+
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Figure() constructor{	
@@ -106,6 +107,10 @@ function Figure() constructor{
 		return animation_queue[0];
 	}
 	
+	get_last_animation_controller = function() {
+		return animation_queue[array_length(animation_queue)-1]
+	}
+	
 	animate = function() {
 		animation = get_current_animation_controller();
 		draw_x = animation.figure_x;
@@ -114,8 +119,15 @@ function Figure() constructor{
 		draw_xscale = animation.figure_xscale;
 		draw_yscale = animation.figure_yscale;
 		animation.update_animation();
+		if array_length(animation_queue) > 1 {
+			animation_queue[1].x_from = draw_x;
+			animation_queue[1].y_from = draw_y;
+			animation_queue[1].figure_x = draw_x;
+			animation_queue[1].figure_y = draw_y;
+		}
 		if animation.animation_frame >= animation.animation_length {
 			array_delete(animation_queue, 0, 1);
+			
 		}
 	}
 
@@ -180,6 +192,7 @@ function Figure() constructor{
 			ex_previous_move_counter: previous_move_counter,
 			ex_draw_x: draw_x,
 			ex_draw_y: draw_y,
+			ex_draw_scale: draw_xscale
 		}
 		return export_data
 	}
@@ -195,6 +208,8 @@ function Figure() constructor{
 		previous_move_counter = import_data.ex_previous_move_counter;
 		draw_x = import_data.ex_draw_x;
 		draw_y = import_data.ex_draw_y;
+		draw_xscale = import_data.ex_draw_scale;
+		draw_yscale = import_data.ex_draw_scale;
 		update_stats();
 	}
 }
