@@ -11,9 +11,10 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	//O_SummonButton.back = 1;
 	
 	execute = function() {
-		new_figure = new Figure()
-		new_figure.set_behaviour(summon_figure)
-		Game.field.get_cell(target_x, target_y).fill(new_figure)
+		Game.field.create_figure(summon_figure, target_x, target_y, 1)
+		//new_figure = new Figure()
+		//new_figure.set_behaviour(summon_figure)
+		//Game.field.get_cell(target_x, target_y).fill(new_figure)
 		Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, 1)
 	}
 	draw = function() {

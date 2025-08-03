@@ -15,11 +15,37 @@ function Field() constructor{
 	player1_captured = new CapturedFiguresCounter(Game.Player1.player_id);
 	player2_captured = new CapturedFiguresCounter(Game.Player2.player_id);
 	player1_dropped = new DroppedFiguresCounter(Game.Player1.player_id);
-	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id)
+	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id);
 	
 	
 	set_selected_cell = function(cell) {
 		selected_cell = cell
+	}
+	
+	create_figure = function(_behaviour, _xcord, _ycord, _is_figure_new, _owner = global.turn_owner) {
+		new_figure = new Figure()
+		new_figure.set_behaviour(_behaviour);
+		new_figure.owner = _owner;
+		Game.field.get_cell(_xcord, _ycord).fill(new_figure);
+		if _is_figure_new {
+			new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
+			Game.game_loop_controller.figures_counter.change_field_figures_amount(_owner, 1);
+		}
+	}
+	
+	find_figure_from_id = function(_id) {
+		for (var h = 0; h < field_height; h++) 
+		{
+			for (var w = 0; w < field_width; w++) 
+			{
+				if cell_array[h][w].is_filled() {
+					if cell_array[h][w].filled_figure.figure_id == _id {
+						return cell_array[h][w].filled_figure
+					}
+				}
+			}
+		}
+		return undefined
 	}
 	
 	cell_array = []
@@ -113,11 +139,6 @@ function Field() constructor{
 	}
 	array_push(Game.do_every_step_list, TEST_draw_cells)
 	
-	/*generate_new_game_field = function(w, h, cell_size) {
-		player2_dropped.facing = -1;
-		player2_captured.facing = -1;
-	
-	}*/
 	get_cell_xy = function(cell) {
 		return [start_x + size*cell.xcord, start_y + size*cell.ycord]
 	}

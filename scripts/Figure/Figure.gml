@@ -4,13 +4,14 @@
 function Figure() constructor{	
 	state = new Figure_state();
 	state.is_active = 1; 
+	figure_id = "";
 	image = 0;
 	in_move = false;
 	overturning = false;
 	owner = global.turn_owner;
 	previous_ability_cell = undefined;
-	previous_ability_target = undefined;
-	previous_move_cell = undefined;
+	previous_ability_target_id = undefined;
+	previous_move_cell = undefined
 	previous_ability_counter = 0;
 	previous_move_counter = 0;
 	behaviour = undefined;
@@ -33,6 +34,7 @@ function Figure() constructor{
 		behaviour = Behaviours.get(new_behaviour);
 		//sprite_index = Behaviours.get_sprite(behaviour);
 	}
+	
 	update_stats = function() {
 		if owner == Game.Player1.player_id {
 			image = 0;
@@ -48,7 +50,7 @@ function Figure() constructor{
 	}
 
 	clear_previous_ability_cell = function() {
-		previous_ability_target = undefined;
+		previous_ability_target_id = undefined;
 		previous_ability_cell = undefined;
 	}
 
@@ -59,7 +61,7 @@ function Figure() constructor{
 			}
 		}
 		else {previous_ability_counter--}
-		if !instance_exists(previous_ability_target) or previous_ability_target.state.is_dropped {
+		if Game.field.find_figure_from_id(previous_ability_target_id) == undefined {
 			clear_previous_ability_cell()
 		}
 	}
@@ -84,14 +86,14 @@ function Figure() constructor{
 		//animation.start_animation(x, y, cell.x, cell.y, lenght, self);
 	}
 
-	add_previous_ability_cell = function(add_cell, add_target) {
-		previous_ability_cell = add_cell;
-		previous_ability_target = add_target;
+	add_previous_ability_cell = function(_add_cell, _target_id) {
+		previous_ability_cell = _add_cell;
+		previous_ability_target_id = _target_id;
 		previous_ability_counter = 2;
 	}
 
-	add_previous_move_cell = function(add_cell) {
-		previous_move_cell = Game.field.get_cell(add_cell[0], add_cell[1]);
+	add_previous_move_cell = function(_add_cell) {
+		previous_move_cell = _add_cell;
 		previous_move_counter = 2;
 	}
 	
@@ -184,9 +186,10 @@ function Figure() constructor{
 		export_data = {
 			ex_state: state.export(),
 			ex_owner: owner,
+			ex_figure_id: figure_id,
 			ex_behaviour: behaviour,
 			ex_previous_ability_cell: previous_ability_cell,
-			ex_previous_ability_target: previous_ability_target,
+			ex_previous_ability_target: previous_ability_target_id,
 			ex_previous_move_cell: previous_move_cell,
 			ex_previous_ability_counter: previous_ability_counter,
 			ex_previous_move_counter: previous_move_counter,
@@ -199,10 +202,11 @@ function Figure() constructor{
 
 	import = function(import_data) {
 		state.import(import_data.ex_state);
+		figure_id = import_data.ex_figure_id;
 		owner = import_data.ex_owner;
 		set_behaviour(import_data.ex_behaviour);
 		previous_ability_cell = import_data.ex_previous_ability_cell;
-		previous_ability_target = import_data.ex_previous_ability_target;
+		previous_ability_target_id = import_data.ex_previous_ability_target;
 		previous_move_cell = import_data.ex_previous_move_cell;
 		previous_ability_counter = import_data.ex_previous_ability_counter;
 		previous_move_counter = import_data.ex_previous_move_counter;

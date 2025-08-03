@@ -31,13 +31,15 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 			Game.field.get_cell_xy(cell_for_move)[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 			if using_figure.previous_ability_cell != undefined and !using_figure.previous_ability_cell.is_filled(){
-				//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_ability_cell.x, using_figure.previous_ability_cell.y,
-				//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+				var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_ability_cell[0], using_figure.previous_ability_cell[1]))[0];
+				var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_ability_cell[0], using_figure.previous_ability_cell[1]))[1];
+				draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
 			}
 		}
 		if draw_previous_move_cell {
-			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
+			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[0];
+			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[1];
+			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
 		}
 		
 	}
@@ -71,7 +73,8 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 				Game.field.get_cell(using_cell.xcord, using_cell.ycord - 2).marked = 1;
 			}
 		}
-		if using_cell.filled_figure.previous_move_cell != undefined and using_cell.filled_figure.previous_move_cell.marked {
+		cl = using_cell.filled_figure.previous_move_cell;
+		if using_cell.filled_figure.previous_move_cell != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked {
 			draw_previous_move_cell = 1;
 			using_cell.filled_figure.previous_move_cell.marked = 0;
 		}

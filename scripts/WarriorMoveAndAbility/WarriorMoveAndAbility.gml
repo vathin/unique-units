@@ -59,10 +59,15 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			}
 		}
-		if target_cell == undefined and draw_previous_cell{
+		if target_cell == undefined and draw_previous_cell and using_figure.previous_move_cell != undefined {
+			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[0];
+			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[1];
+			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
 			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
 			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
-			if using_figure.previous_move_cell.marked {using_figure.previous_move_cell.marked = 0}
+			if Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]).is_marked() {
+				Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]).marked = 0
+				}
 		}
 	}
 	

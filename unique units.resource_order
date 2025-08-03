@@ -86,7 +86,6 @@
     {"name":"Figure","order":2,"path":"scripts/Figure/Figure.yy",},
     {"name":"FigureActionController","order":1,"path":"scripts/FigureActionController/FigureActionController.yy",},
     {"name":"FigureCapture","order":10,"path":"scripts/FigureCapture/FigureCapture.yy",},
-    {"name":"FigureMarksController","order":5,"path":"scripts/FigureMarksController/FigureMarksController.yy",},
     {"name":"FilledFigureStatus","order":14,"path":"scripts/FilledFigureStatus/FilledFigureStatus.yy",},
     {"name":"GameClass","order":1,"path":"scripts/GameClass/GameClass.yy",},
     {"name":"gameData","order":10,"path":"scripts/gameData/gameData.yy",},

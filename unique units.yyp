@@ -121,7 +121,6 @@
     {"id":{"name":"FigureAnimationController","path":"scripts/FigureAnimationController/FigureAnimationController.yy",},},
     {"id":{"name":"FigureBehaviour","path":"scripts/FigureBehaviour/FigureBehaviour.yy",},},
     {"id":{"name":"FigureCapture","path":"scripts/FigureCapture/FigureCapture.yy",},},
-    {"id":{"name":"FigureMarksController","path":"scripts/FigureMarksController/FigureMarksController.yy",},},
     {"id":{"name":"FiguresCounter","path":"scripts/FiguresCounter/FiguresCounter.yy",},},
     {"id":{"name":"FilledFigureStatus","path":"scripts/FilledFigureStatus/FilledFigureStatus.yy",},},
     {"id":{"name":"GameClass","path":"scripts/GameClass/GameClass.yy",},},

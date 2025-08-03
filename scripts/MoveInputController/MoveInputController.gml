@@ -9,8 +9,9 @@ function MoveInputController() constructor{
 		move_ability.check_all_cells();
 	}
 	else {Game.field.check_clear_move_cells(move_from.xcord, move_from.ycord)}
-	if move_from.filled_figure.previous_move_cell != undefined and move_from.filled_figure.previous_move_cell.marked {
-		move_from.filled_figure.previous_move_cell.marked = 0;
+	cl = move_from.filled_figure.previous_move_cell;
+	if cl != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked() {
+		Game.field.get_cell(cl[0], cl[1]).marked = 0;
 		draw_previous_cell = 1;
 	}
 	global.mark = S_Move_mark;

@@ -81,10 +81,12 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	}
 	
 	execute = function() {
-		Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, 1);
-		new_field_figure = new Figure();
-		new_field_figure.set_behaviour(array_get(buttons, chosen_button));
-		target_cell.fill(new_field_figure);
+		//Game.game_loop_controller.figures_counter.change_field_figures_amount(using_figure.owner, 1);
+		//new_field_figure = new Figure();
+		//new_field_figure.set_behaviour(array_get(buttons, chosen_button));
+		//target_cell.fill(new_field_figure);
+		Game.field.create_figure(array_get(buttons, chosen_button), target_cell.xcord, 
+		target_cell.ycord, 1, using_figure.owner)
 		//array_delete(buttons, chosen_button, 1);
 		for (i = 0; i < 3; i++) {
 			if i != chosen_button{

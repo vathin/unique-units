@@ -30,9 +30,10 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
-		if draw_previous_cell{
-			//draw_sprite_ext(S_cycle_rule, 0, from_move.filled_figure.previous_move_cell.x, from_move.filled_figure.previous_move_cell.y,
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+		if draw_previous_cell and from_move.filled_figure.previous_move_cell != undefined{
+			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(from_move.filled_figure.previous_move_cell[0], from_move.filled_figure.previous_move_cell[1]))[0];
+			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(from_move.filled_figure.previous_move_cell[0], from_move.filled_figure.previous_move_cell[1]))[1];
+			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
 		}
 	}
 	

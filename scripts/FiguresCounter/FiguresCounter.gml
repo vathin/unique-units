@@ -4,6 +4,7 @@ function FiguresCounter() constructor {
 	player1_field_figures = 0;
 	player2_field_figures = 0;
 	current_player_figures = 20;
+	figures_id_counter = 0
 	figures_to_capture = []
 	
 	
@@ -23,6 +24,11 @@ function FiguresCounter() constructor {
 	change_field_figures_amount = function(player, amount) {
 		if player == Game.Player1.player_id {player1_field_figures += amount}
 		else {player2_field_figures += amount}
+	}
+	
+	get_figure_id = function() {
+		figures_id_counter ++;
+		return string(figures_id_counter-1)
 	}
 
 	update_captured_figures_array = function() {
@@ -66,6 +72,7 @@ function FiguresCounter() constructor {
 		export_data = {
 			ex_player1_field_figures: player1_field_figures,
 			ex_player2_field_figures: player2_field_figures,
+			ex_figures_id_counter: figures_id_counter
 		}
 			return export_data;
 	}
@@ -73,6 +80,7 @@ function FiguresCounter() constructor {
 	import = function(import_data) {
 		player1_field_figures = import_data.ex_player1_field_figures;
 		player2_field_figures = import_data.ex_player2_field_figures;
+		figures_id_counter = import_data.ex_figures_id_counter;
 		update_turn();
 	}
 }

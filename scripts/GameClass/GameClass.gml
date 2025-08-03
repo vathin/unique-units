@@ -58,7 +58,7 @@ function GameClass() constructor{
 		figure_action_controller = undefined;
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
-		Maps_list.start(global.map)
+		Maps_list.start(global.map);
 	}
 	
 	end_game = function() {
