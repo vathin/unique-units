@@ -18,6 +18,7 @@ function MoveAnimationController() : FigureAnimationController() constructor{
 		if animation_frame >= (animation_length-1) {
 			figure_x = x_to;
 			figure_y = y_to;
+			figure_alpha = 1;
 		}
 	}
 }

@@ -97,9 +97,9 @@ function GameLoopController() constructor{
 			}
 		}
 		if check_win_conditions() != undefined {
-			if Game.role == "host"
-			show_message(check_win_conditions());
-			Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}))
+			if Game.role == "host" {
+				Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}))
+			}
 		}
 		if state == STATE_LIST.enemy_turn {
 			Game.field.clear_all_marks();

@@ -81,7 +81,7 @@ figure_counters_draw = function() {
 
 turn_owner_draw = function() {
 	draw_text_transformed(turn_owner_cord[0], turn_owner_cord[1], 
-	("Ход игрока " + string_char_at(global.turn_owner, string_length(global.turn_owner))), 0.65, 0.65, 0);
+	("Ход игрока " + string(1+1*(global.turn_owner == Game.Player2.player_id))), 0.65, 0.65, 0);
 }
 
 clear_button_overlay = function() {

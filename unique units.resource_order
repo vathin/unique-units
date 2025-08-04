@@ -95,9 +95,9 @@
     {"name":"MatchController","order":2,"path":"scripts/MatchController/MatchController.yy",},
     {"name":"MoveAnimationController","order":1,"path":"scripts/MoveAnimationController/MoveAnimationController.yy",},
     {"name":"OLD_SummonAction","order":3,"path":"scripts/OLD_SummonAction/OLD_SummonAction.yy",},
+    {"name":"OverturnAnimationController","order":2,"path":"scripts/OverturnAnimationController/OverturnAnimationController.yy",},
     {"name":"Player_figure_list","order":5,"path":"scripts/Player_figure_list/Player_figure_list.yy",},
     {"name":"Player","order":9,"path":"scripts/Player/Player.yy",},
-    {"name":"OverturnAnimationController","order":2,"path":"scripts/OverturnAnimationController/OverturnAnimationController.yy",},
     {"name":"ShieldbearerAbility","order":2,"path":"scripts/ShieldbearerAbility/ShieldbearerAbility.yy",},
     {"name":"ShieldbearerBehaviour","order":6,"path":"scripts/ShieldbearerBehaviour/ShieldbearerBehaviour.yy",},
     {"name":"SpearmanAbility","order":3,"path":"scripts/SpearmanAbility/SpearmanAbility.yy",},
@@ -142,5 +142,6 @@
     {"name":"S_trader_card","order":1,"path":"sprites/S_trader_card/S_trader_card.yy",},
     {"name":"S_Trader","order":2,"path":"sprites/S_Trader/S_Trader.yy",},
     {"name":"S_watching_overturned_figure","order":3,"path":"sprites/S_watching_overturned_figure/S_watching_overturned_figure.yy",},
+    {"name":"Spr_end_game","order":17,"path":"sprites/Spr_end_game/Spr_end_game.yy",},
   ],
 }

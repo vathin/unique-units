@@ -63,7 +63,6 @@ function GameClass() constructor{
 	
 	end_game = function() {
 		online_match = 0;
-		game_loop_controller.clear_all();
 		game_loop_controller = undefined;
 		field = undefined;
 		Player1 = undefined;

@@ -27,7 +27,11 @@ if logged_in {
 	}
 	if room == R_Game_end {
 		draw_set_halign(fa_center);
-		draw_text(room_width/2, room_height/2.65, "Победитель: " + _winner)
+		draw_text(room_width/2, room_height/2, "Победитель: " + _winner)
+		if _winner == _id {var draw_frame = 0}
+		else if _winner == enemy {var draw_frame = 1}
+		else {var draw_frame = 2}
+		draw_sprite_ext(Spr_end_game, draw_frame, room_width/2, room_height/3.8, 1.2, 1.2, 0, c_white, 1);
 		end_game_back_button_draw();
 		end_game_back_button_check();
 		draw_set_halign(fa_left);
