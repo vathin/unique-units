@@ -146,7 +146,7 @@ function Figure() constructor{
 		//image_yscale = Settings.figure_scale*0.75;
 		place = Game.field.get_place("drop", owner)
 		place.add_figure(self, 1);
-		Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
+		//Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
 	}
 	capture = function(is_on_field) {
 		state.is_active = 0;
@@ -156,7 +156,7 @@ function Figure() constructor{
 		//place = Game.field.get_place("capture", Game.game_loop_controller.get_opponent(owner));
 		//place.add_figure(self);
 		if is_on_field {
-			Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
+			//Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
 		}
 	}
 

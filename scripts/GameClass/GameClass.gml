@@ -12,6 +12,7 @@ function GameClass() constructor{
 	var opponent;
 	var role;
 	user_data = new userData();
+	in_match = false;
 	
 	
 	start_online = function(_server_id, _opponent, _role) {
@@ -59,6 +60,7 @@ function GameClass() constructor{
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
+		in_match = 1
 	}
 	
 	end_game = function() {
@@ -67,5 +69,6 @@ function GameClass() constructor{
 		field = undefined;
 		Player1 = undefined;
 		Player2 = undefined;
+		in_match = 0
 	}
 }

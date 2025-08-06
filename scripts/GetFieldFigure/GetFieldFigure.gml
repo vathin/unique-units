@@ -10,7 +10,7 @@ function GetFieldFigure() constructor{
 		target.filled_figure.capture();
 		place = Game.field.get_place("capture", 
 		Game.game_loop_controller.get_opponent(target.filled_figure.owner));
-		Game.game_loop_controller.figures_counter.change_field_figures_amount(Game.field.get_opponent(global.turn_owner), -1)
+		//Game.game_loop_controller.figures_counter.change_field_figures_amount(Game.field.get_opponent(global.turn_owner), -1)
 		place.add_figure(target.filled_figure, 1);
 		target.clear();
 	}
