@@ -1,4 +1,4 @@
-/// @description Вставьте описание здесь
+ /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакто
 global.turn_owner = Game.Player1.player_id;
 player1_captured = 0;

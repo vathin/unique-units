@@ -8,7 +8,7 @@ function SummonInputController() constructor{
 	figure_to_summon = array_pop(load_data.player_figures)
 	Game.user_data.save(global.turn_owner, load_data)
 	//O_SummonButton.change_sprite(Behaviours.get_sprite(figure_to_summon), Settings.summon_button_figure_scale);
-	O_BoardDraw.set_button_overlay(Behaviours.get_sprite(figure_to_summon), (global.turn_owner == Game.Player2.player_id))
+	O_BoardDraw.set_button_overlay(Behaviours.get_sprite(figure_to_summon), (global.turn_owner == O_LoginController.enemy))
 	global.mark = S_Summon_mark;
 	Game.field.check_controlled_summon_cells(global.turn_owner);
 	global.able_to_summon = true;

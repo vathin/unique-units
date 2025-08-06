@@ -36,7 +36,8 @@ function Figure() constructor{
 	}
 	
 	update_stats = function() {
-		if owner == Game.Player1.player_id {
+		//if owner == Game.Player1.player_id {
+		if owner == O_LoginController._id {
 			image = 0;
 		}
 		else {

@@ -1,4 +1,5 @@
-address = "ws://127.0.0.1";
+//address = "ws://127.0.0.1";
+address = "109.195.28.230"
 port = 987;
 
 socket = undefined;
