@@ -105,6 +105,7 @@
     {"id":{"name":"R_Invite","path":"rooms/R_Invite/R_Invite.yy",},},
     {"id":{"name":"R_Main_menu","path":"rooms/R_Main_menu/R_Main_menu.yy",},},
     {"id":{"name":"R_Test","path":"rooms/R_Test/R_Test.yy",},},
+    {"id":{"name":"R_Game_search","path":"rooms/R_Game_search/R_Game_search.yy",},},
     {"id":{"name":"AbilityInputController","path":"scripts/AbilityInputController/AbilityInputController.yy",},},
     {"id":{"name":"Action","path":"scripts/Action/Action.yy",},},
     {"id":{"name":"ArcherBehaviour","path":"scripts/ArcherBehaviour/ArcherBehaviour.yy",},},
@@ -200,6 +201,7 @@
     {"roomId":{"name":"R_Test","path":"rooms/R_Test/R_Test.yy",},},
     {"roomId":{"name":"R_Invite","path":"rooms/R_Invite/R_Invite.yy",},},
     {"roomId":{"name":"R_Game_end","path":"rooms/R_Game_end/R_Game_end.yy",},},
+    {"roomId":{"name":"R_Game_search","path":"rooms/R_Game_search/R_Game_search.yy",},},
   ],
   "templateType":"game",
   "TextureGroups":[

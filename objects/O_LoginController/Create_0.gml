@@ -97,6 +97,41 @@ invite_cancel_button_check = function() {
 	}
 }
 
+game_search_button_draw = function() {
+	draw_set_font(F_turn_timer)
+	draw_set_alpha(0.5);
+	draw_rectangle(room_width - 415, 225, room_width - 415 + 340, 310, 0);
+	draw_set_alpha(1);
+	draw_text(room_width - 400, 235, "ПОИСК ИГРЫ");
+	//draw_set_font(F_test)
+	//if reason != "" {draw_text(room_width - 415, 215, reason)}
+	//draw_set_font(F_turn_timer)
+}
+
+game_search_button_check = function() {
+	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
+	and mouse_y > 225 and mouse_y < 310 {
+		room_goto(R_Game_search)
+	}
+}
+
+search_cancel_button_draw = function() {
+	draw_set_alpha(0.35)
+	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
+	draw_set_alpha(1);
+	draw_set_halign(fa_center);
+	draw_text(room_width/2, room_height / 1.25, "ОТМЕНА");
+	draw_set_halign(fa_left);
+}
+search_cancel_button_check = function() {
+	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
+	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
+		//Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
+		//enemy = undefined;
+		room_goto(R_Main_menu);
+	}
+}
+
 end_game_back_button_draw = function() {
 	draw_set_alpha(0.35)
 	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
@@ -234,8 +269,6 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.GameEnd {
 		_winner = msg.data.winner;
 		if _winner == "" {winner = "draw"}
-		Game.end_game()
-		room_goto(R_Game_end);
-		
+		alarm[0] = 35;
 	}
 })

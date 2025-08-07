@@ -74,6 +74,7 @@
     {"name":"R_Invite","order":4,"path":"rooms/R_Invite/R_Invite.yy",},
     {"name":"R_Main_menu","order":1,"path":"rooms/R_Main_menu/R_Main_menu.yy",},
     {"name":"R_Test","order":3,"path":"rooms/R_Test/R_Test.yy",},
+    {"name":"R_Game_search","order":6,"path":"rooms/R_Game_search/R_Game_search.yy",},
     {"name":"AbilityInputController","order":7,"path":"scripts/AbilityInputController/AbilityInputController.yy",},
     {"name":"Action","order":1,"path":"scripts/Action/Action.yy",},
     {"name":"ArcherBehaviour","order":4,"path":"scripts/ArcherBehaviour/ArcherBehaviour.yy",},
