@@ -69,6 +69,7 @@ function GameClass() constructor{
 		field = undefined;
 		Player1 = undefined;
 		Player2 = undefined;
-		in_match = 0
+		in_match = 0;
+		do_every_step_list = [];
 	}
 }

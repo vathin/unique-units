@@ -104,9 +104,9 @@ invite_cancel_button_check = function() {
 game_search_button_draw = function() {
 	draw_set_font(F_turn_timer)
 	draw_set_alpha(0.5);
-	draw_rectangle(room_width - 415, 285, room_width - 415 + 340, 370, 0);
+	draw_rectangle(room_width - 415, 245, room_width - 415 + 340, 330, 0);
 	draw_set_alpha(1);
-	draw_text(room_width - 400, 235, "ПОИСК ИГРЫ");
+	draw_text(room_width - 400, 255, "ПОИСК ИГРЫ");
 	//draw_set_font(F_test)
 	//if reason != "" {draw_text(room_width - 415, 215, reason)}
 	//draw_set_font(F_turn_timer)
@@ -114,7 +114,7 @@ game_search_button_draw = function() {
 
 game_search_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
-	and mouse_y > 285 and mouse_y < 370 {
+	and mouse_y > 245 and mouse_y < 330 {
 		room_goto(R_Game_search)
 	}
 }
@@ -153,8 +153,8 @@ end_game_back_button_check = function() {
 }
 
 invite_accept_window_draw = function() {
-	window_x = room_width - 415;
-	window_y = 220
+	window_x = room_width - 900;
+	window_y = 45
 	draw_set_alpha(0.35);
 	draw_set_font(F_test);
 	draw_rectangle(window_x, window_y, window_x + 340, window_y + 200, 0);
@@ -171,8 +171,8 @@ invite_accept_window_draw = function() {
 
 invite_accept_window_check = function() {
 	if mouse_check_button_pressed(mb_left) {
-		window_x = room_width - 415;
-		window_y = 220;
+		window_x = room_width - 900;
+		window_y = 45;
 		if mouse_x > window_x + 20 and mouse_x < window_x + 155 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
 			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
 			invited = 0;

@@ -13,6 +13,9 @@ function Behaviours() constructor{
 	static get_sprite = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].sprite
 	}
+	static get_card_sprite = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].card
+	}
 	static get = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].index
 	}
@@ -22,9 +25,6 @@ function Behaviours() constructor{
 	static get_random_figure = function() {
 		randomise()
 		return array_get(figure_list, random_range(0, array_length(figure_list)));
-	}
-	static get_figure_card = function(behaviour_type) {
-		return behaviour_list[$ behaviour_type].card
 	}
 	static get_ablility = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].ability

@@ -116,6 +116,7 @@ function Timer() constructor{
 		seconds = import_data.ex_seconds;
 		all_time = import_data.ex_all_time;
 	}
-	array_push(Game.do_every_step_list, TEST_draw_timer)
-	array_push(Game.do_every_step_list, timer_function)
+	array_push(Game.do_every_step_list, TEST_draw_timer);
+	array_push(Game.do_every_step_list, timer_function);
+	
 }
