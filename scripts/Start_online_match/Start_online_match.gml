@@ -9,9 +9,8 @@ function Start_online_match(_server_id, _enemy, _role){
 	global.figure_to_summon = undefined;
 	global.map = "map1";
 	
-	#macro Game global.game
-	Game = undefined;
-	Game = new GameClass();
+	
+	//Game = new GameClass();
 	Game.start_online(_server_id, _enemy, _role);
 	
 }

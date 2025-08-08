@@ -2,6 +2,7 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Player(_id, _type, _able_to_summon=true, _captured=0) constructor{
 	player_id = _id;
-	player_type = _type
-	able_to_summon = true
+	player_type = _type;
+	able_to_summon = true;
+	deck = ["warrior", "archer", "shieldbearer", "spearman", "trader"];
 }

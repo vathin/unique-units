@@ -11,6 +11,8 @@ function GameLoopController() constructor{
 	export_data = [];
 	action_export_data = [];
 	ready_to_send = 1;
+	player1_cards = [];
+	player2_cards = [];
 	
 	turn_timer = new Timer();
 	turn_timer.start_count(Settings.turn_time);
@@ -55,6 +57,13 @@ function GameLoopController() constructor{
 	startInput = function() {
 		//O_SummonButton.unblock()
 		state = STATE_LIST.wait
+	}
+	
+	create_cards = function(_player) {
+		for (i = 0; i <array_length(get_player(_player).deck); i++) {
+			new_card = new FigureCard();
+			new_card.set_figure(get_player(_player).deck[i]);
+		}
 	}
 	
 	get_player = function(_player) {

@@ -13,6 +13,10 @@ invited = false;
 role = undefined;
 server_id = undefined;
 
+#macro Game global.game
+Game = undefined;
+Game = new GameClass();
+
 login_x = login_window_x-x_offset;
 login_y = login_window_y-75-y_offset;
 email_x = login_window_x-x_offset;
@@ -100,7 +104,7 @@ invite_cancel_button_check = function() {
 game_search_button_draw = function() {
 	draw_set_font(F_turn_timer)
 	draw_set_alpha(0.5);
-	draw_rectangle(room_width - 415, 225, room_width - 415 + 340, 310, 0);
+	draw_rectangle(room_width - 415, 285, room_width - 415 + 340, 370, 0);
 	draw_set_alpha(1);
 	draw_text(room_width - 400, 235, "ПОИСК ИГРЫ");
 	//draw_set_font(F_test)
@@ -110,7 +114,7 @@ game_search_button_draw = function() {
 
 game_search_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
-	and mouse_y > 225 and mouse_y < 310 {
+	and mouse_y > 285 and mouse_y < 370 {
 		room_goto(R_Game_search)
 	}
 }

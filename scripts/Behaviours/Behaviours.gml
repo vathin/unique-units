@@ -16,6 +16,9 @@ function Behaviours() constructor{
 	static get = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].index
 	}
+	static get_rarity = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].rarity
+	}
 	static get_random_figure = function() {
 		randomise()
 		return array_get(figure_list, random_range(0, array_length(figure_list)));
