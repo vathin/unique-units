@@ -11,6 +11,8 @@ function GameLoopController() constructor{
 	export_data = [];
 	action_export_data = [];
 	ready_to_send = 1;
+	player1_cards = [];
+	player2_cards = [];
 	
 	turn_timer = new Timer();
 	turn_timer.start_count(Settings.turn_time);
@@ -23,6 +25,16 @@ function GameLoopController() constructor{
 			action.draw();
 		}
 	}
+	
+	TEST_draw_cards = function() {
+		for (i = 0; i < array_length(player1_cards); i++) {
+			player1_cards[i].draw();
+		}
+		for (i = 0; i < array_length(player2_cards); i++) {
+			player2_cards[i].draw();
+		}
+	}
+	
 	
 	enum STATE_LIST {
 		wait,
@@ -57,16 +69,41 @@ function GameLoopController() constructor{
 		state = STATE_LIST.wait
 	}
 	
+	
 	get_player = function(_player) {
 		if _player == Game.Player1.player_id {return Game.Player1}
 		else return Game.Player2
 	}
+	
+	get_cards_array = function(_player) {
+		if _player == Game.Player1.player_id {
+			return player1_cards
+		}
+		else {
+			return player2_cards
+		}
+	}
+	
+	create_cards = function(_player) {
+		var _start_x = room_width/2 - 250;
+		var _start_y = room_height/1.25 - 45;
+		var _x_offset = 600/array_length(get_player(_player).deck)
+		for (i = 0; i <array_length(get_player(_player).deck); i++) {
+			new_card = new FigureCard();
+			new_card.set_figure(get_player(_player).deck[i]);
+			new_card.set_cord(_start_x + i*_x_offset, _start_y);
+			array_push(get_cards_array(_player), new_card);
+		}
+	}
+	
+	create_cards(Game.Player1.player_id);
+	//create_cards(Game.Player2.player_id);
 
 	end_move = function() {
 		//if global.moving_figure {
 		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 		//}
-		if ready_to_send {
+		if ready_to_send and Game.online_match{
 			if O_LoginController._id == global.turn_owner{
 				action_export_data = [action.export()]
 				export_data = [export(), action_export_data]
@@ -97,8 +134,14 @@ function GameLoopController() constructor{
 			}
 		}
 		if check_win_conditions() != undefined {
-			if Game.role == "host" {
-				Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}))
+			if Game.online_match {
+				if Game.role == "host" {
+					Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}))
+				}
+			}
+			else {
+				show_message(check_win_conditions());
+				room_goto(R_Main_menu);
 			}
 		}
 		if state == STATE_LIST.enemy_turn {
@@ -303,4 +346,5 @@ function GameLoopController() constructor{
 	}
 
 	global.cell_action = default_cell_click_action;
+	array_push(Game.do_every_step_list, TEST_draw_cards);
 }

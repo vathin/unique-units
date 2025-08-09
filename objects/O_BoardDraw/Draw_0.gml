@@ -12,6 +12,8 @@ if in_game {
 	figure_counters_draw();
 	turn_owner_draw();
 	
+	
+	
 	if Game.game_loop_controller.have_action() {
 		Game.game_loop_controller.action.draw();
 	}

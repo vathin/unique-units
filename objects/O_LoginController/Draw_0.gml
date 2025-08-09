@@ -14,6 +14,8 @@ if logged_in {
 	if room == R_Main_menu {
 		invite_button_draw();
 		invite_button_check();
+		game_search_button_draw();
+		game_search_button_check();
 		draw_set_font(F_turn_timer)
 		draw_text(50, 50, _nickname)
 		if invited {
@@ -21,11 +23,11 @@ if logged_in {
 			invite_accept_window_check();
 		}
 	}
-	if room == R_Invite {
+	else if room == R_Invite {
 		invite_cancel_button_draw();
 		invite_cancel_button_check();
 	}
-	if room == R_Game_end {
+	else if room == R_Game_end {
 		draw_set_halign(fa_center);
 		draw_text(room_width/2, room_height/2, "Победитель: " + _winner)
 		if _winner == _id {var draw_frame = 0}
@@ -35,6 +37,10 @@ if logged_in {
 		end_game_back_button_draw();
 		end_game_back_button_check();
 		draw_set_halign(fa_left);
+	}
+	else if room == R_Game_search {
+		search_cancel_button_draw();
+		search_cancel_button_check();
 	}
 }
 

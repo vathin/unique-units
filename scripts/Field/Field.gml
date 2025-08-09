@@ -29,7 +29,7 @@ function Field() constructor{
 		Game.field.get_cell(_xcord, _ycord).fill(new_figure);
 		if _is_figure_new {
 			new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
-			Game.game_loop_controller.figures_counter.change_field_figures_amount(_owner, 1);
+			//Game.game_loop_controller.figures_counter.change_field_figures_amount(_owner, 1);
 		}
 	}
 	

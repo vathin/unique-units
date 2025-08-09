@@ -6,4 +6,5 @@ function SpearmanBehaviour() : FigureBehaviour() constructor{
 	card = S_spearman_card;
 	ability = SpearmanAbility;
 	move_ability = StandartMoveAbility;
+	rarity = 1;
 }

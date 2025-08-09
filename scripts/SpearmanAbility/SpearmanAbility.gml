@@ -73,10 +73,12 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 				Game.field.get_cell(using_cell.xcord, using_cell.ycord - 2).marked = 1;
 			}
 		}
-		cl = using_cell.filled_figure.previous_move_cell;
-		if using_cell.filled_figure.previous_move_cell != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked {
-			draw_previous_move_cell = 1;
-			using_cell.filled_figure.previous_move_cell.marked = 0;
+		var _cl = using_cell.filled_figure.previous_move_cell;
+		if _cl != undefined{ 
+			if Game.field.get_cell(_cl[0], _cl[1]).is_marked() {
+				draw_previous_move_cell = 1;
+				Game.field.get_cell(_cl[0], _cl[1]).marked = 0
+			}
 		}
 	}
 	

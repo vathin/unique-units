@@ -13,6 +13,10 @@ invited = false;
 role = undefined;
 server_id = undefined;
 
+#macro Game global.game
+Game = undefined;
+Game = new GameClass();
+
 login_x = login_window_x-x_offset;
 login_y = login_window_y-75-y_offset;
 email_x = login_window_x-x_offset;
@@ -97,6 +101,41 @@ invite_cancel_button_check = function() {
 	}
 }
 
+game_search_button_draw = function() {
+	draw_set_font(F_turn_timer)
+	draw_set_alpha(0.5);
+	draw_rectangle(room_width - 415, 245, room_width - 415 + 340, 330, 0);
+	draw_set_alpha(1);
+	draw_text(room_width - 400, 255, "ПОИСК ИГРЫ");
+	//draw_set_font(F_test)
+	//if reason != "" {draw_text(room_width - 415, 215, reason)}
+	//draw_set_font(F_turn_timer)
+}
+
+game_search_button_check = function() {
+	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
+	and mouse_y > 245 and mouse_y < 330 {
+		room_goto(R_Game_search)
+	}
+}
+
+search_cancel_button_draw = function() {
+	draw_set_alpha(0.35)
+	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
+	draw_set_alpha(1);
+	draw_set_halign(fa_center);
+	draw_text(room_width/2, room_height / 1.25, "ОТМЕНА");
+	draw_set_halign(fa_left);
+}
+search_cancel_button_check = function() {
+	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
+	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
+		//Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
+		//enemy = undefined;
+		room_goto(R_Main_menu);
+	}
+}
+
 end_game_back_button_draw = function() {
 	draw_set_alpha(0.35)
 	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
@@ -114,8 +153,8 @@ end_game_back_button_check = function() {
 }
 
 invite_accept_window_draw = function() {
-	window_x = room_width - 415;
-	window_y = 220
+	window_x = room_width - 900;
+	window_y = 45
 	draw_set_alpha(0.35);
 	draw_set_font(F_test);
 	draw_rectangle(window_x, window_y, window_x + 340, window_y + 200, 0);
@@ -132,8 +171,8 @@ invite_accept_window_draw = function() {
 
 invite_accept_window_check = function() {
 	if mouse_check_button_pressed(mb_left) {
-		window_x = room_width - 415;
-		window_y = 220;
+		window_x = room_width - 900;
+		window_y = 45;
 		if mouse_x > window_x + 20 and mouse_x < window_x + 155 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
 			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
 			invited = 0;
@@ -234,8 +273,6 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.GameEnd {
 		_winner = msg.data.winner;
 		if _winner == "" {winner = "draw"}
-		Game.end_game()
-		room_goto(R_Game_end);
-		
+		alarm[0] = 35;
 	}
 })

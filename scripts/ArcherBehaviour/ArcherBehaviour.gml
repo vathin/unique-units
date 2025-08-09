@@ -6,4 +6,5 @@ function ArcherBehaviour() : FigureBehaviour() constructor{
 	card = S_archer_card;
 	ability = undefined;
 	move_ability = ArcherMoveAbility;
+	rarity = 4;
 }

@@ -3,4 +3,5 @@
 function FigureBehaviour() constructor{
 	index = "";
 	sprite = undefined;
+	rarity = 0;
 }

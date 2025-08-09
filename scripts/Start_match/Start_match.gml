@@ -12,8 +12,8 @@ function Start_match(){
 	//#macro Game global.game
 	//Game = undefined
 	//Game = new GameClass()
-	///Game.init()
-	//O_BoardDraw.in_game = true
+	Game.init()
+	O_BoardDraw.in_game = true
 	
 
 }

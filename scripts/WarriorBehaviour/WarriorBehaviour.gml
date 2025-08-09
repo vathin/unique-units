@@ -6,4 +6,5 @@ function WarriorBehaviour() : FigureBehaviour() constructor{
 	card = S_warrior_card;
 	ability = WarriorAbility;
 	move_ability = WarriorMoveAndAbility;
+	rarity = 2;
 }

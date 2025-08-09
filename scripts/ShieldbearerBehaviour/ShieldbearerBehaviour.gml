@@ -6,4 +6,5 @@ function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	card = S_shieldbearer_card
 	ability = ShieldbearerAbility;
 	move_ability = StandartMoveAbility;
+	rarity = 3;
 }

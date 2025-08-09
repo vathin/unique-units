@@ -21,9 +21,9 @@ function FiguresCounter() constructor {
 		return array_length(Game.user_data.load(player).player_figures);
 	}
 
-	change_field_figures_amount = function(player, amount) {
-		if player == Game.Player1.player_id {player1_field_figures += amount}
-		else {player2_field_figures += amount}
+	change_field_figures_amount = function(player, amount) {					//оно уже тут не надо, само считается
+		if player == Game.Player1.player_id {player1_field_figures += amount}	
+		else {player2_field_figures += amount}									
 	}
 	
 	get_figure_id = function() {
@@ -45,6 +45,8 @@ function FiguresCounter() constructor {
 	}
 
 	update_turn = function() {
+		player1_field_figures = array_length(Game.field.get_player_field_figures(Game.Player1.player_id));
+		player2_field_figures = array_length(Game.field.get_player_field_figures(Game.Player2.player_id));
 		current_player_figures = array_length(Game.user_data.load(global.turn_owner).player_figures);
 		if current_player_figures <= 0 or (get_field_figures(global.turn_owner) >= Settings.max_field_figures){
 			Game.game_loop_controller.get_player(global.turn_owner).able_to_summon = 0
