@@ -9,6 +9,8 @@ connected = false;
 
 callbacks = [];
 
+ping = 0;
+
 connect = function() {
 	socket = network_create_socket(network_socket_ws);
 	network_connect_raw_async(socket, address, port);
@@ -25,7 +27,11 @@ connect_failure_callback = function() {
 	show_debug_message("connect failure!")
 }
 message_callback = function(message_text) {
-	show_debug_message("<< " + message_text)
+	
+	if (string_count("\"type\":\"PING\"", message_text) == 0) {
+		show_debug_message("<< " + message_text)
+	}
+	
 	var msg = ServerMessage.Parse(message_text);
 	call_reaction(msg);
 }
@@ -39,7 +45,9 @@ send_string = function(_server_message_string) {
 	buffer_seek(buffer, buffer_seek_start, 0);
 	buffer_write(buffer, buffer_string, _server_message_string)
 	
-	show_debug_message(">> " + _server_message_string)
+	if (string_count("\"type\":\"PING\"", _server_message_string) == 0) {
+		show_debug_message(">> " + _server_message_string)
+	}
 	
 	network_send_raw(socket, buffer, buffer_tell(buffer) - 1, network_send_text);
 	buffer_delete(buffer)
@@ -66,6 +74,12 @@ remove_reaction = function(_reaction) {
 }
 
 connect();
+
+add_reaction(function(_message) {
+	ping = _message.data.ping;
+	
+	send(new ServerMessage(ServerMessageType.PING));
+}, ServerMessageType.PING);
 
 //Server.add_reaction(function(msg) {
 //	show_message("login refused because " + msg.data.description)

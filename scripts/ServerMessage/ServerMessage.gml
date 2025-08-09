@@ -1,6 +1,8 @@
 function ServerMessageType() constructor {
 	static Error = "Error"; // сообщение вызвало ошибку на сервере и сервер жалуется тебе на неё {error: "error_text"}
 	
+	static PING = "PING"; // пинг
+	
 	static Registration = "Registration"; // ты просишь зарегестрировать новый аккаунт. {nickanme: "...", email: "...@...", password: "..."}
 	static RegistrationAccept = "RegistrationAccept"; // сервер создал аккаунт и разрешил дальнейшие сообщения. {playerData: {...}}
 	static RegistrationRefuse = "RegistrationRefuse"; // сервер отклонил запрос на создание аккаунта {reason: "ключевое слово причины", description: "детальное описание причины"}

@@ -1,8 +1,6 @@
 /// @description 
 
 if (async_load[? "id"] == socket) {
-	show_debug_message(json_encode(async_load));
-		
 	if (async_load[? "type"] == network_type_non_blocking_connect) {
 		if (!async_load[? "succeeded"]) {
 			connect_failure_callback();
