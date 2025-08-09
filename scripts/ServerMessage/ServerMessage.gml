@@ -21,6 +21,8 @@ function ServerMessageType() constructor {
 	static FastMatchEnter = "FastMatchEnter"; // начать поиск быстрой игры
 	static FastMatchLeave = "FastMatchLeave"; // прекратить поиск быстрой игры
 	
+	static MatchmakingIn = "MatchmakingIn"; // сервер начал поиск игры
+	static MatchmakingOut = "MatchmakingOut"; // сервер прекратил поиск игры
 	
 	static GameplayTurn = "GameplayTurn"; // см. ниже:
 		/*
