@@ -18,6 +18,10 @@ function ServerMessageType() constructor {
 	static InviteCancel = "InviteCancel"; // отклонить своё или чужое приглашение {sender: userid, reciever: userid}
 	static InviteAccept = "InviteAccept"; // принять чужое приглашение {sender: userid}
 	
+	static FastMatchEnter = "FastMatchEnter"; // начать поиск быстрой игры
+	static FastMatchLeave = "FastMatchLeave"; // прекратить поиск быстрой игры
+	
+	
 	static GameplayTurn = "GameplayTurn"; // см. ниже:
 		/*
 			когда игрок нажал завершить ход, отправляется на сервер {action: удобные тебе данные об действии игрока, state: состояние доски после хода}
