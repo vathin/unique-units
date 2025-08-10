@@ -4,7 +4,7 @@ function Field() constructor{
 	field_height = 6;
 	field_width = 6;
 	scale = 0.7;
-	size = 90*scale;
+	size = 80*scale;
 	map_sprite = Maps_list.get_map_sprite(global.map);
 	map_scale = size*field_width/2126;
 	start_x = (room_width/2) - size*2.5;
@@ -88,7 +88,7 @@ function Field() constructor{
 					
 				}
 				if (cell_array[h][w].is_marked() and cell_array[h][w].draw_mark == 1) {
-					draw_sprite_ext(global.mark, 0, start_x + size*w, start_y + size*h, scale, scale, 0, c_white, 1)
+					draw_sprite_ext(global.mark, 0, start_x + size*w, start_y + size*h, 0.6, 0.6, 0, c_white, 1)
 				}
 			}
 		}

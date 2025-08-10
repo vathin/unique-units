@@ -85,9 +85,9 @@ function GameLoopController() constructor{
 	}
 	
 	create_cards = function(_player) {
-		var _start_x = room_width/2 - 250;
+		var _start_x = room_width/2 - 150;
 		var _start_y = room_height/1.25 - 45;
-		var _x_offset = 600/array_length(get_player(_player).deck)
+		var _x_offset = 300/(array_length(get_player(_player).deck)-1)
 		for (i = 0; i <array_length(get_player(_player).deck); i++) {
 			new_card = new FigureCard();
 			new_card.set_figure(get_player(_player).deck[i]);

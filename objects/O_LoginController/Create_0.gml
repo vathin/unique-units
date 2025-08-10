@@ -116,6 +116,7 @@ game_search_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
 	and mouse_y > 245 and mouse_y < 330 {
 		room_goto(R_Game_search)
+		Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
 	}
 }
 
@@ -130,9 +131,10 @@ search_cancel_button_draw = function() {
 search_cancel_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
 	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
-		//Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
+		Server.send(new ServerMessage(ServerMessageType.FastMatchLeave, {sender: _id, reciever: enemy}));
 		//enemy = undefined;
 		room_goto(R_Main_menu);
+		
 	}
 }
 
@@ -256,7 +258,10 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.Invite {
 		if msg.data.invite.sender != _id {
 			enemy = msg.data.invite.sender;
-			invited = 1;
+			if room == R_Main_menu{
+				invited = 1;
+			}
+			else {}
 		}
 	}
 	else if msg.type == ServerMessageType.GameStart {

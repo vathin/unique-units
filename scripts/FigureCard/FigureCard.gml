@@ -6,7 +6,7 @@ function FigureCard() constructor{
 	sprite = undefined;
 	draw_x = 0;
 	draw_y = 0;
-	scale = 0.08
+	scale = 0.1
 	
 	draw = function() {draw_sprite_ext(sprite, 0, draw_x, draw_y, scale, scale, 0, c_white, 1)}
 	
