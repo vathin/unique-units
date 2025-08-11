@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"OLD_SummonAction",
   "isCompatibility":false,
   "isDnD":false,

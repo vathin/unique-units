@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"GetFieldFigure",
   "isCompatibility":false,
   "isDnD":false,

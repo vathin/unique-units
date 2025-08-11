@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"MoveInputController",
   "isCompatibility":false,
   "isDnD":false,

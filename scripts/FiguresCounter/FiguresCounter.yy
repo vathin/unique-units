@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"FiguresCounter",
   "isCompatibility":false,
   "isDnD":false,

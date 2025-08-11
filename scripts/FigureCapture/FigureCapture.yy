@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"FigureCapture",
   "isCompatibility":false,
   "isDnD":false,

@@ -1,6 +1,8 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
+instance_create_depth(0, 0, 0, UI_controller);
+
 login_window_x = 840;
 login_window_y = 540;
 x_offset = 25;
@@ -66,7 +68,7 @@ invite_button_draw = function() {
 	draw_set_font(F_turn_timer)
 }
 
-invite_button_check = function() {
+/*invite_button_check = function() {
 	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 
 	and mouse_x < room_width - 415 + 340 
 	and mouse_y > 40 and mouse_y < 125 {
@@ -82,7 +84,7 @@ invite_button_check = function() {
 			reason = "";
 		}
 		}
-}
+}*/
 
 invite_cancel_button_draw = function() {
 	draw_set_alpha(0.35)
@@ -101,7 +103,26 @@ invite_cancel_button_check = function() {
 	}
 }
 
-game_search_button_draw = function() {
+start_invite = function() {
+	if invite_text_field != undefined and invite_text_field.get_text() != ""{
+		Server.send(new ServerMessage(ServerMessageType.Invite, {reciever: invite_text_field.get_text(), sender: _id}));
+		enemy = invite_text_field.get_text();
+		instance_destroy(invite_text_field);
+		invite_text_field = undefined;
+		room_goto(R_Invite);
+	}
+	else {
+		invite_text_field = instance_create_depth(room_width - 215, 185, -1, O_TextInputField);
+		reason = "";
+	}
+}
+
+start_fast_search = function() {
+	room_goto(R_Game_search)
+	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
+} 
+
+/*game_search_button_draw = function() {
 	draw_set_font(F_turn_timer)
 	draw_set_alpha(0.5);
 	draw_rectangle(room_width - 415, 245, room_width - 415 + 340, 330, 0);
@@ -118,7 +139,7 @@ game_search_button_check = function() {
 		room_goto(R_Game_search)
 		Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
 	}
-}
+}*/
 
 search_cancel_button_draw = function() {
 	draw_set_alpha(0.35)
@@ -225,6 +246,7 @@ Server.add_reaction(function(msg)
 		close_window()
 		show_debug_message(msg.data.playerData.id);
 		_id = msg.data.playerData.id;
+		layer_set_visible("MainMenu", 1)
 	}
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
@@ -232,19 +254,16 @@ Server.add_reaction(function(msg)
 	}
 	else if msg.type == ServerMessageType.RegistrationAccept
 	{
-		reason = "succsessfull registration";
+		reason = "sucsessfull registration";
 		logged_in = 1;
 		show_debug_message(msg.data.playerData.id);
 		_id = msg.data.playerData.id;
 		close_window();
+		layer_set_visible("MainMenu", 1);
 	}
 	else if msg.type == ServerMessageType.RegistrationRefuse
 	{
 		reason = msg.data.description
-	}
-	else if msg.type == ServerMessageType.InviteAccept
-	{
-		
 	}
 	else if msg.type == ServerMessageType.InviteCancelled {
 		room_goto(R_Main_menu)

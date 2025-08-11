@@ -1,5 +1,5 @@
 {
-  "$GMRoom":"",
+  "$GMRoom":"v1",
   "%Name":"R_Game_search",
   "creationCodeFile":"",
   "inheritCode":false,

@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"FilledFigureStatus",
   "isCompatibility":false,
   "isDnD":false,

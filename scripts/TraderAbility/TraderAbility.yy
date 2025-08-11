@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"TraderAbility",
   "isCompatibility":false,
   "isDnD":false,

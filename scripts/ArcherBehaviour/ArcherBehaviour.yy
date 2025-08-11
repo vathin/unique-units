@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"ArcherBehaviour",
   "isCompatibility":false,
   "isDnD":false,

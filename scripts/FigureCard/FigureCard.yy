@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"FigureCard",
   "isCompatibility":false,
   "isDnD":false,

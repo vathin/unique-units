@@ -12,16 +12,17 @@ if active
 
 if logged_in {
 	if room == R_Main_menu {
-		invite_button_draw();
-		invite_button_check();
-		game_search_button_draw();
-		game_search_button_check();
+		//invite_button_draw();
+		//invite_button_check();
+		//game_search_button_draw();
+		//game_search_button_check();
 		draw_set_font(F_turn_timer)
 		draw_text(50, 50, _nickname)
 		if invited {
 			invite_accept_window_draw();
 			invite_accept_window_check();
 		}
+		if reason != "" {draw_text(room_width - 415, 215, reason)}
 	}
 	else if room == R_Invite {
 		invite_cancel_button_draw();

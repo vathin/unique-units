@@ -1,5 +1,5 @@
 {
-  "$GMScript":"",
+  "$GMScript":"v1",
   "%Name":"OverturnAnimationController",
   "isCompatibility":false,
   "isDnD":false,
