@@ -24,10 +24,7 @@ if logged_in {
 		}
 		if reason != "" {draw_text(room_width - 415, 215, reason)}
 	}
-	else if room == R_Invite {
-		invite_cancel_button_draw();
-		invite_cancel_button_check();
-	}
+	
 	else if room == R_Game_end {
 		draw_set_halign(fa_center);
 		draw_text(room_width/2, room_height/2, "Победитель: " + _winner)
@@ -38,10 +35,6 @@ if logged_in {
 		end_game_back_button_draw();
 		end_game_back_button_check();
 		draw_set_halign(fa_left);
-	}
-	else if room == R_Game_search {
-		search_cancel_button_draw();
-		search_cancel_button_check();
 	}
 }
 

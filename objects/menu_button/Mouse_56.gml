@@ -10,5 +10,11 @@ bbox_left, bbox_top, bbox_right, bbox_bottom)) {
 		case "fast_search":
 			O_LoginController.start_fast_search();
 		break;
+		case "invite_cancel":
+			O_LoginController.cancel_invite();
+		break;
+		case "search_cancel":
+			O_LoginController.cancel_fast_search();
+		break;
 	}
 }

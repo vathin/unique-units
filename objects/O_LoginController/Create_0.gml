@@ -58,51 +58,6 @@ close_window = function() {
 	reason = "";
 }
 
-invite_button_draw = function() {
-	draw_set_alpha(0.5);
-	draw_rectangle(room_width - 415, 40, room_width - 415 + 340, 125, 0);
-	draw_set_alpha(1);
-	draw_text(room_width - 400, 50, "ПРИГЛАСИТЬ");
-	draw_set_font(F_test)
-	if reason != "" {draw_text(room_width - 415, 215, reason)}
-	draw_set_font(F_turn_timer)
-}
-
-/*invite_button_check = function() {
-	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 
-	and mouse_x < room_width - 415 + 340 
-	and mouse_y > 40 and mouse_y < 125 {
-		if invite_text_field != undefined and invite_text_field.get_text() != ""{
-			Server.send(new ServerMessage(ServerMessageType.Invite, {reciever: invite_text_field.get_text(), sender: _id}));
-			enemy = invite_text_field.get_text();
-			instance_destroy(invite_text_field);
-			invite_text_field = undefined;
-			room_goto(R_Invite);
-		}
-		else {
-			invite_text_field = instance_create_depth(room_width - 215, 185, -1, O_TextInputField);
-			reason = "";
-		}
-		}
-}*/
-
-invite_cancel_button_draw = function() {
-	draw_set_alpha(0.35)
-	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
-	draw_set_alpha(1);
-	draw_set_halign(fa_center);
-	draw_text(room_width/2, room_height / 1.25, "ОТМЕНА");
-	draw_set_halign(fa_left);
-}
-invite_cancel_button_check = function() {
-	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
-	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
-		Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
-		enemy = undefined;
-		room_goto(R_Main_menu);
-	}
-}
-
 start_invite = function() {
 	if invite_text_field != undefined and invite_text_field.get_text() != ""{
 		Server.send(new ServerMessage(ServerMessageType.Invite, {reciever: invite_text_field.get_text(), sender: _id}));
@@ -117,46 +72,20 @@ start_invite = function() {
 	}
 }
 
+cancel_invite = function() {
+	Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id, reciever: enemy}));
+	enemy = undefined;
+	room_goto(R_Main_menu);
+}
+
 start_fast_search = function() {
 	room_goto(R_Game_search)
 	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
 } 
 
-/*game_search_button_draw = function() {
-	draw_set_font(F_turn_timer)
-	draw_set_alpha(0.5);
-	draw_rectangle(room_width - 415, 245, room_width - 415 + 340, 330, 0);
-	draw_set_alpha(1);
-	draw_text(room_width - 400, 255, "ПОИСК ИГРЫ");
-	//draw_set_font(F_test)
-	//if reason != "" {draw_text(room_width - 415, 215, reason)}
-	//draw_set_font(F_turn_timer)
-}
-
-game_search_button_check = function() {
-	if mouse_check_button_pressed(mb_left) and mouse_x > room_width - 415 and mouse_x < room_width - 415 + 340 
-	and mouse_y > 245 and mouse_y < 330 {
-		room_goto(R_Game_search)
-		Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
-	}
-}*/
-
-search_cancel_button_draw = function() {
-	draw_set_alpha(0.35)
-	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
-	draw_set_alpha(1);
-	draw_set_halign(fa_center);
-	draw_text(room_width/2, room_height / 1.25, "ОТМЕНА");
-	draw_set_halign(fa_left);
-}
-search_cancel_button_check = function() {
-	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
-	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
-		Server.send(new ServerMessage(ServerMessageType.FastMatchLeave, {sender: _id, reciever: enemy}));
-		//enemy = undefined;
-		room_goto(R_Main_menu);
-		
-	}
+cancel_fast_search = function() {
+	Server.send(new ServerMessage(ServerMessageType.FastMatchLeave, {sender: _id, reciever: enemy}));
+	room_goto(R_Main_menu);
 }
 
 end_game_back_button_draw = function() {

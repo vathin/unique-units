@@ -40,6 +40,7 @@
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
   ],
   "ResourceOrderSettings":[
+    {"name":"F_menu","order":2,"path":"fonts/F_menu/F_menu.yy",},
     {"name":"F_turn_timer","order":1,"path":"fonts/F_turn_timer/F_turn_timer.yy",},
     {"name":"menu_button","order":2,"path":"objects/menu_button/menu_button.yy",},
     {"name":"O_AbilityButton","order":3,"path":"objects/O_AbilityButton/O_AbilityButton.yy",},
