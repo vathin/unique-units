@@ -79,8 +79,8 @@ cancel_invite = function() {
 }
 
 start_fast_search = function() {
-	room_goto(R_Game_search)
-	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter))
+	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter));
+	room_goto(R_Game_search);
 } 
 
 cancel_fast_search = function() {
