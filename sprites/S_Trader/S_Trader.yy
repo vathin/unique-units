@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Trader",
   "bboxMode":0,
   "bbox_bottom":766,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"f06f3e02-1386-4995-9f27-4b580c8dbe12","name":"f06f3e02-1386-4995-9f27-4b580c8dbe12","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"1ee0dba8-7b7f-4a8f-8c8a-0b22e78499ee","name":"1ee0dba8-7b7f-4a8f-8c8a-0b22e78499ee","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"f06f3e02-1386-4995-9f27-4b580c8dbe12","name":"f06f3e02-1386-4995-9f27-4b580c8dbe12","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"1ee0dba8-7b7f-4a8f-8c8a-0b22e78499ee","name":"1ee0dba8-7b7f-4a8f-8c8a-0b22e78499ee","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

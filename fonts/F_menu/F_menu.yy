@@ -199,7 +199,10 @@
   "sdfSpread":8,
   "size":45.0,
   "styleName":"Roman",
-  "textureGroupId":null,
+  "textureGroupId":{
+    "name":"Default",
+    "path":"texturegroups/Default",
+  },
   "TTFName":"",
   "usesSDF":false,
 }

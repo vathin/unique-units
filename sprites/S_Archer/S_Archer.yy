@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Archer",
   "bboxMode":0,
   "bbox_bottom":767,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"06b9fdf5-8dce-47bd-9fc0-893e2c4359b6","name":"06b9fdf5-8dce-47bd-9fc0-893e2c4359b6","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"e8e9ff1d-4828-469a-ba77-c5ffb95dca01","name":"e8e9ff1d-4828-469a-ba77-c5ffb95dca01","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"06b9fdf5-8dce-47bd-9fc0-893e2c4359b6","name":"06b9fdf5-8dce-47bd-9fc0-893e2c4359b6","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"e8e9ff1d-4828-469a-ba77-c5ffb95dca01","name":"e8e9ff1d-4828-469a-ba77-c5ffb95dca01","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

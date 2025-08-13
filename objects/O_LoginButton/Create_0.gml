@@ -1,8 +1,8 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-send_to = undefined
-type = undefined
+send_to = O_LoginController
+
 
 set_type = function(new_type) {
 	type = new_type

@@ -1,8 +1,6 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
-instance_create_depth(0, 0, 0, UI_controller);
-
 login_window_x = 840;
 login_window_y = 540;
 x_offset = 25;
@@ -14,6 +12,8 @@ enemy = undefined;
 invited = false;
 role = undefined;
 server_id = undefined;
+instance_create_depth(0, 0, 0, UI_controller);
+UI_controller.check_layers();
 
 #macro Game global.game
 Game = undefined;
@@ -30,33 +30,6 @@ LoginButton_y = login_window_y + 102;;
 RegisterButton_x = login_window_x - 35;
 RegisterButton_y = login_window_y + 102;
 invite_text_field = undefined;
-
-
-create_window = function() {
-	LoginTextField = instance_create_depth(login_x, login_y, -1, O_TextInputField);
-	EmailTextField = instance_create_depth(email_x, email_y, -1, O_TextInputField);
-	PasswordTextField = instance_create_depth(password_x, password_y, -1, O_TextInputField);
-
-	LoginButton = instance_create_depth(LoginButton_x, LoginButton_y, -1, O_LoginButton);
-	RegisterButton = instance_create_depth(RegisterButton_x, RegisterButton_y, -1, O_LoginButton);
-
-	LoginButton.set_type("Login_acc");
-	RegisterButton.set_type("Register_acc");
-
-	LoginButton.set_address(self);
-	RegisterButton.set_address(self);
-	active = true;
-}
-
-close_window = function() {
-	instance_destroy(LoginTextField);
-	instance_destroy(EmailTextField);
-	instance_destroy(PasswordTextField);
-	instance_destroy(LoginButton);
-	instance_destroy(RegisterButton);
-	active = false;
-	reason = "";
-}
 
 start_invite = function() {
 	if invite_text_field != undefined and invite_text_field.get_text() != ""{
@@ -136,46 +109,57 @@ invite_accept_window_check = function() {
 	}
 }
 
-create_window();
+//create_window();
 _nickname = undefined;
 _email = undefined;
 _password = undefined;
 _id = undefined;
-var _winner
+_winner = undefined;
+
+log_in = function() {
+	logged_in = true
+	UI_controller.check_layers();
+}
 
 send_data = function(type) {
 	show_debug_message(type)
 	get_text_data()
-	if type == "Login_acc" {
+	if type == "login_acc" {
 		Server.send(new ServerMessage(ServerMessageType.Login, {email: _email, password: _password}))
 	}
-	else if type == "Register_acc" {
+	else if type == "register_acc" {
 		Server.send(new ServerMessage(ServerMessageType.Registration, {nickname: _nickname, email: _email, password: _password}))
 	}
+	_password = "";
 }
 
 get_text_data = function() {
-	_nickname = LoginTextField.get_text()
+	with (O_TextInputField) {
+		switch(type) {
+			case "login":
+				O_LoginController._nickname = get_text()
+			break;
+			case "email":
+				O_LoginController._email = get_text()
+			break;
+			case "password":
+				O_LoginController._password = get_text()
+			break;
+		}
+	}
+	/*_nickname = LoginTextField.get_text()
 	_email = EmailTextField.get_text()
-	_password = PasswordTextField.get_text()
+	_password = PasswordTextField.get_text()*/
 }
 
-//test3
-//test3@a
-//test3
 
-//test4
-//test4@a
-//test4
 
 Server.add_reaction(function(msg)
 {
 	if msg.type == ServerMessageType.LoginAccept {
-		logged_in = true
-		close_window()
-		show_debug_message(msg.data.playerData.id);
 		_id = msg.data.playerData.id;
-		layer_set_visible("MainMenu", 1)
+		show_debug_message(msg.data.playerData.id);
+		log_in()
 	}
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
@@ -183,12 +167,9 @@ Server.add_reaction(function(msg)
 	}
 	else if msg.type == ServerMessageType.RegistrationAccept
 	{
-		reason = "sucsessfull registration";
-		logged_in = 1;
-		show_debug_message(msg.data.playerData.id);
 		_id = msg.data.playerData.id;
-		close_window();
-		layer_set_visible("MainMenu", 1);
+		show_debug_message(msg.data.playerData.id);
+		log_in()
 	}
 	else if msg.type == ServerMessageType.RegistrationRefuse
 	{

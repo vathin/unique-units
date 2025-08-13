@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Warrior",
   "bboxMode":2,
   "bbox_bottom":768,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"afc29c30-665d-448b-97d7-d4683ea13da4","name":"afc29c30-665d-448b-97d7-d4683ea13da4","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"3c9a1d5f-db1c-444c-a7d1-4f2a0404bc66","name":"3c9a1d5f-db1c-444c-a7d1-4f2a0404bc66","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"afc29c30-665d-448b-97d7-d4683ea13da4","name":"afc29c30-665d-448b-97d7-d4683ea13da4","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"3c9a1d5f-db1c-444c-a7d1-4f2a0404bc66","name":"3c9a1d5f-db1c-444c-a7d1-4f2a0404bc66","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

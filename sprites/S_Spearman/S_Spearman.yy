@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Spearman",
   "bboxMode":0,
   "bbox_bottom":767,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"34a89ab5-1ef0-4594-8e1f-1cfd344c1ff7","name":"34a89ab5-1ef0-4594-8e1f-1cfd344c1ff7","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"44060707-a182-4285-93b6-d29de60e4c07","name":"44060707-a182-4285-93b6-d29de60e4c07","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"34a89ab5-1ef0-4594-8e1f-1cfd344c1ff7","name":"34a89ab5-1ef0-4594-8e1f-1cfd344c1ff7","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"44060707-a182-4285-93b6-d29de60e4c07","name":"44060707-a182-4285-93b6-d29de60e4c07","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

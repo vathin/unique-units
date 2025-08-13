@@ -2,7 +2,13 @@
 // Вы можете записать свой код в этом редакторе
 
 check_layers = function() {
-	if room == R_Main_menu and O_LoginController.logged_in {layer_set_visible(layer_get_id("MainMenu"), 1)}
+	if room == R_Main_menu {
+		if O_LoginController.logged_in{
+			layer_set_visible(layer_get_id("MainMenu"), 1);
+			layer_set_visible("LoginWindow", 0);
+			}
+		else {layer_set_visible("LoginWindow", 1)}
+		}
 	else {{layer_set_visible(layer_get_id("MainMenu"), 0)}}
 	if room == R_Invite {layer_set_visible("InviteRoom", 1)}
 	else {layer_set_visible("InviteRoom", 0)}

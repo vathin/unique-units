@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Exit_card_display_button",
   "bboxMode":0,
   "bbox_bottom":78,
@@ -12,7 +12,7 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"70c8161b-6803-4d9a-bd16-74933f0a658f","name":"70c8161b-6803-4d9a-bd16-74933f0a658f","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"70c8161b-6803-4d9a-bd16-74933f0a658f","name":"70c8161b-6803-4d9a-bd16-74933f0a658f","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

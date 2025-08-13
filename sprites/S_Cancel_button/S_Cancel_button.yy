@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_Cancel_button",
   "bboxMode":0,
   "bbox_bottom":229,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"1a60bbc5-011b-41c6-a136-ec1a7f91d705","name":"1a60bbc5-011b-41c6-a136-ec1a7f91d705","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"3cf315e4-84c1-428d-98a4-c43213d05ceb","name":"3cf315e4-84c1-428d-98a4-c43213d05ceb","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"1a60bbc5-011b-41c6-a136-ec1a7f91d705","name":"1a60bbc5-011b-41c6-a136-ec1a7f91d705","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"3cf315e4-84c1-428d-98a4-c43213d05ceb","name":"3cf315e4-84c1-428d-98a4-c43213d05ceb","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,

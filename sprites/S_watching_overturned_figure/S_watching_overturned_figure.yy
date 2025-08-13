@@ -1,5 +1,5 @@
 {
-  "$GMSprite":"",
+  "$GMSprite":"v2",
   "%Name":"S_watching_overturned_figure",
   "bboxMode":0,
   "bbox_bottom":148,
@@ -12,8 +12,8 @@
   "edgeFiltering":false,
   "For3D":false,
   "frames":[
-    {"$GMSpriteFrame":"","%Name":"1b42a3f7-2dda-43d5-ad2c-c064f05a0338","name":"1b42a3f7-2dda-43d5-ad2c-c064f05a0338","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
-    {"$GMSpriteFrame":"","%Name":"fb2e0d3b-6b20-4049-b5b8-fe4268024f79","name":"fb2e0d3b-6b20-4049-b5b8-fe4268024f79","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"1b42a3f7-2dda-43d5-ad2c-c064f05a0338","name":"1b42a3f7-2dda-43d5-ad2c-c064f05a0338","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
+    {"$GMSpriteFrame":"v1","%Name":"fb2e0d3b-6b20-4049-b5b8-fe4268024f79","name":"fb2e0d3b-6b20-4049-b5b8-fe4268024f79","resourceType":"GMSpriteFrame","resourceVersion":"2.0",},
   ],
   "gridX":0,
   "gridY":0,
