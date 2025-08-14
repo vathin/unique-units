@@ -14,4 +14,6 @@ check_layers = function() {
 	else {layer_set_visible("InviteRoom", 0)}
 	if room == R_Game_search {layer_set_visible("SearchRoom", 1)}
 	else {layer_set_visible("SearchRoom", 0)}
+	if room == R_Game_end {layer_set_visible("GameEndRoom", 1)}
+	else {layer_set_visible("GameEndRoom", 0)}
 }

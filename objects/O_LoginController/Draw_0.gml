@@ -12,10 +12,6 @@ if active
 
 if logged_in {
 	if room == R_Main_menu {
-		//invite_button_draw();
-		//invite_button_check();
-		//game_search_button_draw();
-		//game_search_button_check();
 		draw_set_font(F_turn_timer)
 		draw_text(50, 50, _nickname)
 		if invited {
@@ -32,9 +28,8 @@ if logged_in {
 		else if _winner == enemy {var draw_frame = 1}
 		else {var draw_frame = 2}
 		draw_sprite_ext(Spr_end_game, draw_frame, room_width/2, room_height/3.8, 1.2, 1.2, 0, c_white, 1);
-		end_game_back_button_draw();
-		end_game_back_button_check();
 		draw_set_halign(fa_left);
 	}
 }
+invite_accept_window_draw();
 

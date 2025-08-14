@@ -61,22 +61,6 @@ cancel_fast_search = function() {
 	room_goto(R_Main_menu);
 }
 
-end_game_back_button_draw = function() {
-	draw_set_alpha(0.35)
-	draw_rectangle(room_width/2 - 125, room_height/1.25 - 15, room_width/2 + 125, room_height/1.25 + 90, 0);
-	draw_set_alpha(1);
-	draw_set_halign(fa_center);
-	draw_text(room_width/2, room_height / 1.25, "В МЕНЮ");
-	draw_set_halign(fa_left);
-}
-end_game_back_button_check = function() {
-	if mouse_check_button_pressed(mb_left) and mouse_x > room_width/2 - 125 and mouse_x < room_width/2 + 125
-	and mouse_y > room_height/1.25 - 15 and mouse_y < room_height/1.25 + 90 {
-		enemy = undefined;
-		room_goto(R_Main_menu);
-	}
-}
-
 invite_accept_window_draw = function() {
 	window_x = room_width - 900;
 	window_y = 45
