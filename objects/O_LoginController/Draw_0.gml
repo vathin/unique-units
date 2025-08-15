@@ -14,10 +14,6 @@ if logged_in {
 	if room == R_Main_menu {
 		draw_set_font(F_turn_timer)
 		draw_text(50, 50, _nickname)
-		if invited {
-			invite_accept_window_draw();
-			invite_accept_window_check();
-		}
 		if reason != "" {draw_text(room_width - 415, 215, reason)}
 	}
 	
@@ -31,5 +27,4 @@ if logged_in {
 		draw_set_halign(fa_left);
 	}
 }
-invite_accept_window_draw();
 

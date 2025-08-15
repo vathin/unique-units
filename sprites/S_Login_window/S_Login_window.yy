@@ -19,13 +19,14 @@
   "height":312,
   "HTile":false,
   "layers":[
+    {"$GMImageLayer":"","%Name":"5c672406-2dd6-4cc2-83c8-26191184592d","blendMode":0,"displayName":"Layer 1","isLocked":false,"name":"5c672406-2dd6-4cc2-83c8-26191184592d","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
     {"$GMImageLayer":"","%Name":"c88ac5a6-20ea-4262-b9f9-0e3b3032355e","blendMode":0,"displayName":"default","isLocked":false,"name":"c88ac5a6-20ea-4262-b9f9-0e3b3032355e","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"S_Login_window",
   "nineSlice":{
     "$GMNineSliceData":"",
     "bottom":25,
-    "enabled":false,
+    "enabled":true,
     "guideColour":[4294902015,4294902015,4294902015,4294902015,],
     "highlightColour":1728023040,
     "highlightStyle":0,

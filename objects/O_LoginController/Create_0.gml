@@ -61,36 +61,23 @@ cancel_fast_search = function() {
 	room_goto(R_Main_menu);
 }
 
-invite_accept_window_draw = function() {
-	window_x = room_width - 900;
-	window_y = 45
-	draw_set_alpha(0.35);
-	draw_set_font(F_test);
-	draw_rectangle(window_x, window_y, window_x + 340, window_y + 200, 0);
-	draw_rectangle_color(window_x + 20, window_y + 120, window_x + 155, window_y + 160, c_lime, c_lime, c_lime, c_lime, 0);
-	draw_rectangle_color(window_x + 185, window_y + 120, window_x + 320, window_y + 160, c_red, c_red, c_red, c_red, 0);
-	draw_set_alpha(1);
-	draw_set_halign(fa_center);
-	draw_text(window_x + 170, window_y + 10, "ПРИГЛАШЕНИЕ В ИГРУ");
-	draw_text(window_x + 170, window_y + 50, "ОТ: " + string(enemy));
-	draw_text(window_x + 87, window_y + 122, "принять");
-	draw_text(window_x + 253, window_y + 122, "отклонить");
-	draw_set_halign(fa_left);
+set_reason_text = function(_text) {
+	var _layer = layer_get_flexpanel_node("LoginWindow");
+	if layer_get_visible("LoginWindow") {var _layer = layer_get_flexpanel_node("LoginWindow");}
+	var _text_panel = flexpanel_node_get_child(_layer, "ReasonText");
+	var _text_struct = flexpanel_node_get_struct(_text_panel);
+	var _textID = _text_struct.layerElements[0].elementId;
+	layer_text_text(_textID, _text);
 }
 
-invite_accept_window_check = function() {
-	if mouse_check_button_pressed(mb_left) {
-		window_x = room_width - 900;
-		window_y = 45;
-		if mouse_x > window_x + 20 and mouse_x < window_x + 155 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
-			Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
-			invited = 0;
-		}
-		else if mouse_x > window_x + 185 and mouse_x < window_x + 320 and mouse_y > window_y + 120 and mouse_y < window_y + 160 {
-			Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id}));
-			invited = 0;
-		}
-	}
+invite_accept = function() {
+	Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
+	invited = 0;
+}
+
+invite_decline = function() {
+	Server.send(new ServerMessage(ServerMessageType.InviteCancel, {sender: _id}));
+	invited = 0;
 }
 
 //create_window();
@@ -147,7 +134,8 @@ Server.add_reaction(function(msg)
 	}
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
-		reason = msg.data.description
+		reason = msg.data.description;
+		set_reason_text(reason);
 	}
 	else if msg.type == ServerMessageType.RegistrationAccept
 	{
@@ -158,6 +146,7 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.RegistrationRefuse
 	{
 		reason = msg.data.description
+		set_reason_text(reason);
 	}
 	else if msg.type == ServerMessageType.InviteCancelled {
 		room_goto(R_Main_menu)
@@ -173,8 +162,8 @@ Server.add_reaction(function(msg)
 			enemy = msg.data.invite.sender;
 			if room == R_Main_menu{
 				invited = 1;
+				UI_controller.check_layers();
 			}
-			else {}
 		}
 	}
 	else if msg.type == ServerMessageType.GameStart {
