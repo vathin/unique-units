@@ -61,10 +61,9 @@ cancel_fast_search = function() {
 	room_goto(R_Main_menu);
 }
 
-set_reason_text = function(_text) {
-	var _layer = layer_get_flexpanel_node("LoginWindow");
-	if layer_get_visible("LoginWindow") {var _layer = layer_get_flexpanel_node("LoginWindow");}
-	var _text_panel = flexpanel_node_get_child(_layer, "ReasonText");
+set_text_on_ui_layer = function(_layer_name, _panel_name, _text) {
+	var _layer = layer_get_flexpanel_node(_layer_name);
+	var _text_panel = flexpanel_node_get_child(_layer, _panel_name);
 	var _text_struct = flexpanel_node_get_struct(_text_panel);
 	var _textID = _text_struct.layerElements[0].elementId;
 	layer_text_text(_textID, _text);
@@ -135,18 +134,18 @@ Server.add_reaction(function(msg)
 	else if msg.type == ServerMessageType.LoginRefuse 
 	{
 		reason = msg.data.description;
-		set_reason_text(reason);
+		set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
 	}
 	else if msg.type == ServerMessageType.RegistrationAccept
 	{
 		_id = msg.data.playerData.id;
 		show_debug_message(msg.data.playerData.id);
-		log_in()
+		log_in();
 	}
 	else if msg.type == ServerMessageType.RegistrationRefuse
 	{
-		reason = msg.data.description
-		set_reason_text(reason);
+		reason = msg.data.description;
+		set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
 	}
 	else if msg.type == ServerMessageType.InviteCancelled {
 		room_goto(R_Main_menu)
@@ -162,6 +161,7 @@ Server.add_reaction(function(msg)
 			enemy = msg.data.invite.sender;
 			if room == R_Main_menu{
 				invited = 1;
+				set_text_on_ui_layer("InviteWindow", "Text_2", "от: " + enemy)
 				UI_controller.check_layers();
 			}
 		}
