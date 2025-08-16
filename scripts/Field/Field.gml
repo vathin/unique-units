@@ -6,7 +6,7 @@ function Field() constructor{
 	scale = 0.65;
 	size = 80*scale;
 	map_sprite = Maps_list.get_map_sprite(global.map);
-	map_scale = size*field_width/2126;
+	map_scale = size*field_width/2126; //0,1467545
 	start_x = (room_width/2) - size*2.5;
 	start_y = (room_height/2) - size*3;
 	field_x_size = size*field_width;

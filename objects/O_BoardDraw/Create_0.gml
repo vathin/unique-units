@@ -17,8 +17,19 @@ turn_owner_cord = [room_width/1.85, room_height/6.45];
 end_button = false;
 button_overlay_sprite = undefined;
 button_overlay_subimg = 0;
-button_overlay_scale = 1
+button_overlay_scale = 1;
+main_button = undefined;
+move_button = undefined;
+ability_button = undefined;
 
+get_button_on_ui = function(_layer, _panel) {
+	var _l = layer_get_flexpanel_node(_layer);
+	var _p = flexpanel_node_get_child(_l, _panel);
+	return _p
+}
+
+main_button = get_button_on_ui("GameRoom", "MainButton");
+flexpanel_delete_node(main_button, 1)
 
 figure_click = function(_figure) {
 		if _figure.state.is_active {

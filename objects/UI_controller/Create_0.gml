@@ -1,5 +1,14 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
+enum INGAMEBUTTONFRAMES {
+	opponent_turn,
+	can_summon,
+	cant_summon,
+	can_move,
+	cant_move,
+	can_use_ability,
+	cant_use_ability
+}
 
 turn_off_layers = function() {
 	layer_set_visible("MainMenu", 0);
