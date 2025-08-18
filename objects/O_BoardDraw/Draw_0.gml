@@ -13,7 +13,7 @@ if in_game {
 	turn_owner_draw();
 	
 	
-	
+	UI_controller.clear_ingame_layer();
 	if Game.game_loop_controller.have_action() {
 		Game.game_loop_controller.action.draw();
 	}
@@ -29,6 +29,7 @@ if in_game {
 		("Доступно:" + string(Game.game_loop_controller.figures_counter.get_summon_figures_amount(global.turn_owner))),
 		0.75, 0.75, 0);
 		if Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
+			UI_controller.turn_on_button(UI_controller.main_button);
 			draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
 		}
 		break;

@@ -29,7 +29,7 @@ get_button_on_ui = function(_layer, _panel) {
 }
 
 main_button = get_button_on_ui("GameRoom", "MainButton");
-flexpanel_delete_node(main_button, 1)
+flexpanel_node_style_set_display(main_button, flexpanel_display.none)
 
 figure_click = function(_figure) {
 		if _figure.state.is_active {
