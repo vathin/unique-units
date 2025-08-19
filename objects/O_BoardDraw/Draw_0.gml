@@ -25,20 +25,25 @@ if in_game {
 	}
 	switch game_state{
 	case STATE_LIST.wait:
-		draw_text_transformed(main_button_x[1] + 55, main_button_y[0] + 25,
-		("Доступно:" + string(Game.game_loop_controller.figures_counter.get_summon_figures_amount(global.turn_owner))),
-		0.75, 0.75, 0);
+		UI_controller.turn_on_button(UI_controller.main_button);
+		//draw_text_transformed(main_button_x[1] + 55, main_button_y[0] + 25,
+		//("Доступно:" + string(Game.game_loop_controller.figures_counter.get_summon_figures_amount(global.turn_owner))),
+		//0.75, 0.75, 0);
 		if Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
-			UI_controller.turn_on_button(UI_controller.main_button);
-			draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
+			//draw_text_transformed(room_width/2-27, room_height/1.25-10, "призыв", 0.55, 0.55, 0);
+			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.can_summon);
 		}
 		break;
 	case STATE_LIST.figure_action:
+	UI_controller.turn_on_button(UI_controller.move_button);
+	UI_controller.turn_on_button(UI_controller.ability_button);
 		if Game.figure_action_controller.figure_can_move {
-			draw_text_transformed(move_button_x[0] + 10, move_button_y[0] + 20, "передв.", 0.55, 0.55, 0);
+			//draw_text_transformed(move_button_x[0] + 10, move_button_y[0] + 20, "передв.", 0.55, 0.55, 0);
+			UI_controller.set_button_frame(UI_controller.move_button, INGAMEBUTTONFRAMES.can_move);
 		}
 		if Game.figure_action_controller.figure_have_ability{
-			draw_text_transformed(ability_button_x[0] + 10, ability_button_y[0] + 20, "способ.", 0.55, 0.55, 0);
+			//draw_text_transformed(ability_button_x[0] + 10, ability_button_y[0] + 20, "способ.", 0.55, 0.55, 0);
+			UI_controller.set_button_frame(UI_controller.ability_button, INGAMEBUTTONFRAMES.can_use_ability)
 		}
 		break;
 	case STATE_LIST.summon:
@@ -48,8 +53,14 @@ if in_game {
 			button_overlay_scale, button_overlay_scale, 0, c_white, 1)
 		}
 		if global.cell_click_callback != undefined {
-			draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
+			//draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
+			UI_controller.turn_on_button(UI_controller.main_button);
+			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.cancel);
 		}
+		break;
+		case STATE_LIST.enemy_turn:
+			UI_controller.turn_on_button(UI_controller.main_button);
+			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.opponent_turn);
 		break;
 	}
 	

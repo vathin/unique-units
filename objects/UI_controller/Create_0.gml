@@ -12,7 +12,8 @@ enum INGAMEBUTTONFRAMES {
 	can_move,
 	cant_move,
 	can_use_ability,
-	cant_use_ability
+	cant_use_ability,
+	cancel
 }
 
 turn_off_layers = function() {
@@ -22,6 +23,7 @@ turn_off_layers = function() {
 	layer_set_visible("InviteRoom", 0);
 	layer_set_visible("SearchRoom", 0);
 	layer_set_visible("GameEndRoom", 0);
+	layer_set_visible(InGame_layer, 0);
 }
 
 get_button_on_ui = function(_layer, _panel) {
@@ -38,10 +40,24 @@ turn_off_button = function(_button) {
 	flexpanel_node_style_set_display(_button, flexpanel_display.none)
 }
 
+get_button_instance = function(_button) {
+	var _struct = flexpanel_node_get_struct(_button);
+	var _instID = _struct.layerElements[0].elementId;
+	return layer_instance_get_instance(_instID);
+}
+
+set_button_frame = function(_button, _frame) {
+	var _button_instance = get_button_instance(_button);
+	_button_instance.set_frame(_frame);
+}
+
 clear_ingame_layer = function() {
 	turn_off_button(main_button);
+	set_button_frame(main_button, get_button_instance(main_button).standart_frame);
 	turn_off_button(move_button);
+	set_button_frame(move_button, get_button_instance(move_button).standart_frame)
 	turn_off_button(ability_button);
+	set_button_frame(ability_button, get_button_instance(ability_button).standart_frame)
 }
 
 main_button = get_button_on_ui(InGame_layer, "MainButton");

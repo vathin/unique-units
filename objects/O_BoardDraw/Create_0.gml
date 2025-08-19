@@ -61,6 +61,42 @@ figure_click = function(_figure) {
 		}
 	}
 	
+cancel = function() {
+	if (game_state == STATE_LIST.summon and global.cell_click_callback != undefined) or
+	Game.game_loop_controller.can_cancel {
+		if Game.game_loop_controller.have_action(){Game.game_loop_controller.action.back()}
+		if Game.ability_input_controller != undefined {Game.ability_input_controller.back()}
+		if Game.move_input_controller != undefined {Game.move_input_controller.back()}
+		if Game.figure_action_controller != undefined {Game.figure_action_controller.back()}
+	}
+}
+
+main_button_click = function() {
+	if game_state == STATE_LIST.wait and 
+		Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
+		Game.summon_controller = new SummonInputController();
+	}
+	else {cancel()}
+}
+
+end_button_click = function() {
+	if end_button{
+		Game.game_loop_controller.end_move()
+	}
+}
+
+move_button_click = function() {
+	if Game.figure_action_controller != undefined {
+		Game.figure_action_controller.move_figure();
+	}
+}
+
+ability_button_click = function() {
+	if Game.figure_action_controller != undefined {
+		Game.figure_action_controller.use_ability();
+	}
+}
+	
 block_end_button = function() {
 	end_button = false
 }
