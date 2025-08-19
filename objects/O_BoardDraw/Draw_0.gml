@@ -18,10 +18,12 @@ if in_game {
 		Game.game_loop_controller.action.draw();
 	}
 	if end_button {
-		draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);
+		//draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);
+		UI_controller.set_button_frame(UI_controller.end_turn_button, SIDEBUTTONFRAMES.end_turn_active);
 	}
 	if Game.game_loop_controller.can_cancel {
-		draw_text_transformed(room_width/2-23, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
+		//draw_text_transformed(room_width/2-23, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
+		UI_controller.set_button_frame(UI_controller.cancel_button, SIDEBUTTONFRAMES.cancel_active)
 	}
 	switch game_state{
 	case STATE_LIST.wait:

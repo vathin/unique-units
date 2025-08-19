@@ -3,17 +3,26 @@
 move_button = undefined;
 ability_button = undefined;
 main_button = undefined;
-InGame_layer = "GameRoom"
+cancel_button = undefined;
+end_turn_button = undefined;
+InGame_layer = "GameRoom";
 
 enum INGAMEBUTTONFRAMES {
 	opponent_turn,
 	can_summon,
 	cant_summon,
-	can_move,
 	cant_move,
-	can_use_ability,
+	can_move,
 	cant_use_ability,
+	can_use_ability,
 	cancel
+}
+
+enum SIDEBUTTONFRAMES {
+	end_turn_inactive,
+	end_turn_active,
+	cancel_inactive,
+	cancel_active
 }
 
 turn_off_layers = function() {
@@ -55,14 +64,18 @@ clear_ingame_layer = function() {
 	turn_off_button(main_button);
 	set_button_frame(main_button, get_button_instance(main_button).standart_frame);
 	turn_off_button(move_button);
-	set_button_frame(move_button, get_button_instance(move_button).standart_frame)
+	set_button_frame(move_button, get_button_instance(move_button).standart_frame);
 	turn_off_button(ability_button);
-	set_button_frame(ability_button, get_button_instance(ability_button).standart_frame)
+	set_button_frame(ability_button, get_button_instance(ability_button).standart_frame);
+	set_button_frame(cancel_button, get_button_instance(cancel_button).standart_frame);
+	set_button_frame(end_turn_button, get_button_instance(end_turn_button).standart_frame);
 }
 
 main_button = get_button_on_ui(InGame_layer, "MainButton");
 move_button = get_button_on_ui(InGame_layer, "MoveButton");
 ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
+cancel_button = get_button_on_ui(InGame_layer, "CancelButton");
+end_turn_button = get_button_on_ui(InGame_layer, "EndTurnButton");
 
 
 check_layers = function() {

@@ -22,9 +22,9 @@ if game_state != STATE_LIST.enemy_turn {
 			}*/
 		}
 		if mouse_x > end_button_x[0] and mouse_x < end_button_x[1] and mouse_y > end_button_y[0] and mouse_y < end_button_y[1]{
-			if end_button{
+			/*if end_button{
 				Game.game_loop_controller.end_move();
-			}
+			}*/
 		}
 		if game_state == STATE_LIST.figure_action{
 			if mouse_x > move_button_x[0] and mouse_x < move_button_x[1] and mouse_y > move_button_y[0]
