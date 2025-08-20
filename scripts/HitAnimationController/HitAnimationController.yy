@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"HitAnimationController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"HitAnimationController",
+  "parent":{
+    "name":"animation",
+    "path":"folders/Scripts/animation.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

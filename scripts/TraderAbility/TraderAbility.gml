@@ -13,6 +13,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	global.mark = S_Summon_mark;
 	buttons = [];
 	
+	
 	change_summon_button = function() {
 		//O_SummonButton.back = 0;
 		//O_SummonButton.y = O_SummonButton.standart_y + 75;
@@ -36,7 +37,14 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		Game.user_data.save(using_figure.owner, load_data);
 	}
 	
-	/*TEST_draw_buttons = function() {
+	start = function() {
+		create_buttons();
+		array_push(Game.do_every_step_list, TEST_buttons_check);
+		array_push(Game.do_every_step_list, TEST_draw_buttons);
+		Game.game_loop_controller.set_can_cancel(0);
+	}
+	
+	TEST_draw_buttons = function() {
 		if buttons != [] {
 			for (i = 0; i < 3; i ++) {
 				if chosen_button == i  or target_cell == undefined{draw_set_alpha(0.5)}
@@ -47,11 +55,11 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
 		{array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
-	}*/
+	}
 	
 	TEST_buttons_check = function() {
 		if mouse_check_button_pressed(mb_left) {
-			if target_cell != undefined {
+			 {
 				if mouse_y > figure_button_y - 25 and mouse_y < figure_button_y + 45 {
 					if mouse_x > figure_button_x - 40 and mouse_x < figure_button_x + 50 {
 						chosen_button = 0;
@@ -66,6 +74,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 					} 
 					if chosen_button != undefined {O_BoardDraw.unblock_end_button()}
 				}
+				if !Game.field.is_any_cell_marked() {check_ability_targets()}
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
@@ -73,11 +82,10 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	}
 	
 	if Game.game_loop_controller.state == STATE_LIST.figure_ability {
-		create_buttons();
+		//create_buttons();
 		//array_push(Game.do_every_step_list, TEST_draw_buttons);
-		array_push(Game.do_every_step_list, TEST_buttons_check);
-		Game.game_loop_controller.set_can_cancel(0);
-		//change_summon_button();
+		//array_push(Game.do_every_step_list, TEST_buttons_check);
+		//Game.game_loop_controller.set_can_cancel(0);
 	}
 	
 	execute = function() {
@@ -99,12 +107,12 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			array_delete(buttons, 0, 1);
 		}
 		if Game.game_loop_controller.state == STATE_LIST.figure_ability {
-			//array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_draw_buttons), 1);
+			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_draw_buttons), 1);
 			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_buttons_check), 1);
 		}
 	}
 
-	check_ability_targets = function(a, b) {
+	check_ability_targets = function(a = undefined, b = undefined) {
 		Game.field.check_controlled_summon_cells(global.turn_owner);
 		load_data = Game.user_data.load(global.turn_owner);
 		if array_length(load_data.player_figures) < 3 and !global.using_ability{
@@ -125,12 +133,12 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			draw_sprite_ext(S_Back_chosen, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.75);
 		}
-		if buttons != [] {
+		/*if buttons != [] {
 			for (i = 0; i < 3; i ++) {
 				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
 				Settings.figure_scale*1.2, Settings.figure_scale*1.2, 0, c_white, 1/(1+(chosen_button == i  or target_cell == undefined)));
 			}
-		}
+		}*/
 	}
 	
 	global.cell_action = function(cell) {
@@ -141,6 +149,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			if !Game.game_loop_controller.have_action() {
 				Game.ability_input_controller.start_ability();
 				O_BoardDraw.block_end_button();
+				Game.field.clear_all_marks();
 			}
 			Game.game_loop_controller.action.target_cell = cell;
 			//O_BoardDraw.unblock_end_button()
