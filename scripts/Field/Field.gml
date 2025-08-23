@@ -288,7 +288,7 @@ function Field() constructor{
 	is_any_cell_marked = function() {
 		for (i = 0; i < field_width; i++) {
 			for (m = 0; m < field_height; m++) {
-				if get_cell(m, i).marked {
+				if get_cell(m, i).is_marked() {
 					return true
 				}
 			}

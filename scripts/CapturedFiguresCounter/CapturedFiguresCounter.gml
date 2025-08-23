@@ -23,7 +23,9 @@ function CapturedFiguresCounter(_owner) constructor{
 			new_figure_y = O_BoardDraw.capture_cord[1] + 7 + 55*facing + figure_y_offset*facing;
 			figure_y_offset += 32;
 			if _use_animation {
-				if (new_figure_x != figures[i].draw_x or new_figure_y != figures[i].draw_y) {
+				if (new_figure_x != figures[i].draw_x or new_figure_y != figures[i].draw_y) and
+				!(figures[i].have_animation() and figures[i].get_last_animation_controller().x_to == new_figure_x 
+				and figures[i].get_last_animation_controller().y_to == new_figure_y) {
 					figure_animation = new MoveAnimationController();
 					figure_animation.start_animation(figures[i].draw_x, figures[i].draw_y, new_figure_x, 
 					new_figure_y, point_distance(figures[i].draw_x, figures[i].draw_y, new_figure_x, new_figure_y)/5, Settings.figure_scale/1.2);
