@@ -3,8 +3,11 @@
 in_game = 1
 selected_cell = undefined
 game_state = undefined
-main_button_x = [room_width/2-40, room_width/2+40];
-main_button_y = [room_height/1.25-40, room_height/1.25+20];
+//main_button_x = [room_width/2-40, room_width/2+40];
+//main_button_y = [room_height/1.25-40, room_height/1.25+20];
+
+main_button_x = UI_controller.get_button_instance(UI_controller.main_button).x;
+main_button_y = UI_controller.get_button_instance(UI_controller.main_button).y;
 end_button_x = [room_width/2-55, room_width/2 + 50];
 end_button_y = [room_height/1.25+35, room_height/1.25+80];
 move_button_x = [room_width/2-100, room_width/2 -40];
@@ -18,18 +21,6 @@ end_button = false;
 button_overlay_sprite = undefined;
 button_overlay_subimg = 0;
 button_overlay_scale = 1;
-main_button = undefined;
-move_button = undefined;
-ability_button = undefined;
-
-get_button_on_ui = function(_layer, _panel) {
-	var _l = layer_get_flexpanel_node(_layer);
-	var _p = flexpanel_node_get_child(_l, _panel);
-	return _p
-}
-
-main_button = get_button_on_ui("GameRoom", "MainButton");
-flexpanel_node_style_set_display(main_button, flexpanel_display.none)
 
 figure_click = function(_figure) {
 		if _figure.state.is_active {
@@ -114,9 +105,9 @@ drop_draw = function() {
 
 capture_draw = function() {
 	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] + 40, 
-	/*array_length(Game.field.player1_captured.figures)*/Game.game_loop_controller.player1_captured, 0.65, 0.6, 0);
+	Game.game_loop_controller.player1_captured, 0.65, 0.6, 0);
 	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] - 43, 
-	/*array_length(Game.field.player2_captured.figures)*/Game.game_loop_controller.player2_captured, 0.65, 0.6, 0);
+	Game.game_loop_controller.player2_captured, 0.65, 0.6, 0);
 }
 
 figure_counters_draw = function() {
@@ -139,7 +130,7 @@ clear_button_overlay = function() {
 set_button_overlay = function(_sprite, _subimg = 0) {
 	button_overlay_sprite = _sprite;
 	button_overlay_subimg = _subimg;
-	button_overlay_scale = (main_button_x[1] - main_button_x[0])/sprite_get_width(_sprite)
+	button_overlay_scale = 0.2;
 }
 
 clear = function() {

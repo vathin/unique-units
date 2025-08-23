@@ -2,8 +2,8 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
 	figure_button_x = room_width/2 - 130;
-	figure_button_y = room_height/1.25 - 35;
-	figure_button_x_offset = 130;
+	figure_button_y = room_height/1.25 + 45;
+	figure_button_x_offset = 82;
 	using_figure = _using_figure;
 	using_cell = _using_cell;
 	chosen_button = undefined;
@@ -14,12 +14,6 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	buttons = [];
 	
 	
-	change_summon_button = function() {
-		//O_SummonButton.back = 0;
-		//O_SummonButton.y = O_SummonButton.standart_y + 75;
-		//O_SummonButton.change_sprite(O_SummonButton.standart_sprite, 0.2);
-		//O_SummonButton.image_index = 2;
-	}
 	
 	create_buttons = function() {
 		Game.game_loop_controller.set_can_cancel(0);
@@ -44,7 +38,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			for (i = 0; i < 3; i ++) {
 				var _draw_alpha = 1/(1+(chosen_button == i));
 				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
-				Settings.figure_scale*1.2, Settings.figure_scale*1.2, 0, c_white, _draw_alpha);
+				Settings.figure_scale*1.3, Settings.figure_scale*1.3, 0, c_white, _draw_alpha);
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
@@ -148,7 +142,6 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	back = function() {
 		if chosen_button != undefined or target_cell != undefined{
-			//chosen_button.image_alpha = 1;
 			chosen_button = undefined;
 			sprite_draw = undefined;
 			target_cell = undefined;

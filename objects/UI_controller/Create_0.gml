@@ -102,3 +102,4 @@ check_layers = function() {
 		break;
 	}
 }
+//show_message(get_button_instance(main_button).x)

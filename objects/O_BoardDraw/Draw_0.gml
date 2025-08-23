@@ -37,8 +37,8 @@ if in_game {
 		}
 		break;
 	case STATE_LIST.figure_action:
-	UI_controller.turn_on_button(UI_controller.move_button);
-	UI_controller.turn_on_button(UI_controller.ability_button);
+		UI_controller.turn_on_button(UI_controller.move_button);
+		UI_controller.turn_on_button(UI_controller.ability_button);
 		if Game.figure_action_controller.figure_can_move {
 			//draw_text_transformed(move_button_x[0] + 10, move_button_y[0] + 20, "передв.", 0.55, 0.55, 0);
 			UI_controller.set_button_frame(UI_controller.move_button, INGAMEBUTTONFRAMES.can_move);
@@ -51,8 +51,7 @@ if in_game {
 	case STATE_LIST.summon:
 		if button_overlay_sprite != undefined {
 			draw_sprite_ext(button_overlay_sprite, button_overlay_subimg, 
-			(main_button_x[0]+main_button_x[1])/2, (main_button_y[0] + main_button_y[1])/2,
-			button_overlay_scale, button_overlay_scale, 0, c_white, 1)
+			main_button_x, main_button_y, button_overlay_scale, button_overlay_scale, 0, c_white, 1)
 		}
 		if global.cell_click_callback != undefined {
 			//draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
