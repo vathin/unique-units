@@ -19,6 +19,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
 	draw_previous_cell = false;
 	if Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
+	_found_id = []
 	
 	init = function() {
 		if to_x != undefined {
@@ -36,6 +37,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
 		Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length);
 		using_figure.add_animation(figure_animation);
+		_found_id = [];
 	}
 	
 	draw = function() {
@@ -62,7 +64,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	check_clear_cells = function(cell_x, cell_y) {
 		found_cells = false;
 		closed = 0;
-		if cell_x = undefined or cell_y = undefined {
+		if cell_x == undefined or cell_y == undefined {
 			cell_x = from_x;
 			cell_y = from_y;
 		}
@@ -106,7 +108,8 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	check_cell_for_move = function(from_cell, new_cell) {
 		if (new_cell == undefined) return;
 		if (from_cell == new_cell) return;
-		if (new_cell == using_figure.previous_move_cell) {
+		if using_figure.previous_move_cell != undefined 
+		and (new_cell == Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1])) {
 			draw_previous_cell = 1;
 			return;
 		}
@@ -130,14 +133,34 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		}
 	}
 	is_cell_have_neighbor = function(cell, except_of = undefined) {
-		if (is_cell_filled(cell.xcord - 1, cell.ycord - 1, except_of)) return true;
-		if (is_cell_filled(cell.xcord + 0, cell.ycord - 1, except_of)) return true;
-		if (is_cell_filled(cell.xcord + 1, cell.ycord - 1, except_of)) return true;
-		if (is_cell_filled(cell.xcord - 1, cell.ycord + 0, except_of)) return true;
-		if (is_cell_filled(cell.xcord + 1, cell.ycord + 0, except_of)) return true;
-		if (is_cell_filled(cell.xcord - 1, cell.ycord + 1, except_of)) return true;
-		if (is_cell_filled(cell.xcord + 0, cell.ycord + 1, except_of)) return true;
-		if (is_cell_filled(cell.xcord + 1, cell.ycord + 1, except_of)) return true;
+		var _array = []
+		
+		if (is_cell_filled(cell.xcord - 1, cell.ycord - 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord - 1, cell.ycord - 1).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord + 0, cell.ycord - 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord + 0, cell.ycord - 1).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord + 1, cell.ycord - 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord + 1, cell.ycord - 1).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord - 1, cell.ycord + 0, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord - 1, cell.ycord + 0).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord + 1, cell.ycord + 0, except_of))
+		{array_push(_array, Game.field.get_cell(cell.xcord + 1, cell.ycord + 0).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord - 1, cell.ycord + 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord - 1, cell.ycord + 1).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord + 0, cell.ycord + 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord + 0, cell.ycord + 1).filled_figure.figure_id)};
+		if (is_cell_filled(cell.xcord + 1, cell.ycord + 1, except_of)) 
+		{array_push(_array, Game.field.get_cell(cell.xcord + 1, cell.ycord + 1).filled_figure.figure_id)};
+			
+		for (m = 0; m < array_length(_array); m ++) {
+			for (n = 0; n < array_length(_found_id); n++) {
+				if _array[m] == _found_id[n] {return true}
+			}
+		}
+		if array_length(_array) > 0 and array_length(_found_id) == 0 {
+			for (i = 0; i < array_length(_array); i++) {array_push(_found_id, _array[i])}
+			return true
+			}
 		
 		return false
 	}
@@ -166,6 +189,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	}
 	
 	clear = function() {
+		_found_id = [];
 		for (i = 0; i <= 5; i++) {
 			for (m = 0; m <= 5; m++) {
 				cell_array[m][i] = ArcherMoveAbility_Cell.uncalculated;
@@ -182,8 +206,8 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 				}
 			else {
 				cell_array[new_cell.xcord][new_cell.ycord] = 2;
-				if old_cell = Game.field.get_cell(from_x, from_y) {
-					cell_array[cell_x][cell_y] = 0;
+				if old_cell == Game.field.get_cell(from_x, from_y) {
+					cell_array[cell_x][cell_y] = 1;
 				}
 				for (j = -1; j <= 1; j++) {
 					for (k = -1; k <= 1; k++) {

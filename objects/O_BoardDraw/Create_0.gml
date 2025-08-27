@@ -3,11 +3,8 @@
 in_game = 1
 selected_cell = undefined
 game_state = undefined
-//main_button_x = [room_width/2-40, room_width/2+40];
-//main_button_y = [room_height/1.25-40, room_height/1.25+20];
-
-main_button_x = UI_controller.get_button_instance(UI_controller.main_button).x;
-main_button_y = UI_controller.get_button_instance(UI_controller.main_button).y;
+main_button_x = [room_width/2-40, room_width/2+40];
+main_button_y = [room_height/1.25-40, room_height/1.25+20];
 end_button_x = [room_width/2-55, room_width/2 + 50];
 end_button_y = [room_height/1.25+35, room_height/1.25+80];
 move_button_x = [room_width/2-100, room_width/2 -40];
@@ -123,14 +120,11 @@ turn_owner_draw = function() {
 }
 
 clear_button_overlay = function() {
-	button_overlay_sprite = undefined;
-	button_overlay_subimg = 0;
+	UI_controller.clear_ingame_layer(1)
 }
 
 set_button_overlay = function(_sprite, _subimg = 0) {
-	button_overlay_sprite = _sprite;
-	button_overlay_subimg = _subimg;
-	button_overlay_scale = 0.2;
+	UI_controller.get_button_instance(UI_controller.main_button).set_sprite(_sprite, _subimg)
 }
 
 clear = function() {

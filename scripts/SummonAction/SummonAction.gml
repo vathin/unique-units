@@ -23,9 +23,17 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 			Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 			cords = Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))
-			//draw_text_transformed(cords[0], cords[1], string_char_at(summon_figure,1)+string_char_at(summon_figure, 2), 0.5, 0.5, 0)
 		}
 	}
+	
+	Button_set_overlay = function() {
+		O_BoardDraw.set_button_overlay(Behaviours.get_sprite(summon_figure), 0)
+		if Game.game_loop_controller.state != STATE_LIST.summon or Game.game_loop_controller.action.target_x != undefined {
+			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, Button_set_overlay), 1)
+			O_BoardDraw.clear_button_overlay()
+			}
+	}
+	
 	set_new_target_coordinates = function(_new_x, _new_y) {
 		target_x = _new_x;
 		target_y = _new_y;
@@ -45,6 +53,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 			global.cell_click_callback = undefined;
 			O_BoardDraw.clear();
 			O_BoardDraw.set_button_overlay(Behaviours.get_sprite(summon_figure), (global.turn_owner==O_LoginController.enemy))
+			array_push(Game.do_every_step_list, Button_set_overlay);
 		}
 	}
 	

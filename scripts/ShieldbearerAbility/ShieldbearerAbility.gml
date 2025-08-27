@@ -74,18 +74,16 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 		else {
 			Game.field.clear_all_marks();
 			Game.field.check_clear_move_cells(using_cell.xcord, using_cell.ycord);
-			cl = using_figure.previous_ability_cell
-			if cl != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked 
-			and using_figure.previous_ability_target_id == target_figure.figure_id{
+			var cl = using_figure.previous_ability_cell
+			var tcl = target_figure.previous_move_cell;
+			if tcl != undefined and Game.field.get_cell(tcl[0], tcl[1]).is_filled() {
+				Game.field.get_cell(tcl[0], tcl[1]).marked = 0;
+				draw_previous_move = 1;
+			}
+			else if cl != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked 
+			and using_figure.previous_ability_target_id == target_figure.figure_id {
 				Game.field.get_cell(cl[0], cl[1]).marked = 0;
 				draw_previous_ability = 1;
-			}
-			else {
-				tcl = target_figure.previous_move_cell;
-				if tcl != undefined and Game.field.get_cell(tcl[0], tcl[1]).is_filled() {
-					Game.field.get_cell(tcl[0], tcl[1]).marked = 0;
-					draw_previous_move = 1;
-				}
 			}
 		}
 	}

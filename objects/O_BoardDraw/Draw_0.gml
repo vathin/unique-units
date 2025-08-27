@@ -12,7 +12,6 @@ if in_game {
 	figure_counters_draw();
 	turn_owner_draw();
 	
-	
 	UI_controller.clear_ingame_layer();
 	if Game.game_loop_controller.have_action() {
 		Game.game_loop_controller.action.draw();
@@ -49,13 +48,8 @@ if in_game {
 		}
 		break;
 	case STATE_LIST.summon:
-		if button_overlay_sprite != undefined {
-			draw_sprite_ext(button_overlay_sprite, button_overlay_subimg, 
-			main_button_x, main_button_y, button_overlay_scale, button_overlay_scale, 0, c_white, 1)
-		}
+		UI_controller.turn_on_button(UI_controller.main_button);
 		if global.cell_click_callback != undefined {
-			//draw_text_transformed(room_width/2-27, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
-			UI_controller.turn_on_button(UI_controller.main_button);
 			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.cancel);
 		}
 		break;
@@ -64,5 +58,4 @@ if in_game {
 			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.opponent_turn);
 		break;
 	}
-	
 }

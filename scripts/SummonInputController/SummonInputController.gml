@@ -7,8 +7,6 @@ function SummonInputController() constructor{
 	load_data = Game.user_data.load(global.turn_owner);
 	figure_to_summon = array_pop(load_data.player_figures)
 	Game.user_data.save(global.turn_owner, load_data)
-	//O_SummonButton.change_sprite(Behaviours.get_sprite(figure_to_summon), Settings.summon_button_figure_scale);
-	O_BoardDraw.set_button_overlay(Behaviours.get_sprite(figure_to_summon), (global.turn_owner == O_LoginController.enemy))
 	global.mark = S_Summon_mark;
 	Game.field.check_controlled_summon_cells(global.turn_owner);
 	global.able_to_summon = true;
@@ -19,6 +17,15 @@ function SummonInputController() constructor{
 			Game.game_loop_controller.choose_cell_for_summon();
 		}	
 	}
+	
+	Button_set_overlay = function() {
+		O_BoardDraw.set_button_overlay(Behaviours.get_sprite(figure_to_summon), 0)
+		if Game.game_loop_controller.state != STATE_LIST.summon 
+		or (Game.game_loop_controller.have_action() and Game.game_loop_controller.action.target_x != undefined) {
+			O_BoardDraw.clear_button_overlay();
+			}
+	}
+	array_push(Game.do_every_step_list, Button_set_overlay)
 
 	time_end = function() {
 		//drop_figure = instance_create_depth(O_SummonButton.x, O_SummonButton.y, -1, O_Figure);
@@ -29,6 +36,8 @@ function SummonInputController() constructor{
 
 	start_summon = function(target_x, target_y) {
 		Game.game_loop_controller.set_action(new SummonAction(target_x, target_y, Behaviours.get_sprite(figure_to_summon), figure_to_summon));
+		array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, Button_set_overlay), 1);
+		O_BoardDraw.clear_button_overlay()
 		Game.summon_controller = undefined
 	}
 }

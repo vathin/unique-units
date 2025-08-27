@@ -148,6 +148,7 @@ function GameLoopController() constructor{
 			Game.field.clear_all_marks();
 		}
 		ready_to_send = 1;
+		UI_controller.clear_ingame_layer(1)
 	}
 
 	set_action = function(new_action) {

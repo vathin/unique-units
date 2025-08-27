@@ -34,7 +34,7 @@
                 {"$GMOverriddenProperty":"v1","%Name":"","name":"","objectId":{"name":"O_ingame_button","path":"objects/O_ingame_button/O_ingame_button.yy",},"propertyId":{"name":"type","path":"objects/O_ingame_button/O_ingame_button.yy",},"resourceType":"GMOverriddenProperty","resourceVersion":"2.0","value":"\"end_turn\"",},
               ],"resourceType":"GMRInstance","resourceVersion":"2.0","rotation":0.0,"scaleX":1.0,"scaleY":1.0,"x":0.0,"y":0.0,},
           ],"flexDirection":0,"height":{"unit":1,"value":75.0,},"justifyContent":1,"name":"EndTurnButton","nodeColour":4287230536,"positionRight":{"unit":2,"value":8.0,},"positionTop":{"unit":2,"value":22.0,},"resourceType":"GMRFlexPanel","resourceVersion":"2.0","width":{"unit":1,"value":175.0,},},
-      ],"flexDirection":2,"gapRow":50.0,"gridX":32,"gridY":32,"justifyContent":1,"name":"GameRoom","nodeColour":4282970775,"resourceType":"GMRUILayer","resourceVersion":"2.0","visible":false,},
+      ],"flexDirection":2,"gapRow":50.0,"gridX":32,"gridY":32,"justifyContent":1,"name":"GameRoom","nodeColour":4282970775,"resourceType":"GMRUILayer","resourceVersion":"2.0",},
     {"$GMRUILayer":"v1","%Name":"InviteWindow","alignItems":1,"children":[
         {"$GMRFlexPanel":"","%Name":"Window","alignItems":1,"children":[
             {"$GMRFlexPanel":"","%Name":"InviteText","alignItems":2,"children":[

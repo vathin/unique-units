@@ -114,7 +114,7 @@ function Field() constructor{
 			else {
 				draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 				draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
-				if draw_figure.state.is_conquesting {
+				if (draw_figure.state.is_captured and draw_figure.owner == O_LoginController._id){
 					var _draw_alpha = 1
 					draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
