@@ -17,9 +17,10 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	found_move_cells = false;
 	cells_to_check = [];
 	using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
-	draw_previous_cell = false;
 	if Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
 	_found_id = []
+	previous_move_cell = undefined;
+	draw_previous_cell = false;
 	
 	init = function() {
 		if to_x != undefined {
@@ -31,6 +32,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	execute = function() {
 		using_cell = Game.field.get_cell(from_x, from_y);
 		cell_for_move = Game.field.get_cell(to_x, to_y);
+		Game.field.add_movement(using_cell, cell_for_move, using_cell.filled_figure.figure_id);
 		cell_for_move.fill(using_figure);
 		using_cell.clear();
 		figure_animation = new MoveAnimationController();
@@ -45,12 +47,10 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[0],
 			Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
-		if draw_previous_cell{
-			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[0];
-			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[1];
+		if draw_previous_cell and previous_move_cell != undefined{
+			var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
+			var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
 			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
-			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1)
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
@@ -86,6 +86,14 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		return found_cells
 	}
 	
+	check_previous_cell = function() {
+		var _previous_cell = Game.field.check_movement_array(using_figure.figure_id)
+		if _previous_cell != undefined and _previous_cell.is_marked() {
+			draw_previous_cell = 1;
+			_previous_cell.marked = 0;
+			previous_move_cell = _previous_cell;
+		}
+	}
 	check_all_cells = function() {
 		var start_cell = Game.field.get_cell(from_x, from_y);
 		Game.field.clear_all_marks();
@@ -108,11 +116,6 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	check_cell_for_move = function(from_cell, new_cell) {
 		if (new_cell == undefined) return;
 		if (from_cell == new_cell) return;
-		if using_figure.previous_move_cell != undefined 
-		and (new_cell == Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1])) {
-			draw_previous_cell = 1;
-			return;
-		}
 		if (not check_cell_not_yet_calculated(new_cell)) return;
 		if (new_cell.is_filled()) return;
 		
@@ -151,16 +154,23 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		{array_push(_array, Game.field.get_cell(cell.xcord + 0, cell.ycord + 1).filled_figure.figure_id)};
 		if (is_cell_filled(cell.xcord + 1, cell.ycord + 1, except_of)) 
 		{array_push(_array, Game.field.get_cell(cell.xcord + 1, cell.ycord + 1).filled_figure.figure_id)};
-			
-		for (m = 0; m < array_length(_array); m ++) {
-			for (n = 0; n < array_length(_found_id); n++) {
-				if _array[m] == _found_id[n] {return true}
-			}
-		}
+		
 		if array_length(_array) > 0 and array_length(_found_id) == 0 {
 			for (i = 0; i < array_length(_array); i++) {array_push(_found_id, _array[i])}
 			return true
 			}
+			var _found_figure = 0
+		for (m = 0; m < array_length(_array); m ++) {
+			for (n = 0; n < array_length(_found_id); n++) {
+				if _array[m] == _found_id[n] {_found_figure = 1}
+			}
+		}
+		if _found_figure {
+			for (m = 0; m < array_length(_array); m ++) {
+				if (array_get_index(_found_id, _array[m]) == -1) {array_push(_found_id, _array[m])}
+			}
+			return true
+		}
 		
 		return false
 	}

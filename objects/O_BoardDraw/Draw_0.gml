@@ -20,7 +20,8 @@ if in_game {
 		//draw_text_transformed(room_width/2-50, room_height/1.25+40, "закончить ход", 0.55, 0.55, 0);
 		UI_controller.set_button_frame(UI_controller.end_turn_button, SIDEBUTTONFRAMES.end_turn_active);
 	}
-	if Game.game_loop_controller.can_cancel {
+	if (game_state == STATE_LIST.summon and global.cell_click_callback != undefined) or
+	Game.game_loop_controller.can_cancel {
 		//draw_text_transformed(room_width/2-23, room_height/1.25-10, "отмена", 0.55, 0.55, 0);
 		UI_controller.set_button_frame(UI_controller.cancel_button, SIDEBUTTONFRAMES.cancel_active)
 	}

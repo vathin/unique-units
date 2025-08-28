@@ -9,11 +9,21 @@ function MoveInputController() constructor{
 		move_ability.check_all_cells();
 	}
 	else {Game.field.check_clear_move_cells(move_from.xcord, move_from.ycord)}
-	cl = move_from.filled_figure.previous_move_cell;
-	if cl != undefined and Game.field.get_cell(cl[0], cl[1]).is_marked() {
-		Game.field.get_cell(cl[0], cl[1]).marked = 0;
-		draw_previous_cell = 1;
+	
+	draw_cell = function() {
+		var _draw_x = Game.field.get_cell_xy(previous_cell)[0];
+		var _draw_y = Game.field.get_cell_xy(previous_cell)[1];
+		draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
+		if Game.game_loop_controller.have_action() {array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
 	}
+	
+	previous_cell = Game.field.check_movement_array(move_from.filled_figure.figure_id)
+	if previous_cell != undefined and previous_cell.is_marked() {
+		previous_cell.marked = 0;
+		draw_previous_cell = 1;
+		array_push(Game.do_every_step_list, draw_cell)
+	}
+	else {previous_cell = undefined}
 	global.mark = S_Move_mark;
 	move_ability = Behaviours.get_move_ability(move_from.filled_figure.behaviour)
 	set_new_cell_action = function() {
@@ -30,9 +40,10 @@ function MoveInputController() constructor{
 		action_set = new move_ability(move_from.xcord,move_from.ycord, 
 		to_x, to_y, undefined);
 		action_set.draw_previous_cell = draw_previous_cell;
+		action_set.previous_move_cell = previous_cell
 		Game.game_loop_controller.set_action(action_set);
-		Game.move_input_controller = undefined;
 		set_new_cell_action();
+		Game.move_input_controller = undefined;
 	}
 
 	back = function() {

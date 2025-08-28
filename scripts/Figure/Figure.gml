@@ -9,11 +9,6 @@ function Figure() constructor{
 	in_move = false;
 	overturning = false;
 	owner = global.turn_owner;
-	previous_ability_cell = undefined;
-	previous_ability_target_id = undefined;
-	previous_move_cell = undefined
-	previous_ability_counter = 0;
-	previous_move_counter = 0;
 	behaviour = undefined;
 	draw_x = 0;
 	draw_y = 0;
@@ -45,58 +40,7 @@ function Figure() constructor{
 		}
 	}
 	update_stats();
-	
-	clear_previous_move_cell = function() {
-		previous_move_cell = undefined;
-	}
 
-	clear_previous_ability_cell = function() {
-		previous_ability_target_id = undefined;
-		previous_ability_cell = undefined;
-	}
-
-	check_previous_ability_targets = function() {
-		if previous_ability_counter == 0 {
-			if previous_ability_cell != undefined {
-				clear_previous_ability_cell();
-			}
-		}
-		else {previous_ability_counter--}
-		if Game.field.find_figure_from_id(previous_ability_target_id) == undefined {
-			clear_previous_ability_cell()
-		}
-	}
-
-	check_previous_move_cell = function() {
-		if previous_move_counter == 0 {
-			if previous_move_cell != undefined {
-				clear_previous_move_cell();
-			}
-		}
-		else {previous_move_counter--}
-	}
-
-	check_cycle_rule = function() {
-		check_previous_ability_targets();
-		check_previous_move_cell();
-	}
-
-
-	start_move_animation = function(cell, lenght) {
-		//animation = instance_create_depth(0, 0, 0, O_MoveFigureAnimation);
-		//animation.start_animation(x, y, cell.x, cell.y, lenght, self);
-	}
-
-	add_previous_ability_cell = function(_add_cell, _target_id) {
-		previous_ability_cell = _add_cell;
-		previous_ability_target_id = _target_id;
-		previous_ability_counter = 2;
-	}
-
-	add_previous_move_cell = function(_add_cell) {
-		previous_move_cell = _add_cell;
-		previous_move_counter = 2;
-	}
 	
 	add_animation = function(_new_animation) {
 		array_push(animation_queue, _new_animation)
@@ -134,10 +78,7 @@ function Figure() constructor{
 		}
 	}
 
-	revert_counter = function() {
-		previous_ability_counter++;
-		previous_move_counter++;
-	}
+
 
 	drop = function() {
 		state.is_active = 0;
@@ -189,11 +130,6 @@ function Figure() constructor{
 			ex_owner: owner,
 			ex_figure_id: figure_id,
 			ex_behaviour: behaviour,
-			ex_previous_ability_cell: previous_ability_cell,
-			ex_previous_ability_target: previous_ability_target_id,
-			ex_previous_move_cell: previous_move_cell,
-			ex_previous_ability_counter: previous_ability_counter,
-			ex_previous_move_counter: previous_move_counter,
 			ex_draw_x: draw_x,
 			ex_draw_y: draw_y,
 			ex_draw_scale: draw_xscale
@@ -206,11 +142,6 @@ function Figure() constructor{
 		figure_id = import_data.ex_figure_id;
 		owner = import_data.ex_owner;
 		set_behaviour(import_data.ex_behaviour);
-		previous_ability_cell = import_data.ex_previous_ability_cell;
-		previous_ability_target_id = import_data.ex_previous_ability_target;
-		previous_move_cell = import_data.ex_previous_move_cell;
-		previous_ability_counter = import_data.ex_previous_ability_counter;
-		previous_move_counter = import_data.ex_previous_move_counter;
 		draw_x = import_data.ex_draw_x;
 		draw_y = import_data.ex_draw_y;
 		draw_xscale = import_data.ex_draw_scale;

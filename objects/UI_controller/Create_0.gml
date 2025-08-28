@@ -7,6 +7,7 @@ cancel_button = undefined;
 end_turn_button = undefined;
 InGame_layer = "GameRoom";
 
+
 enum INGAMEBUTTONFRAMES {
 	opponent_turn,
 	can_summon,

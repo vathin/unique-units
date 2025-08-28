@@ -60,7 +60,7 @@ function GameClass() constructor{
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
-		in_match = 1
+		in_match = 1;
 	}
 	
 	end_game = function() {

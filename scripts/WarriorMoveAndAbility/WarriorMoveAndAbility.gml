@@ -21,16 +21,9 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	Game.field.get_cell(_from_x, _from_y).set_draw_marks(0);
 	Game.field.get_cell(_to_x, _to_y).set_draw_marks(0);
 	O_BoardDraw.unblock_end_button();
-	
-	change_move_button_to_summon = function() {
-		//O_SummonButton.x = figure_controller.move_button.x;
-		//O_SummonButton.y = figure_controller.move_button.y;
-		//O_SummonButton.change_sprite(S_Back, 0.128);
-		//O_SummonButton.back = 1;
-		//figure_controller.move_button.y = -450; 
-	}
-	
-	//change_move_button_to_summon();
+	previous_move_cell = undefined;
+	draw_previous_cell = 0;
+
 	
 	execute = function() {
 		//global.moving_figure = 1;
@@ -57,6 +50,9 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			target_cell.filled_figure.add_animation(target_animation)
 			target_cell.filled_figure.drop()
 		}
+		else {
+			Game.field.add_movement(from_move, to_move, using_figure.figure_id)
+		}
 	}
 	
 	draw = function() {
@@ -69,15 +65,19 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
 			}
 		}
-		if target_cell == undefined and draw_previous_cell and using_figure.previous_move_cell != undefined {
-			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[0];
-			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]))[1];
+		if draw_previous_cell and previous_move_cell != undefined and target_cell == undefined{
+			var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
+			var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
 			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
-			//draw_sprite_ext(S_cycle_rule, 0, using_figure.previous_move_cell.x, using_figure.previous_move_cell.y,
-			//Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
-			if Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]).is_marked() {
-				Game.field.get_cell(using_figure.previous_move_cell[0], using_figure.previous_move_cell[1]).marked = 0
-				}
+		}
+	}
+	
+	check_previous_cell = function() {
+		var _previous_cell = Game.field.check_movement_array(using_figure.figure_id)
+		if _previous_cell != undefined and _previous_cell.is_marked() {
+			draw_previous_cell = 1;
+			_previous_cell.marked = 0;
+			previous_move_cell = _previous_cell;
 		}
 	}
 	
@@ -89,6 +89,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		if !check_ability_targets(0, 0) {Game.figure_action_controller.figure_have_ability = 0}
 		else {Game.figure_action_controller.figure_have_ability = 1}
 		O_BoardDraw.unblock_end_button()
+		check_previous_cell();
 		//Game.game_loop_controller.state = STATE_LIST.figure_action
 	}
 	
@@ -112,6 +113,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				}
 			}
 		}
+		check_previous_cell()
 		return(found_cells)
 	}
 	
@@ -146,7 +148,8 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				Game.field.get_cell(to_x, to_y).set_draw_marks(0);
 				move_controller = new MoveInputController();
 				move_controller = undefined;
-				Game.game_loop_controller.state = STATE_LIST.figure_action
+				Game.game_loop_controller.state = STATE_LIST.figure_action;
+				check_previous_cell();
 			}
 		}
 		else {

@@ -16,7 +16,7 @@ function Field() constructor{
 	player2_captured = new CapturedFiguresCounter(Game.Player2.player_id);
 	player1_dropped = new DroppedFiguresCounter(Game.Player1.player_id);
 	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id);
-	
+	movement_array = [];
 	
 	set_selected_cell = function(cell) {
 		selected_cell = cell
@@ -365,6 +365,20 @@ function Field() constructor{
 		}
 		return cells
 	}
+	
+	add_movement = function(cell_from, cell_to, _figure_id, _is_ability = 0) {
+		array_push(movement_array, {from: [cell_from.xcord, cell_from.ycord], to: [cell_to.xcord, cell_to.ycord], figure_id: _figure_id, is_ability: _is_ability})
+	}
+	
+	check_movement_array = function(_figure_id) {
+		for (i = array_length(movement_array)-1; i >= 0; i--) {
+			if movement_array[i].figure_id == _figure_id and movement_array[i].is_ability and array_length(movement_array) - i < 3{
+				return get_cell(movement_array[i].from[0], movement_array[i].from[1])
+			}
+		}
+		return undefined
+	}
+	
 
 	export_cell = function(cell_x, cell_y) {
 		cell = get_cell(cell_x, cell_y);

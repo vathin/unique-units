@@ -62,7 +62,6 @@ function Cell() constructor{
 	}
 	
 	update_filled_figure_state = function() {
-		filled_figure.check_cycle_rule();
 			found_clear_cells = 0
 			for (i = -1; i <= 1; i++) {
 				for (m = -1; m <=1; m++) {

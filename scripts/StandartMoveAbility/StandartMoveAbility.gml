@@ -12,11 +12,12 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 	to_move = Game.field.get_cell(_to_x, _to_y);
 	draw_previous_cell = false;
 	O_BoardDraw.unblock_end_button();
-	
+	previous_move_cell = undefined;
 	
 	
 	execute = function() {
 		using_figure = Game.field.get_cell(from_x, from_y).filled_figure;
+		Game.field.add_movement(from_move, to_move, using_figure.figure_id)
 		from_move.clear();
 		to_move.fill(using_figure, true);
 		figure_animation = new MoveAnimationController();
@@ -30,16 +31,16 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 		}
-		if draw_previous_cell and from_move.filled_figure.previous_move_cell != undefined{
-			var _draw_x = Game.field.get_cell_xy(Game.field.get_cell(from_move.filled_figure.previous_move_cell[0], from_move.filled_figure.previous_move_cell[1]))[0];
-			var _draw_y = Game.field.get_cell_xy(Game.field.get_cell(from_move.filled_figure.previous_move_cell[0], from_move.filled_figure.previous_move_cell[1]))[1];
+		if draw_previous_cell and previous_move_cell != undefined{
+			var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
+			var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
 			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
 		}
 	}
 	
 	set_new_target_coordinates = function(_new_x, _new_y) {
-		if draw_previous_cell {
-			from_move.filled_figure.previous_move_cell.marked = 0;
+		if draw_previous_cell and previous_move_cell != undefined{
+			previous_move_cell.marked = 0;
 		}
 		if to_x != undefined {to_move.set_draw_marks(1)}
 		to_x = _new_x;

@@ -8,6 +8,5 @@ function FigureAbilityAction() : Action() constructor{
 		Game.figure_action_controller = new FigureActionController()
 		Game.game_loop_controller.action = undefined;
 	}
-	draw_previous_ability_cell = false;
 	draw_previous_move_cell = false;
 }
