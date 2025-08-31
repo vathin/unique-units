@@ -13,6 +13,9 @@ function GameLoopController() constructor{
 	ready_to_send = 1;
 	player1_cards = [];
 	player2_cards = [];
+	cards_x = room_width/2 - 150;
+	cards_y = room_height/1.25 - 60;
+	cards_offset = 10
 	
 	turn_timer = new Timer();
 	turn_timer.start_count(Settings.turn_time);
@@ -32,6 +35,16 @@ function GameLoopController() constructor{
 		}
 		for (i = 0; i < array_length(player2_cards); i++) {
 			player2_cards[i].draw();
+		}
+	}
+	
+	TEST_check_cards = function() {
+		for (i = 0; i < array_length(player1_cards); i++) {
+			if keyboard_check_released(vk_alt) and abs(mouse_x - (cards_x + cards_offset*i)) < 40
+			and abs(mouse_y - (cards_y)) < 60{
+				var _display = instance_create_depth(room_width/2, room_height/2, -5, O_Card_display);
+				_display.set_sprite(player1_cards[i].sprite)
+			}
 		}
 	}
 	
@@ -85,13 +98,13 @@ function GameLoopController() constructor{
 	}
 	
 	create_cards = function(_player) {
-		var _start_x = room_width/2 - 150;
-		var _start_y = room_height/1.25 - 60;
-		var _x_offset = 300/(array_length(get_player(_player).deck)-1)
+		var _start_x = cards_x;
+		var _start_y = cards_y;
+		cards_offset = 300/(array_length(get_player(_player).deck)-1)
 		for (i = 0; i <array_length(get_player(_player).deck); i++) {
 			new_card = new FigureCard();
 			new_card.set_figure(get_player(_player).deck[i]);
-			new_card.set_cord(_start_x + i*_x_offset, _start_y);
+			new_card.set_cord(_start_x + i*cards_offset, _start_y);
 			array_push(get_cards_array(_player), new_card);
 		}
 	}
@@ -348,4 +361,5 @@ function GameLoopController() constructor{
 
 	global.cell_action = default_cell_click_action;
 	array_push(Game.do_every_step_list, TEST_draw_cards);
+	array_push(Game.do_every_step_list, TEST_check_cards);
 }
