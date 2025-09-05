@@ -1,7 +1,13 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
 
+sprite_index = sprite
 send_to = O_LoginController
+enum MODES {
+	go_to_registration,
+	go_to_login
+}
+mode = MODES.go_to_registration
 
 
 set_type = function(new_type) {
@@ -13,5 +19,10 @@ set_address = function(new_address) {
 }
 
 click = function() {
-	send_to.send_data(type)
+	if type != "Mode_switch"{
+		send_to.send_data(type)
+	}
+	else {
+		
+	}
 }
