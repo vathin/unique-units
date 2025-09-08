@@ -192,6 +192,7 @@
     {"id":{"name":"S_Login_window","path":"sprites/S_Login_window/S_Login_window.yy",},},
     {"id":{"name":"S_logo","path":"sprites/S_logo/S_logo.yy",},},
     {"id":{"name":"S_Map","path":"sprites/S_Map/S_Map.yy",},},
+    {"id":{"name":"S_menu_button_2","path":"sprites/S_menu_button_2/S_menu_button_2.yy",},},
     {"id":{"name":"S_menu_button","path":"sprites/S_menu_button/S_menu_button.yy",},},
     {"id":{"name":"S_Move_active","path":"sprites/S_Move_active/S_Move_active.yy",},},
     {"id":{"name":"S_Move_mark","path":"sprites/S_Move_mark/S_Move_mark.yy",},},

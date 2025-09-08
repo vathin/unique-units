@@ -148,6 +148,7 @@
     {"name":"S_Login_window","order":1,"path":"sprites/S_Login_window/S_Login_window.yy",},
     {"name":"S_logo","order":18,"path":"sprites/S_logo/S_logo.yy",},
     {"name":"S_Map","order":1,"path":"sprites/S_Map/S_Map.yy",},
+    {"name":"S_menu_button_2","order":7,"path":"sprites/S_menu_button_2/S_menu_button_2.yy",},
     {"name":"S_menu_button","order":5,"path":"sprites/S_menu_button/S_menu_button.yy",},
     {"name":"S_Move_active","order":6,"path":"sprites/S_Move_active/S_Move_active.yy",},
     {"name":"S_shieldbearer_card","order":3,"path":"sprites/S_shieldbearer_card/S_shieldbearer_card.yy",},

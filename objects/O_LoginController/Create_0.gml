@@ -92,6 +92,7 @@ _winner = undefined;
 log_in = function() {
 	logged_in = true
 	UI_controller.check_layers();
+	set_text_on_ui_layer("MainMenu", "Nickname", _nickname)
 }
 
 send_data = function(type) {

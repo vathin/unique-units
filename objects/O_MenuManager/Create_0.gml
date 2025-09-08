@@ -4,6 +4,7 @@ register_button = UI_controller.get_button_on_ui("LoginWindow", "RegistrationBut
 login_text_field = UI_controller.get_button_instance((UI_controller.get_button_on_ui("LoginWindow", "LoginField")))
 email_text_field = UI_controller.get_button_instance((UI_controller.get_button_on_ui("LoginWindow", "EmailField")))
 password_text_field = UI_controller.get_button_instance((UI_controller.get_button_on_ui("LoginWindow", "PasswordField")))
+nickname_panel = UI_controller.get_button_on_ui("MainMenu", "Nickname")
 UI_controller.turn_off_button(register_button);
 enum LOGIN_MODES {
 	login,
