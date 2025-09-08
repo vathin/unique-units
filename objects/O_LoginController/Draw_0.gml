@@ -12,12 +12,12 @@ if active
 
 if logged_in {
 	if room == R_Main_menu {
-		draw_set_font(F_turn_timer)
+		draw_set_font(F_test)
 		draw_text(50, 50, _nickname)
-		if reason != "" {draw_text(room_width - 415, 215, reason)}
+		if reason != "" {draw_text(room_width/2, 215, reason)}
 	}
-	
 	else if room == R_Game_end {
+		draw_set_font(F_menu)
 		draw_set_halign(fa_center);
 		draw_text(room_width/2, room_height/2, "Победитель: " + _winner)
 		if _winner == _id {var draw_frame = 0}

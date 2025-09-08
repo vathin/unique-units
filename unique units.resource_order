@@ -162,5 +162,6 @@
     {"name":"S_watching_overturned_figure","order":3,"path":"sprites/S_watching_overturned_figure/S_watching_overturned_figure.yy",},
     {"name":"Spr_end_game","order":17,"path":"sprites/Spr_end_game/Spr_end_game.yy",},
     {"name":"Spr_main_menu_button","order":3,"path":"sprites/Spr_main_menu_button/Spr_main_menu_button.yy",},
+    {"name":"Spr_ui_panel","order":6,"path":"sprites/Spr_ui_panel/Spr_ui_panel.yy",},
   ],
 }

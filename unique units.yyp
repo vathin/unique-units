@@ -212,6 +212,7 @@
     {"id":{"name":"S_watching_overturned_figure","path":"sprites/S_watching_overturned_figure/S_watching_overturned_figure.yy",},},
     {"id":{"name":"Spr_end_game","path":"sprites/Spr_end_game/Spr_end_game.yy",},},
     {"id":{"name":"Spr_main_menu_button","path":"sprites/Spr_main_menu_button/Spr_main_menu_button.yy",},},
+    {"id":{"name":"Spr_ui_panel","path":"sprites/Spr_ui_panel/Spr_ui_panel.yy",},},
   ],
   "resourceType":"GMProject",
   "resourceVersion":"2.0",

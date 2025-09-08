@@ -39,8 +39,11 @@ start_invite = function() {
 		invite_text_field = undefined;
 		room_goto(R_Invite);
 	}
-	else {
-		invite_text_field = instance_create_depth(room_width - 215, 185, -1, O_TextInputField);
+	else if invite_text_field == undefined{
+		invite_text_field = instance_create_depth(room_width/2, room_height/2 -30, -1, O_TextInputField);
+		invite_text_field.default_text = "nickname"
+		invite_text_field.image_xscale = 2.5;
+		invite_text_field.image_yscale = 0.85;
 		reason = "";
 	}
 }
@@ -92,8 +95,9 @@ log_in = function() {
 }
 
 send_data = function(type) {
-	show_debug_message(type)
-	get_text_data()
+	_nickname = O_MenuManager.get_login_text();
+	_email = O_MenuManager.get_email_text();
+	_password = O_MenuManager.get_password_text();
 	if type == "login_acc" {
 		Server.send(new ServerMessage(ServerMessageType.Login, {email: _email, password: _password}))
 	}
@@ -102,26 +106,6 @@ send_data = function(type) {
 	}
 	_password = "";
 }
-
-get_text_data = function() {
-	with (O_TextInputField) {
-		switch(type) {
-			case "login":
-				O_LoginController._nickname = get_text()
-			break;
-			case "email":
-				O_LoginController._email = get_text()
-			break;
-			case "password":
-				O_LoginController._password = get_text()
-			break;
-		}
-	}
-	/*_nickname = LoginTextField.get_text()
-	_email = EmailTextField.get_text()
-	_password = PasswordTextField.get_text()*/
-}
-
 
 
 Server.add_reaction(function(msg)
