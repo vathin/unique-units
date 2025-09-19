@@ -160,6 +160,7 @@
     {"name":"S_Summon_mark","order":1,"path":"sprites/S_Summon_mark/S_Summon_mark.yy",},
     {"name":"S_trader_card","order":1,"path":"sprites/S_trader_card/S_trader_card.yy",},
     {"name":"S_Trader","order":2,"path":"sprites/S_Trader/S_Trader.yy",},
+    {"name":"S_ui_circle","order":8,"path":"sprites/S_ui_circle/S_ui_circle.yy",},
     {"name":"S_watching_overturned_figure","order":3,"path":"sprites/S_watching_overturned_figure/S_watching_overturned_figure.yy",},
     {"name":"Spr_end_game","order":17,"path":"sprites/Spr_end_game/Spr_end_game.yy",},
     {"name":"Spr_main_menu_button","order":3,"path":"sprites/Spr_main_menu_button/Spr_main_menu_button.yy",},
