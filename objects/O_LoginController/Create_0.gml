@@ -96,9 +96,9 @@ log_in = function() {
 }
 
 send_data = function(type) {
-	_nickname = O_MenuManager.get_login_text();
-	_email = O_MenuManager.get_email_text();
-	_password = O_MenuManager.get_password_text();
+	_nickname = UI_controller.get_login_text();
+	_email = UI_controller.get_email_text();
+	_password = UI_controller.get_password_text();
 	if type == "login_acc" {
 		Server.send(new ServerMessage(ServerMessageType.Login, {email: _email, password: _password}))
 	}

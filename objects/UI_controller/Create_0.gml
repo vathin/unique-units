@@ -1,12 +1,12 @@
 /// @description Вставьте описание здесь
 // Вы можете записать свой код в этом редакторе
+
 move_button = undefined;
 ability_button = undefined;
 main_button = undefined;
 cancel_button = undefined;
 end_turn_button = undefined;
 InGame_layer = "GameRoom";
-
 
 enum INGAMEBUTTONFRAMES {
 	opponent_turn,
@@ -24,16 +24,6 @@ enum SIDEBUTTONFRAMES {
 	end_turn_active,
 	cancel_inactive,
 	cancel_active
-}
-
-turn_off_layers = function() {
-	layer_set_visible("MainMenu", 0);
-	layer_set_visible("LoginWindow", 0);
-	layer_set_visible("InviteWindow", 0);
-	layer_set_visible("InviteRoom", 0);
-	layer_set_visible("SearchRoom", 0);
-	layer_set_visible("GameEndRoom", 0);
-	layer_set_visible(InGame_layer, 0);
 }
 
 get_button_on_ui = function(_layer, _panel) {
@@ -61,6 +51,76 @@ set_button_frame = function(_button, _frame) {
 	_button_instance.set_frame(_frame);
 }
 
+main_button = get_button_on_ui(InGame_layer, "MainButton");
+move_button = get_button_on_ui(InGame_layer, "MoveButton");
+ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
+cancel_button = get_button_on_ui(InGame_layer, "CancelButton");
+end_turn_button = get_button_on_ui(InGame_layer, "EndTurnButton");
+
+login_button = get_button_on_ui("LoginWindow", "LoginButton");
+register_button = get_button_on_ui("LoginWindow", "RegistrationButton");
+login_text_field = get_button_instance((get_button_on_ui("LoginWindow", "LoginField")))
+email_text_field = get_button_instance((get_button_on_ui("LoginWindow", "EmailField")))
+password_text_field = get_button_instance((get_button_on_ui("LoginWindow", "PasswordField")))
+nickname_panel = get_button_on_ui("MainMenu", "Nickname")
+turn_off_button(register_button);
+
+#region Main_menu
+menu_layers = ["MenuHome", "MenuSettings"];
+
+enum menu_pages {
+	HomePage,
+	SettingsPage
+}
+
+current_page = menu_pages.HomePage;
+
+enum LOGIN_MODES {
+	login,
+	register
+}
+login_mode = LOGIN_MODES.login;
+switch_login_mode = function() {
+	if login_mode == LOGIN_MODES.login {
+		login_mode = LOGIN_MODES.register;
+		turn_off_button(login_button);
+		turn_on_button(register_button);
+	}
+	else {
+		login_mode = LOGIN_MODES.login;
+		turn_on_button(login_button);
+		turn_off_button(register_button);
+	}
+}
+
+get_login_text = function() {
+	return login_text_field.get_text()
+}
+get_email_text = function() {
+	return email_text_field.get_text()
+}
+get_password_text = function() {
+	return password_text_field.get_text()
+}
+
+switch_menu_page = function(_new_page) {
+	current_page = _new_page;
+	check_layers();
+}
+
+get_current_page = function() {
+	return current_page
+}
+clear_menu_layers = function() {
+	layer_set_visible(menu_layers[menu_pages.HomePage], 0);
+	layer_set_visible(menu_layers[menu_pages.SettingsPage], 0)
+}
+
+turn_on_menu_layer = function() {
+	layer_set_visible(menu_layers[current_page], 1)
+}
+#endregion
+
 clear_ingame_layer = function(_full_clear = 0) {
 	turn_off_button(main_button);
 	get_button_instance(main_button).clear(_full_clear);
@@ -72,12 +132,17 @@ clear_ingame_layer = function(_full_clear = 0) {
 	get_button_instance(end_turn_button).clear(_full_clear);
 }
 
-main_button = get_button_on_ui(InGame_layer, "MainButton");
-move_button = get_button_on_ui(InGame_layer, "MoveButton");
-ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
-cancel_button = get_button_on_ui(InGame_layer, "CancelButton");
-end_turn_button = get_button_on_ui(InGame_layer, "EndTurnButton");
-
+turn_off_layers = function() {
+	layer_set_visible("HomeMenu", 0);
+	layer_set_visible("MainMenu", 0)
+	layer_set_visible("LoginWindow", 0);
+	layer_set_visible("InviteWindow", 0);
+	layer_set_visible("InviteRoom", 0);
+	layer_set_visible("SearchRoom", 0);
+	layer_set_visible("GameEndRoom", 0);
+	layer_set_visible(InGame_layer, 0);
+	if room == R_Main_menu {clear_menu_layers()}
+}
 
 check_layers = function() {
 	turn_off_layers();
@@ -85,6 +150,7 @@ check_layers = function() {
 	case R_Main_menu:
 		if O_LoginController.logged_in{
 			layer_set_visible(layer_get_id("MainMenu"), 1);
+			turn_on_menu_layer();
 			if O_LoginController.invited {layer_set_visible("InviteWindow", 1)}
 			}
 		else {layer_set_visible("LoginWindow", 1)}
@@ -103,4 +169,4 @@ check_layers = function() {
 		break;
 	}
 }
-//show_message(get_button_instance(main_button).x)
+

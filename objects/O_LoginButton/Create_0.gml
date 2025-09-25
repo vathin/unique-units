@@ -24,6 +24,6 @@ click = function() {
 		send_to.send_data(type)
 	}
 	else {
-		O_MenuManager.switch_login_mode()
+		UI_controller.switch_login_mode()
 	}
 }
