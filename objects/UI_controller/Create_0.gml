@@ -66,11 +66,15 @@ nickname_panel = get_button_on_ui("MainMenu", "Nickname")
 turn_off_button(register_button);
 
 #region Main_menu
-menu_layers = ["MenuHome", "MenuSettings"];
+menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop"];
+menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
 
 enum menu_pages {
 	HomePage,
-	SettingsPage
+	BattlePassPage,
+	DeckPage,
+	SettingsPage,
+	ShopPage
 }
 
 current_page = menu_pages.HomePage;
@@ -106,14 +110,24 @@ get_password_text = function() {
 switch_menu_page = function(_new_page) {
 	current_page = _new_page;
 	check_layers();
+	layer_sprite_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node("MainMenu"),
+	menu_icons_panels[current_page])).layerElements[0].elementId, 0.45)
+	
 }
 
 get_current_page = function() {
 	return current_page
 }
 clear_menu_layers = function() {
+	for (i = 0; i < array_length(menu_icons_panels); i++) {
+		layer_sprite_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node("MainMenu"),
+		menu_icons_panels[i])).layerElements[0].elementId, 1)
+	}
 	layer_set_visible(menu_layers[menu_pages.HomePage], 0);
-	layer_set_visible(menu_layers[menu_pages.SettingsPage], 0)
+	layer_set_visible(menu_layers[menu_pages.BattlePassPage], 0);
+	layer_set_visible(menu_layers[menu_pages.DeckPage], 0);
+	layer_set_visible(menu_layers[menu_pages.SettingsPage], 0);
+	layer_set_visible(menu_layers[menu_pages.ShopPage], 0);
 }
 
 turn_on_menu_layer = function() {
@@ -141,7 +155,7 @@ turn_off_layers = function() {
 	layer_set_visible("SearchRoom", 0);
 	layer_set_visible("GameEndRoom", 0);
 	layer_set_visible(InGame_layer, 0);
-	if room == R_Main_menu {clear_menu_layers()}
+	clear_menu_layers();
 }
 
 check_layers = function() {
