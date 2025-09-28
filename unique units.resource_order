@@ -137,6 +137,7 @@
     {"name":"S_Archer","order":1,"path":"sprites/S_Archer/S_Archer.yy",},
     {"name":"S_Back_chosen","order":1,"path":"sprites/S_Back_chosen/S_Back_chosen.yy",},
     {"name":"S_Back","order":5,"path":"sprites/S_Back/S_Back.yy",},
+    {"name":"S_Background_2","order":20,"path":"sprites/S_Background_2/S_Background_2.yy",},
     {"name":"S_Background","order":14,"path":"sprites/S_Background/S_Background.yy",},
     {"name":"S_Cancel_button","order":2,"path":"sprites/S_Cancel_button/S_Cancel_button.yy",},
     {"name":"S_Conquesting","order":2,"path":"sprites/S_Conquesting/S_Conquesting.yy",},

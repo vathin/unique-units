@@ -51,6 +51,15 @@ set_button_frame = function(_button, _frame) {
 	_button_instance.set_frame(_frame);
 }
 
+set_ui_sprite_alpha = function(_layer, _panel, _alpha) {
+	layer_sprite_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer),
+	_panel)).layerElements[0].elementId, _alpha);
+}
+
+set_ui_text_alpha = function(_layer, _panel, _alpha) {
+	layer_text_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel)).layerElements[0].elementId, _alpha)
+}
+
 main_button = get_button_on_ui(InGame_layer, "MainButton");
 move_button = get_button_on_ui(InGame_layer, "MoveButton");
 ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
@@ -83,19 +92,24 @@ enum LOGIN_MODES {
 	login,
 	register
 }
-login_mode = LOGIN_MODES.login;
+login_mode = LOGIN_MODES.register;
 switch_login_mode = function() {
+	set_ui_text_alpha("LoginWindow", "RegistrationBText", 0);
+	set_ui_text_alpha("LoginWindow", "LoginBText", 0);
 	if login_mode == LOGIN_MODES.login {
 		login_mode = LOGIN_MODES.register;
 		turn_off_button(login_button);
 		turn_on_button(register_button);
+		set_ui_text_alpha("LoginWindow", "RegistrationBText", 1)
 	}
 	else {
 		login_mode = LOGIN_MODES.login;
 		turn_on_button(login_button);
 		turn_off_button(register_button);
+		set_ui_text_alpha("LoginWindow", "LoginBText", 1)
 	}
 }
+switch_login_mode();
 
 get_login_text = function() {
 	return login_text_field.get_text()
@@ -110,8 +124,6 @@ get_password_text = function() {
 switch_menu_page = function(_new_page) {
 	current_page = _new_page;
 	check_layers();
-	layer_sprite_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node("MainMenu"),
-	menu_icons_panels[current_page])).layerElements[0].elementId, 0.45)
 	
 }
 
@@ -120,9 +132,9 @@ get_current_page = function() {
 }
 clear_menu_layers = function() {
 	for (i = 0; i < array_length(menu_icons_panels); i++) {
-		layer_sprite_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node("MainMenu"),
-		menu_icons_panels[i])).layerElements[0].elementId, 1)
+		set_ui_sprite_alpha("MainMenu", menu_icons_panels[i], 1);
 	}
+	set_ui_sprite_alpha("MainMenu", menu_icons_panels[current_page], 0.45);
 	layer_set_visible(menu_layers[menu_pages.HomePage], 0);
 	layer_set_visible(menu_layers[menu_pages.BattlePassPage], 0);
 	layer_set_visible(menu_layers[menu_pages.DeckPage], 0);

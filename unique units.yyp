@@ -180,6 +180,7 @@
     {"id":{"name":"S_Back_Action_Target","path":"sprites/S_Back_Action_Target/S_Back_Action_Target.yy",},},
     {"id":{"name":"S_Back_chosen","path":"sprites/S_Back_chosen/S_Back_chosen.yy",},},
     {"id":{"name":"S_Back","path":"sprites/S_Back/S_Back.yy",},},
+    {"id":{"name":"S_Background_2","path":"sprites/S_Background_2/S_Background_2.yy",},},
     {"id":{"name":"S_Background","path":"sprites/S_Background/S_Background.yy",},},
     {"id":{"name":"S_Cancel_button","path":"sprites/S_Cancel_button/S_Cancel_button.yy",},},
     {"id":{"name":"S_Conquesting","path":"sprites/S_Conquesting/S_Conquesting.yy",},},
