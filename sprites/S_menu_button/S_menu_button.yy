@@ -20,7 +20,7 @@
   "height":88,
   "HTile":false,
   "layers":[
-    {"$GMImageLayer":"","%Name":"3777b18f-5667-495b-87d8-1e3a0a807833","blendMode":0,"displayName":"default","isLocked":false,"name":"3777b18f-5667-495b-87d8-1e3a0a807833","opacity":100.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
+    {"$GMImageLayer":"","%Name":"3777b18f-5667-495b-87d8-1e3a0a807833","blendMode":0,"displayName":"default","isLocked":false,"name":"3777b18f-5667-495b-87d8-1e3a0a807833","opacity":75.0,"resourceType":"GMImageLayer","resourceVersion":"2.0","visible":true,},
   ],
   "name":"S_menu_button",
   "nineSlice":{

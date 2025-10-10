@@ -75,7 +75,7 @@ nickname_panel = get_button_on_ui("MainMenu", "Nickname")
 turn_off_button(register_button);
 
 #region Main_menu
-menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop"];
+menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop", "MenuProfile"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
 
 enum menu_pages {
@@ -83,7 +83,8 @@ enum menu_pages {
 	BattlePassPage,
 	DeckPage,
 	SettingsPage,
-	ShopPage
+	ShopPage,
+	ProfilePage
 }
 
 current_page = menu_pages.HomePage;
@@ -134,12 +135,12 @@ clear_menu_layers = function() {
 	for (i = 0; i < array_length(menu_icons_panels); i++) {
 		set_ui_sprite_alpha("MainMenu", menu_icons_panels[i], 1);
 	}
-	set_ui_sprite_alpha("MainMenu", menu_icons_panels[current_page], 0.45);
-	layer_set_visible(menu_layers[menu_pages.HomePage], 0);
-	layer_set_visible(menu_layers[menu_pages.BattlePassPage], 0);
-	layer_set_visible(menu_layers[menu_pages.DeckPage], 0);
-	layer_set_visible(menu_layers[menu_pages.SettingsPage], 0);
-	layer_set_visible(menu_layers[menu_pages.ShopPage], 0);
+	if (current_page < menu_pages.ProfilePage) {
+		set_ui_sprite_alpha("MainMenu", menu_icons_panels[current_page], 0.45);
+	}
+	for (i = 0; i < array_length(menu_layers); i++) {
+		layer_set_visible(menu_layers[i], 0);
+	}
 }
 
 turn_on_menu_layer = function() {
