@@ -13,6 +13,11 @@ function ServerMessageType() constructor {
 	
 	static Kick = "Kick"; // сервер отключил тебя.
 	
+	static Decks = "Decks"; // спросить сервер какие колоды есть у игрока. Сервер отвечает с таким же типом сообщения: {decks: [{deckid: "deck_id", author: userid, owner: userid, name: "...", units: {"unit_name": count, ...}}]}
+	static DeckCreate = "DeckCreate"; // Создать колоду {name: "...", units: {"unit_name": count, "unit_name2": count2}}
+	static DeckRemove = "DeckRemove"; // Удалить колоду {deckid: "deck_id"}
+	static DeckUpdate = "DeckUpdate"; // Обновить колоду {deckid: "deck_id", name: "...", units: {"unit_name": count, "unit_name2": count2}}
+	
 	static Invite = "Invite"; // отправить приглашение поиграть игроку {reciever: userid}
 	static InviteCancelled = "InviteCancelled"; // приглашение откланено {reason: ..., invite: {from: userid, to: userid, duration: seconds}}
 	static InviteCancel = "InviteCancel"; // отклонить своё или чужое приглашение {sender: userid, reciever: userid}
