@@ -8,6 +8,7 @@ cancel_button = undefined;
 end_turn_button = undefined;
 InGame_layer = "GameRoom";
 
+
 enum INGAMEBUTTONFRAMES {
 	opponent_turn,
 	can_summon,
@@ -60,6 +61,13 @@ set_ui_text_alpha = function(_layer, _panel, _alpha) {
 	layer_text_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel)).layerElements[0].elementId, _alpha)
 }
 
+ui_scissor = function(_layer, _panel) {
+	var _p = flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel));
+	var _width = _p.width;
+	var _height = _p.height;
+	gpu_set_scissor(window_get_width()/2-_width/2, window_get_height()/2-_height/2, _width, _height)
+}
+
 main_button = get_button_on_ui(InGame_layer, "MainButton");
 move_button = get_button_on_ui(InGame_layer, "MoveButton");
 ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
@@ -77,6 +85,7 @@ turn_off_button(register_button);
 #region Main_menu
 menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop", "MenuProfile"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
+menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop"]
 
 enum menu_pages {
 	HomePage,
@@ -87,6 +96,7 @@ enum menu_pages {
 	ProfilePage
 }
 
+menu_scroll_position = 0;
 current_page = menu_pages.HomePage;
 
 enum LOGIN_MODES {
@@ -122,10 +132,24 @@ get_password_text = function() {
 	return password_text_field.get_text()
 }
 
+check_scroll = function() {
+	if layer_get_visible(layer_get_id("MainMenu")) 
+	and page_is_scrollable(current_page) {return current_page}
+	return undefined;
+}
+
+get_upper_percent_border = function(_page){
+	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height*0.01;
+}
+
 switch_menu_page = function(_new_page) {
 	current_page = _new_page;
 	check_layers();
-	
+	menu_scroll_position = 0;
+	if (page_is_scrollable(_new_page)) {
+		menu_scroll_position = get_upper_percent_border(_new_page);
+	}
+	scroll_menu_page(current_page, 0);
 }
 
 get_current_page = function() {
@@ -146,7 +170,25 @@ clear_menu_layers = function() {
 turn_on_menu_layer = function() {
 	layer_set_visible(menu_layers[current_page], 1)
 }
+
+scroll_menu_page = function(_page, _direction, _scroll_speed = undefined) {
+	if _scroll_speed != undefined {menu_scroll_position += _scroll_speed}
+	else {menu_scroll_position += _direction*5;}
+	var _layer = menu_layers[_page];
+	var _panel = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), "Window");
+	if menu_scroll_position < -25 {menu_scroll_position = -25}
+	else if menu_scroll_position > get_upper_percent_border(current_page) {menu_scroll_position = get_upper_percent_border(current_page)}
+	flexpanel_node_style_set_position(_panel, flexpanel_edge.top, menu_scroll_position, flexpanel_unit.percent)
+}
+
+page_is_scrollable = function(_page) {
+	if array_get_index(menu_scrollable_pages, menu_layers[_page]) != -1 {return true}
+	return false;
+}
+
 #endregion
+
+
 
 clear_ingame_layer = function(_full_clear = 0) {
 	turn_off_button(main_button);
@@ -161,7 +203,7 @@ clear_ingame_layer = function(_full_clear = 0) {
 
 turn_off_layers = function() {
 	layer_set_visible("HomeMenu", 0);
-	layer_set_visible("MainMenu", 0)
+	layer_set_visible("MainMenu", 0);
 	layer_set_visible("LoginWindow", 0);
 	layer_set_visible("InviteWindow", 0);
 	layer_set_visible("InviteRoom", 0);

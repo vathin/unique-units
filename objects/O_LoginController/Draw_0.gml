@@ -7,7 +7,7 @@ if active
 	draw_text_transformed(login_x - 156, login_y -40, "Логин:", 0.75, 0.75, 0)
 	draw_text_transformed(email_x - 156, email_y -40, "Эл. почта:", 0.75, 0.75, 0)
 	draw_text_transformed(password_x - 156, password_y -40, "Пароль:", 0.75, 0.75, 0)
-	draw_text_transformed(login_window_x - 255, login_window_y + 130, reason, 0.8, 0.8, 0)
+	//draw_text_transformed(login_window_x - 255, login_window_y + 130, reason, 0.8, 0.8, 0)
 }
 
 if logged_in {
