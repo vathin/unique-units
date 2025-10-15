@@ -85,7 +85,7 @@ turn_off_button(register_button);
 #region Main_menu
 menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop", "MenuProfile"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
-menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop"]
+menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop", "MenuDeck"]
 
 enum menu_pages {
 	HomePage,
@@ -139,7 +139,7 @@ check_scroll = function() {
 }
 
 get_upper_percent_border = function(_page){
-	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height*0.01;
+	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*10;
 }
 
 switch_menu_page = function(_new_page) {
@@ -239,3 +239,12 @@ check_layers = function() {
 	}
 }
 
+show_message(O_DeckManager.decks);
+//_panel = flexpanel_create_node(flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck1")));
+//_panel2_struct = flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck1"));
+//_panel2_struct.nodes[0].layerElements[0].textText = "Test_n2";
+//_panel2_struct.name = "Deck5";
+//_panel2 = flexpanel_create_node(_panel2_struct);
+//flexpanel_node_insert_child(get_button_on_ui("MenuDeck", "DecksList"), _panel, 1);
+//flexpanel_node_insert_child(get_button_on_ui("MenuDeck", "DecksList"), _panel2, 0);
+//show_message(flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck5")));

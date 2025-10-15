@@ -12,6 +12,12 @@ enemy = undefined;
 invited = false;
 role = undefined;
 server_id = undefined;
+_nickname = undefined;
+_email = undefined;
+_password = undefined;
+_id = undefined;
+_winner = undefined;
+deck = []
 instance_create_depth(0, 0, 0, UI_controller);
 UI_controller.check_layers();
 
@@ -56,6 +62,7 @@ cancel_invite = function() {
 
 start_fast_search = function() {
 	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter));
+	instance_destroy(invite_text_field);
 	room_goto(R_Game_search);
 } 
 
@@ -83,16 +90,13 @@ invite_decline = function() {
 }
 
 //create_window();
-_nickname = undefined;
-_email = undefined;
-_password = undefined;
-_id = undefined;
-_winner = undefined;
+
 
 log_in = function() {
 	logged_in = true
 	UI_controller.check_layers();
 	set_text_on_ui_layer("MainMenu", "Nickname", _nickname)
+	//Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: "test2", units: {"archer": 4, "warrior": 5, "shieldbearer": 2}}))
 }
 
 send_data = function(type) {
@@ -111,60 +115,63 @@ send_data = function(type) {
 
 Server.add_reaction(function(msg)
 {
-	if msg.type == ServerMessageType.LoginAccept {
-		_id = msg.data.playerData.id;
-		show_debug_message(msg.data.playerData.id);
-		log_in()
-	}
-	else if msg.type == ServerMessageType.LoginRefuse 
-	{
-		reason = msg.data.description;
-		set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
-	}
-	else if msg.type == ServerMessageType.RegistrationAccept
-	{
-		_id = msg.data.playerData.id;
-		show_debug_message(msg.data.playerData.id);
-		log_in();
-	}
-	else if msg.type == ServerMessageType.RegistrationRefuse
-	{
-		reason = msg.data.description;
-		set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
-	}
-	else if msg.type == ServerMessageType.InviteCancelled {
-		room_goto(R_Main_menu)
-		reason = "ошибка";
-		show_debug_message(msg.data)
-	}
-	else if msg.type == ServerMessageType.InviteCancel {
-		//room_goto(R_Main_menu);
-		reason = "отмена";
-	}
-	else if msg.type == ServerMessageType.Invite {
-		if msg.data.invite.sender != _id {
-			enemy = msg.data.invite.sender;
-			if room == R_Main_menu{
-				invited = 1;
-				set_text_on_ui_layer("InviteWindow", "Text_2", "от: " + enemy)
-				UI_controller.check_layers();
+	switch msg.type{
+		case ServerMessageType.LoginAccept:
+			_id = msg.data.playerData.id;
+			show_debug_message(msg.data.playerData.id);
+			log_in()
+			break;
+		case ServerMessageType.LoginRefuse:
+			reason = msg.data.description;
+			set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
+			break;
+		case ServerMessageType.RegistrationAccept:
+			_id = msg.data.playerData.id;
+			show_debug_message(msg.data.playerData.id);
+			log_in();
+			break;
+		case ServerMessageType.RegistrationRefuse:
+			reason = msg.data.description;
+			set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
+			break;
+		case ServerMessageType.InviteCancelled:
+			room_goto(R_Main_menu)
+			reason = "ошибка";
+			show_debug_message(msg.data)
+			break;
+		case ServerMessageType.InviteCancel:
+			//room_goto(R_Main_menu);
+			reason = "отмена";
+			break;
+		case ServerMessageType.Invite:
+			if msg.data.invite.sender != _id {
+				enemy = msg.data.invite.sender;
+				if room == R_Main_menu{
+					invited = 1;
+					set_text_on_ui_layer("InviteWindow", "Text_2", "от: " + enemy)
+					UI_controller.check_layers();
+				}
 			}
-		}
+			break;
+		case ServerMessageType.Decks:
+			O_DeckManager.decks = msg.data.decks;
+			break;
+		case ServerMessageType.GameStart:
+			room_goto(R_Test);
+			enemy = msg.data.opponent;
+			global.turn_owner = msg.data.turn
+			Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
+			break;
+		case ServerMessageType.GameplayTurn:
+			if msg.data.turn.fieldState.ex_turn_owner != _id {
+				Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
+			}
+			break;
+		case ServerMessageType.GameEnd: 
+			_winner = msg.data.winner;
+			if _winner == "" {winner = "draw"}
+			alarm[0] = 35;
+			break;
 	}
-	else if msg.type == ServerMessageType.GameStart {
-		room_goto(R_Test);
-		enemy = msg.data.opponent;
-		global.turn_owner = msg.data.turn
-		Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
-	}
-	else if msg.type == ServerMessageType.GameplayTurn {
-		if msg.data.turn.fieldState.ex_turn_owner != _id {
-			Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
-		}
-	}
-	else if msg.type == ServerMessageType.GameEnd {
-		_winner = msg.data.winner;
-		if _winner == "" {winner = "draw"}
-		alarm[0] = 35;
-	}
-})
+}
+)

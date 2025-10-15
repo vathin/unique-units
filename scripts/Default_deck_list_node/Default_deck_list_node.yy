@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"Default_deck_list_node",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"Default_deck_list_node",
+  "parent":{
+    "name":"Deck",
+    "path":"folders/Scripts/Game/Deck.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
