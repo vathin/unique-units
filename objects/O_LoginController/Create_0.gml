@@ -62,7 +62,10 @@ cancel_invite = function() {
 
 start_fast_search = function() {
 	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter));
-	instance_destroy(invite_text_field);
+	if instance_exists(invite_text_field) {
+		instance_destroy(invite_text_field);
+		invite_text_field = undefined;
+		}
 	room_goto(R_Game_search);
 } 
 
@@ -112,6 +115,17 @@ send_data = function(type) {
 	_password = "";
 }
 
+create_deck = function(_name, _deck) {
+	Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: _name, units: _deck}));
+}
+
+update_deck = function(_deck_id, _name, _new_deck) {
+	Server.send(new ServerMessage(ServerMessageType.DeckUpdate, {deckid: _deck_id, name: _name, units: _new_deck}))
+}
+
+delete_deck = function(_deck_id) {
+	Server.send(new ServerMessage(ServerMessageType.DeckRemove, {deckid: _deck_id}))
+}
 
 Server.add_reaction(function(msg)
 {
@@ -155,6 +169,7 @@ Server.add_reaction(function(msg)
 			break;
 		case ServerMessageType.Decks:
 			O_DeckManager.decks = msg.data.decks;
+			O_DeckManager.reset_decks_page();
 			break;
 		case ServerMessageType.GameStart:
 			room_goto(R_Test);

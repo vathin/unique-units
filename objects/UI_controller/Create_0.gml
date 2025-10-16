@@ -27,7 +27,7 @@ enum SIDEBUTTONFRAMES {
 	cancel_active
 }
 
-get_button_on_ui = function(_layer, _panel) {
+get_element_on_ui = function(_layer, _panel) {
 	var _l = layer_get_flexpanel_node(_layer);
 	var _p = flexpanel_node_get_child(_l, _panel);
 	return _p
@@ -68,18 +68,18 @@ ui_scissor = function(_layer, _panel) {
 	gpu_set_scissor(window_get_width()/2-_width/2, window_get_height()/2-_height/2, _width, _height)
 }
 
-main_button = get_button_on_ui(InGame_layer, "MainButton");
-move_button = get_button_on_ui(InGame_layer, "MoveButton");
-ability_button = get_button_on_ui(InGame_layer, "AbilityButton");
-cancel_button = get_button_on_ui(InGame_layer, "CancelButton");
-end_turn_button = get_button_on_ui(InGame_layer, "EndTurnButton");
+main_button = get_element_on_ui(InGame_layer, "MainButton");
+move_button = get_element_on_ui(InGame_layer, "MoveButton");
+ability_button = get_element_on_ui(InGame_layer, "AbilityButton");
+cancel_button = get_element_on_ui(InGame_layer, "CancelButton");
+end_turn_button = get_element_on_ui(InGame_layer, "EndTurnButton");
 
-login_button = get_button_on_ui("LoginWindow", "LoginButton");
-register_button = get_button_on_ui("LoginWindow", "RegistrationButton");
-login_text_field = get_button_instance((get_button_on_ui("LoginWindow", "LoginField")))
-email_text_field = get_button_instance((get_button_on_ui("LoginWindow", "EmailField")))
-password_text_field = get_button_instance((get_button_on_ui("LoginWindow", "PasswordField")))
-nickname_panel = get_button_on_ui("MainMenu", "Nickname")
+login_button = get_element_on_ui("LoginWindow", "LoginButton");
+register_button = get_element_on_ui("LoginWindow", "RegistrationButton");
+login_text_field = get_button_instance((get_element_on_ui("LoginWindow", "LoginField")))
+email_text_field = get_button_instance((get_element_on_ui("LoginWindow", "EmailField")))
+password_text_field = get_button_instance((get_element_on_ui("LoginWindow", "PasswordField")))
+nickname_panel = get_element_on_ui("MainMenu", "Nickname")
 turn_off_button(register_button);
 
 #region Main_menu
@@ -139,7 +139,7 @@ check_scroll = function() {
 }
 
 get_upper_percent_border = function(_page){
-	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*10;
+	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*20;
 }
 
 switch_menu_page = function(_new_page) {
@@ -155,6 +155,11 @@ switch_menu_page = function(_new_page) {
 get_current_page = function() {
 	return current_page
 }
+
+get_page_from_array = function(_page) {
+	return menu_layers[_page]
+}
+
 clear_menu_layers = function() {
 	for (i = 0; i < array_length(menu_icons_panels); i++) {
 		set_ui_sprite_alpha("MainMenu", menu_icons_panels[i], 1);
@@ -239,12 +244,11 @@ check_layers = function() {
 	}
 }
 
-show_message(O_DeckManager.decks);
-//_panel = flexpanel_create_node(flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck1")));
-//_panel2_struct = flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck1"));
+//_panel = flexpanel_create_node(flexpanel_node_get_struct(get_element_on_ui("MenuDeck", "Deck1")));
+//_panel2_struct = flexpanel_node_get_struct(get_element_on_ui("MenuDeck", "Deck1"));
 //_panel2_struct.nodes[0].layerElements[0].textText = "Test_n2";
 //_panel2_struct.name = "Deck5";
 //_panel2 = flexpanel_create_node(_panel2_struct);
-//flexpanel_node_insert_child(get_button_on_ui("MenuDeck", "DecksList"), _panel, 1);
-//flexpanel_node_insert_child(get_button_on_ui("MenuDeck", "DecksList"), _panel2, 0);
-//show_message(flexpanel_node_get_struct(get_button_on_ui("MenuDeck", "Deck5")));
+//flexpanel_node_insert_child(get_element_on_ui("MenuDeck", "DecksList"), _panel, 1);
+//flexpanel_node_insert_child(get_element_on_ui("MenuDeck", "DecksList"), _panel2, 0);
+//show_message(flexpanel_node_get_struct(get_element_on_ui("MenuDeck", "Deck5")));
