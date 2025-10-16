@@ -38,7 +38,7 @@ check_deck_window = function() {
 	if array_length(decks) > 6 {
 		var _multiplier = ceil((array_length(decks)-6) / 2);
 		var _p = UI_controller.get_element_on_ui(deck_layer, "Window");
-		var _height = deck_window_default_height + 180*_multiplier;
+		var _height = deck_window_default_height + 250*_multiplier;
 		
 		flexpanel_node_style_set_height(_p, _height, flexpanel_unit.point);
 		//flexpanel_node_style_set_position(_p, flexpanel_edge.top, 10*_multiplier, flexpanel_unit.percent)

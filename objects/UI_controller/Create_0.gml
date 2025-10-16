@@ -98,6 +98,7 @@ enum menu_pages {
 
 menu_scroll_position = 0;
 current_page = menu_pages.HomePage;
+default_window_percent_size = 65;
 
 enum LOGIN_MODES {
 	login,
@@ -139,7 +140,7 @@ check_scroll = function() {
 }
 
 get_upper_percent_border = function(_page){
-	return flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*20;
+	return (flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*100 -default_window_percent_size)/2
 }
 
 switch_menu_page = function(_new_page) {
