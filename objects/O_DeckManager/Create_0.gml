@@ -1,6 +1,9 @@
 decks = [];
 deck_layer = "MenuDeck";
 deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
+default_deck = {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}
+
+selected_deck = undefined;
 
 Default_deck_list_node = { layerElements : [  ], flexWrap : "wrap", gapColumn : 0, gapRow : 0, 
 	justifyContent : "center", marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0, 
@@ -24,7 +27,34 @@ Default_deck_list_node = { layerElements : [  ], flexWrap : "wrap", gapColumn : 
 	alignItems : "center" } ], name : "Deck1", clipContent : 0, paddingLeft : 0, paddingRight : 0, 
 	paddingTop : 0, width : 175, paddingBottom : 0, height : 175, alignContent : "center" }
 
-default_deck = {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}
+default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
+
+
+get_deck = function(_deck_name) {
+	for (i = 0; i < array_length(decks); i++) {
+		var _deck = decks[i];
+		if _deck.name == _deck_name {
+			return _deck
+		}
+	}
+}
+
+get_deck_figures_array = function(_deck_units) {
+	var _names = struct_get_names(_deck_units);
+	var _array = [];
+	for (i = 0; i < array_length(_names); i++) {
+		for (m = 0; m < struct_get(_deck_units, _names[i]); m++) {
+			array_push(_array, _names[i]);
+		}
+	}
+	return _array
+}
+
+get_selected_deck_array = function() {
+	return get_deck_figures_array(selected_deck.units)
+}
+
+selected_deck = default_deck;
 
 add_deck_ui_panel = function(_name){
 	var _struct = Default_deck_list_node;
@@ -38,7 +68,7 @@ check_deck_window = function() {
 	if array_length(decks) > 6 {
 		var _multiplier = ceil((array_length(decks)-6) / 2);
 		var _p = UI_controller.get_element_on_ui(deck_layer, "Window");
-		var _height = deck_window_default_height + 250*_multiplier;
+		var _height = deck_window_default_height + 350*_multiplier;
 		
 		flexpanel_node_style_set_height(_p, _height, flexpanel_unit.point);
 		//flexpanel_node_style_set_position(_p, flexpanel_edge.top, 10*_multiplier, flexpanel_unit.percent)
@@ -48,14 +78,22 @@ check_deck_window = function() {
 
 create_new_deck = function() {
 	var _name = "Deck" + string(array_length(decks));
-	O_LoginController.create_deck(_name, default_deck);
+	O_LoginController.create_deck(_name, default_deck.units);
 	reset_decks_page();
 }
 
 reset_decks_page = function() {
-	flexpanel_node_remove_all_children(UI_controller.get_element_on_ui(deck_layer, "DecksList"));
+	var _decks_list_node = UI_controller.get_element_on_ui(deck_layer, "DecksList");
+	var _to_delete = flexpanel_node_get_struct(_decks_list_node).nodes;
+	for (i = 0; i < array_length(_to_delete); i++) {
+		var _name = _to_delete[i].name;
+		//flexpanel_delete_node(flexpanel_node_get_child(_decks_list_node, _name), 1);
+	}
+	flexpanel_node_remove_all_children(_decks_list_node);
 	for (i = 0; i < array_length(decks); i++) {
 		add_deck_ui_panel(decks[i].name)
 	}
 	check_deck_window();
+	//flexpanel_node_style_set_display(_decks_list_node, flexpanel_display.none)
 }
+show_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "this_does_nothing")))

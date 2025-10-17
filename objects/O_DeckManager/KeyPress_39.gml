@@ -1,1 +1,1 @@
-create_new_deck();
+if room == R_Main_menu {create_new_deck();}

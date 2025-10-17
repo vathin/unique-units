@@ -1,0 +1,1 @@
+UI_controller.switch_menu_page(menu_pages.DeckSettingsPage);

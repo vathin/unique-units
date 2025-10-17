@@ -1,0 +1,1 @@
+if room == R_Main_menu {reset_decks_page();}

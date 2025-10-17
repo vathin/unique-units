@@ -40,11 +40,13 @@ function GameClass() constructor{
 		if online_match {
 			if role == "host" {
 				Player1 = new Player(O_LoginController._id, "local");
+				Player1.deck = O_DeckManager.get_selected_deck_array();
 				Player2 = new Player(O_LoginController.enemy, "online");
 			}
 			else {
 				Player1 = new Player(O_LoginController.enemy, "online");
 				Player2 = new Player(O_LoginController._id, "local");
+				Player2.deck = O_DeckManager.get_selected_deck_array();
 			}
 		}
 		else {
