@@ -152,6 +152,7 @@ switch_menu_page = function(_new_page) {
 		menu_scroll_position = get_upper_percent_border(_new_page);
 	}
 	scroll_menu_page(current_page, 0);
+	O_LoginController.delete_invite_text_field();
 }
 
 get_current_page = function() {

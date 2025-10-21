@@ -5,7 +5,7 @@ login_window_x = 840;
 login_window_y = 540;
 x_offset = 25;
 y_offset = 25;
-logged_in = false;
+logged_in = true;
 active = false;
 reason = "";
 enemy = undefined;
@@ -60,12 +60,16 @@ cancel_invite = function() {
 	room_goto(R_Main_menu);
 }
 
-start_fast_search = function() {
-	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter));
+delete_invite_text_field = function() {
 	if instance_exists(invite_text_field) {
 		instance_destroy(invite_text_field);
-		invite_text_field = undefined;
-		}
+		invite_text_field = undefined;	
+	}
+}
+
+start_fast_search = function() {
+	Server.send(new ServerMessage(ServerMessageType.FastMatchEnter));
+	delete_invite_text_field()
 	room_goto(R_Game_search);
 } 
 
@@ -168,8 +172,7 @@ Server.add_reaction(function(msg)
 			}
 			break;
 		case ServerMessageType.Decks:
-			O_DeckManager.decks = msg.data.decks;
-			O_DeckManager.reset_decks_page();
+			O_DeckManager.set_decks(msg.data.decks);
 			break;
 		case ServerMessageType.GameStart:
 			room_goto(R_Test);

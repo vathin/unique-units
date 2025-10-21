@@ -1,1 +1,1 @@
-UI_controller.switch_menu_page(menu_pages.DeckSettingsPage);
+O_DeckManager.deck_button_click(deck_id);
