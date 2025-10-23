@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"DeepCopy",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"DeepCopy",
+  "parent":{
+    "name":"Libraries_Tools",
+    "path":"folders/Scripts/Libraries_Tools.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}
