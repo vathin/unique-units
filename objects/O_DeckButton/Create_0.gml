@@ -1,0 +1,1 @@
+destroy_self = function() {instance_destroy()}

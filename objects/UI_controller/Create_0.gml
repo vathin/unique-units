@@ -194,6 +194,11 @@ page_is_scrollable = function(_page) {
 	return false;
 }
 
+is_current_page_scrollable = function() {
+	if page_is_scrollable(current_page) {return true}
+	return false
+}
+
 #endregion
 
 

@@ -1,4 +1,5 @@
-decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"trader": 2, "warrior": 3, "spearman": 7}} ];
+decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"trader": 2, "warrior": 3, "spearman": 7}},
+	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6}}];
 deck_layer = "MenuDeck";
 deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
 default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
@@ -20,23 +21,18 @@ Default_deck_list_node = { layerElements : [  ], flexWrap : "wrap", gapColumn : 
 	flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, spriteIndex : S_ui_circle, 
 	flexTileVertical : 0, spriteOffsetX : 0, flexStretchKeepAspect : 0, spriteOffsetY : 0, 
 	elementOrder : 20, spriteScaleX : 1, spriteScaleY : 1, spriteColour : -1, spriteImageSpeed : 1, 
-	spriteSpeedType : 0, spriteImageIndex : 0, spriteAngle : 0 }*/ ], gapColumn : 0, gapRow : 0, 
+	spriteSpeedType : 0, spriteImageIndex : 0, spriteAngle : 0 }*/ ], /*gapColumn : 0, gapRow : 0, 
 	justifyContent : "center", marginLeft : 0, marginRight : 0, positionType : "absolute", 
 	marginTop : 0, marginBottom : 0, name : "UI_sprite", clipContent : 0, paddingLeft : 0, 
 	paddingRight : 0, paddingTop : 0, width : "100%", paddingBottom : 0, height : "100%", 
-	alignItems : "center" } ], name : "Deck1", clipContent : 0, paddingLeft : 0, paddingRight : 0, 
+	alignItems : "center"*/ } ], name : "Deck1", clipContent : 0, paddingLeft : 0, paddingRight : 0, 
 	paddingTop : 0, width : 175, paddingBottom : 0, height : 175, alignContent : "center" }
 
-create_deck_button = function(_deck_id = "0") {
-	_button_instance = instance_create_layer(0, 0, "MenuDeck", O_DeckButton);
-	 
-	_button_instance.deck_id = _deck_id; 
-	var _struct = { type : "Instance", instanceObjectIndex : _button_instance.object_index, instanceVariables : { _deck_id }, 
-	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, 
-	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, instanceId : instance_id_get(_button_instance), 
-	elementId : _button_instance, flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, 
-	flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 10 }
-	show_message(_struct.elementId)
+create_deck_button = function() {
+	var _struct = { type : "Instance", instanceObjectIndex : O_DeckButton, instanceVariables : {  }, 
+	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1,  instanceImageSpeed : 1, 
+	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, 
+	flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 11 }
 	return _struct
 }
 
@@ -83,19 +79,30 @@ get_selected_deck_array = function() {
 
 selected_deck = default_deck;
 
-add_deck_ui_panel = function(_name, _deck_id = "0"){
+add_deck_ui_panel = function(_name, _deck_id = "3"){
 	var _struct = Default_deck_list_node;
 	_struct.name = _name;
 	_struct.nodes[0].layerElements[0].textText = _name;
-	array_push(_struct.layerElements, create_deck_button(_deck_id))
+	array_push(_struct.layerElements, create_deck_button())
 	var _panel = flexpanel_create_node(_struct);
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, "DecksList"), _panel, 0);
+	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.deck_id = _deck_id
+	//show_message(flexpanel_node_get_struct(_panel).layerElements[0].instanceId.deck_id);
+}
+
+clear_figure_buttons = function() {
+	for (i = 0; i < 20; i++) {
+		var _place = UI_controller.get_element_on_ui("MenuDeckSettings", "place" + string(i+1));
+		flexpanel_node_get_struct(_place).layerElements[0].instanceId.clear()
+	}
 }
 
 switch_figure_buttons = function(_figures) {
-	for (i = 0; i < array_length(figures); i++) {
-		var _place = UI_controller.get_element_on_ui("MenuDeckSettings", "place" + string(i));
+	clear_figure_buttons();
+	for (i = 0; i < array_length(_figures); i++) {
+		var _place = UI_controller.get_element_on_ui("MenuDeckSettings", "place" + string(i+1));
 		flexpanel_node_get_struct(_place).layerElements[0].instanceId.sprite_index = Behaviours.get_sprite(_figures[i]);
+		flexpanel_node_get_struct(_place).layerElements[0].instanceId.figure_inside = _figures[i];
 	}
 	
 }
@@ -122,10 +129,10 @@ reset_decks_page = function() {
 	for (i = 0; i < array_length(_to_delete); i++) {
 		var _name = _to_delete[i].name;
 		if array_length(_to_delete[i].layerElements) > 0 {
-			var _instance = layer_instance_get_instance(_to_delete[i].layerElements[0].elementId);
-			//var _instance = _to_delete[i].layerElements[0].instanceObjectIndex;
-			instance_destroy(_instance); 
+			//var _instance = _to_delete[i].layerElements[0].instanceId;
+			instance_destroy(_to_delete[i].layerElements[0].instanceId);
 		}
+		flexpanel_node_style_set_display(flexpanel_node_get_child(_decks_list_node, _name), flexpanel_display.none)
 		flexpanel_delete_node(flexpanel_node_get_child(_decks_list_node, _name), 1);
 	}
 	flexpanel_node_remove_all_children(_decks_list_node);
@@ -138,9 +145,9 @@ reset_decks_page = function() {
 deck_button_click = function(_deck_id) {
 	if get_deck_from_id(_deck_id) != undefined {
 		UI_controller.switch_menu_page(menu_pages.DeckSettingsPage);
-		switch_figure_buttons(get_deck_from_id(_deck_id).units);
+		switch_figure_buttons(get_deck_figures_array(get_deck_from_id(_deck_id).units));
 	}
 }
 
 
-show_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeck", "Button")))
+//show_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeck", "Button")))
