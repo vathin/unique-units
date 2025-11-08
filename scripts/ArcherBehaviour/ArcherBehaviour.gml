@@ -7,4 +7,5 @@ function ArcherBehaviour() : FigureBehaviour() constructor{
 	ability = undefined;
 	move_ability = ArcherMoveAbility;
 	rarity = 4;
+	max_deck_amount = 5;
 }

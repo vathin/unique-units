@@ -1,1 +1,1 @@
-if room == R_Main_menu {reset_decks_page();}
+if room == R_Main_menu {switch_deck(selected_deck);}

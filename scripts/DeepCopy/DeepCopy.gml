@@ -25,7 +25,6 @@ function deep_copy(ref, flags = 0) {
                 ref_new[i] = ref[i];
             }
         }
-        
         return ref_new;
     }
     else if (is_struct(ref)) {
@@ -49,7 +48,6 @@ function deep_copy(ref, flags = 0) {
             static_set(ref_new, static_struct);
             is_constructed = true;
         }
-        
         var names = variable_struct_get_names(ref);
         var length = variable_struct_names_count(ref);
         

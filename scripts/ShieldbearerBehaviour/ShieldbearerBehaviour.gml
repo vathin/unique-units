@@ -7,4 +7,5 @@ function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	ability = ShieldbearerAbility;
 	move_ability = StandartMoveAbility;
 	rarity = 3;
+	max_deck_amount = 10;
 }

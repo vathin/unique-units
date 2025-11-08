@@ -65,6 +65,7 @@
     {"name":"O_FigureActionController","order":4,"path":"objects/O_FigureActionController/O_FigureActionController.yy",},
     {"name":"O_FigureMarksController","order":8,"path":"objects/O_FigureMarksController/O_FigureMarksController.yy",},
     {"name":"O_Figures_counter","order":1,"path":"objects/O_Figures_counter/O_Figures_counter.yy",},
+    {"name":"O_figureSelectionButton","order":8,"path":"objects/O_figureSelectionButton/O_figureSelectionButton.yy",},
     {"name":"O_FlexableObject","order":13,"path":"objects/O_FlexableObject/O_FlexableObject.yy",},
     {"name":"O_GameLoopController","order":2,"path":"objects/O_GameLoopController/O_GameLoopController.yy",},
     {"name":"O_GF_Square","order":2,"path":"objects/O_GF_Square/O_GF_Square.yy",},

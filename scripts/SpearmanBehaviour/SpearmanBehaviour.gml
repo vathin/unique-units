@@ -7,4 +7,5 @@ function SpearmanBehaviour() : FigureBehaviour() constructor{
 	ability = SpearmanAbility;
 	move_ability = StandartMoveAbility;
 	rarity = 1;
+	max_deck_amount = 20;
 }

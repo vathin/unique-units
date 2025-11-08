@@ -1,12 +1,11 @@
 {
   "$GMObject":"",
-  "%Name":"O_Deck_figure_place",
+  "%Name":"O_figureSelectionButton",
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
-    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
-  "name":"O_Deck_figure_place",
+  "name":"O_figureSelectionButton",
   "overriddenProperties":[],
   "parent":{
     "name":"MainMenu",
@@ -34,8 +33,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"S_Conquesting",
-    "path":"sprites/S_Conquesting/S_Conquesting.yy",
+    "name":"S_archer_card",
+    "path":"sprites/S_archer_card/S_archer_card.yy",
   },
   "spriteMaskId":null,
   "visible":true,

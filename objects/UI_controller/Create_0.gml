@@ -83,9 +83,9 @@ nickname_panel = get_element_on_ui("MainMenu", "Nickname")
 turn_off_button(register_button);
 
 #region Main_menu
-menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeck", "MenuSettings", "MenuShop", "MenuProfile", "MenuDeckSettings"];
+menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeckSettings", "MenuSettings", "MenuShop", "MenuProfile", "MenuDeckSettings"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
-menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop", "MenuDeck"]
+menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop", "MenuDeck", "MenuDeckSettings"]
 
 enum menu_pages {
 	HomePage,
