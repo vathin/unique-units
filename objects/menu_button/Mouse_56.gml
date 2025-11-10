@@ -20,5 +20,12 @@ bbox_left, bbox_top, bbox_right, bbox_bottom)) {
 			O_LoginController.enemy = undefined;
 			room_goto(R_Main_menu);
 		break;
+		//deck_page
+		case "deck_save":
+			O_DeckManager.save_deck();
+		break;
+		case "deck_reset":
+			O_DeckManager.switch_deck(O_DeckManager.selected_deck);
+		break;
 	}
 }

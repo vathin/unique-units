@@ -1,3 +1,7 @@
+// ЛКМ - Добавить фигуру в колоду
+// ПКМ - Удалить фигуру из колоды
+
+
 decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"trader": 2, "warrior": 3, "spearman": 7}},
 	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6}}];
 deck_layer = "MenuDeckSettings";
@@ -6,6 +10,7 @@ figure_buttons_panel = "Cards";
 deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
 default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
 available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
+max_figures_in_deck = 20;
 
 selected_deck = decks[1];
 
@@ -66,13 +71,10 @@ reset_decks_page = function() {
 	clear_cards();
 	var _decks_list_node = UI_controller.get_element_on_ui(deck_layer, "UpPanel");
 	for (i = flexpanel_node_get_num_children(_decks_list_node) - 1; i >= 0; i--) {
-		var node = flexpanel_node_get_child(_decks_list_node, i);
-		flexpanel_delete_node(node, true);
+		//var node = flexpanel_node_get_child(_decks_list_node, i);
+		//flexpanel_delete_node(node, true);
 	}
 	
-	for (i = 0; i < array_length(decks); i++) {
-		//add_deck_ui_panel(decks[i].name, decks[i].deckid);
-	}
 	//check_deck_window();
 	create_figure_buttons(available_figures);
 }
@@ -104,11 +106,20 @@ deck_button_click = function(_deck_id) {
 
 card_click = function(_figure) {
 	var _card = card_get_instance(_figure);
-	if _card != undefined {
-		_card.change_amount();
+	if array_length(get_deck_figures_array(get_deck_from_cards())) < max_figures_in_deck {
+		if _card != undefined {
+			_card.change_amount();
+		}
+		else {
+			add_card_ui_panel(_figure);
+		}
 	}
-	else {
-		add_card_ui_panel(_figure);
+}
+
+card_delete_click = function(_figure) {
+	var _card = card_get_instance(_figure);
+	if _card != undefined {
+		_card.change_amount(-1);
 	}
 }
 
@@ -163,12 +174,14 @@ clear_cards = function() {
 }
 
 get_deck_from_cards = function() {
+	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	figures_struct = {};
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
-		if array_length(_node.layerElements) > 0 {
-			var _figure = _node.layerElements[0].figure_inside;
-			var _amount = _node.layerElements[0].amount;
+		var _struct = flexpanel_node_get_struct(_node)
+		if array_length(_struct.layerElements) > 0 {
+			var _figure = _struct.layerElements[0].instanceId.figure_inside;
+			var _amount = _struct.layerElements[0].instanceId.figure_amount;
 			struct_set(figures_struct, _figure, _amount)
 		}
 	}
@@ -224,3 +237,5 @@ save_deck = function() {
 }
 
 show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "Cards")).nodes)
+
+switch_deck(selected_deck)

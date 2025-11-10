@@ -9,9 +9,9 @@ clear = function() {
 	instance_destroy();
 }
 
-change_amount = function() {
-	figure_amount++;
-	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) {
+change_amount = function(_amount = 1) {
+	figure_amount += _amount;
+	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) or figure_amount < 1 {
 		clear();
 	}
 }
