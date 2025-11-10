@@ -1,0 +1,1 @@
+O_DeckManager.card_click(figure_inside)

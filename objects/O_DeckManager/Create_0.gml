@@ -1,9 +1,11 @@
 decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"trader": 2, "warrior": 3, "spearman": 7}},
 	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6}}];
 deck_layer = "MenuDeckSettings";
-cards_panel = "CardPlaces"
+cards_panel = "CardPlaces";
+figure_buttons_panel = "Cards";
 deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
 default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
+available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
 
 selected_deck = decks[1];
 
@@ -48,16 +50,6 @@ get_selected_deck_array = function() {
 	return get_deck_figures_array(selected_deck.units)
 }
 
-selected_deck = default_deck;
-
-create_deck_button = function() {
-	var _struct = { type : "Instance", instanceObjectIndex : O_DeckButton, 
-	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1,  instanceImageSpeed : 1, 
-	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, 
-	flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 11 }
-	return _struct
-}
-
 
 switch_deck = function(_new_deck) {
 	reset_decks_page();
@@ -70,7 +62,7 @@ switch_deck = function(_new_deck) {
 	}
 }
 reset_decks_page = function() {
-	//clear_figure_buttons();
+	clear_figure_buttons();
 	clear_cards();
 	var _decks_list_node = UI_controller.get_element_on_ui(deck_layer, "UpPanel");
 	for (i = flexpanel_node_get_num_children(_decks_list_node) - 1; i >= 0; i--) {
@@ -82,10 +74,11 @@ reset_decks_page = function() {
 		//add_deck_ui_panel(decks[i].name, decks[i].deckid);
 	}
 	//check_deck_window();
+	create_figure_buttons(available_figures);
 }
 
 
-check_deck_window = function() {
+/*check_deck_window = function() {
 	if array_length(decks) > 6 {
 		var _multiplier = ceil((array_length(decks)-6) / 2);
 		var _p = UI_controller.get_element_on_ui(deck_layer, "Window");
@@ -93,7 +86,7 @@ check_deck_window = function() {
 		flexpanel_node_style_set_height(_p, _height, flexpanel_unit.point);
 		UI_controller.switch_menu_page(UI_controller.get_current_page());
 	}
-}
+}*/
 
 create_new_deck = function() {
 	var _name = "Deck" + string(array_length(decks));
@@ -110,7 +103,7 @@ deck_button_click = function(_deck_id) {
 }
 
 card_click = function(_figure) {
-	var _card = card_button_exists(_figure)
+	var _card = card_get_instance(_figure);
 	if _card != undefined {
 		_card.change_amount();
 	}
@@ -119,12 +112,21 @@ card_click = function(_figure) {
 	}
 }
 
-card_button_exists = function(_figure) {
-	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel)
+card_get_instance = function(_figure) {
+	var _node = card_get_node(_figure);
+	if _node != undefined {
+		return flexpanel_node_get_struct(_node).layerElements[0].instanceId;
+	}
+	return undefined;
+}
+
+card_get_node = function(_figure) {
+	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
-		var _node = flexpanel_node_get_child(_figures_list_node, i);
-		if array_length(_node.layerElements) > 0 and _node.layerElements[0].instanceId.figure_inside == _figure {
-			return _node.layerElements[0].instanceId
+		var _node = flexpanel_node_get_child(_cards_list_node, i);
+		var _struct = flexpanel_node_get_struct(_node);
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == _figure {
+			return _node
 		}
 	}
 	return undefined;
@@ -135,14 +137,14 @@ add_card_ui_panel = function(_figure, _amount = 1) {
 	//var _struct = Default_card_struct;
 	_struct.name = "cardelement" + string(_figure);
 	//_struct.nodes[0].layerElements[0].textText = _name;
-	array_push(_struct.layerElements, card_instance_create(_figure));
+	array_push(_struct.layerElements, card_instance_create());
 	var _panel = flexpanel_create_node(_struct);
 	
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, cards_panel), _panel, 0);
 	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure, _amount);
 }
 
-card_instance_create = function(_figure) {
+card_instance_create = function() {
 	var _struct = { type : "Instance", instanceVariables : {  },
 	instanceObjectIndex : O_Deck_figure_place, instanceOffsetX : 0, instanceOffsetY : 0,
 	instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, 
@@ -152,8 +154,12 @@ card_instance_create = function(_figure) {
 	return deep_copy(_struct)
 }
 
-save_deck = function() {
-	selected_deck.units = get_deck_from_cards();
+clear_cards = function() {
+	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
+	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_cards_list_node, i);
+		flexpanel_delete_node(node, true);
+	}
 }
 
 get_deck_from_cards = function() {
@@ -169,16 +175,23 @@ get_deck_from_cards = function() {
 	return figures_struct;
 }
 
-clear_cards = function() {
-	_cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
-	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
-		var node = flexpanel_node_get_child(_cards_list_node, i);
-		flexpanel_delete_node(node, true);
+create_figure_buttons = function(_figures) {
+	for (i = 0; i < array_length(_figures); i++) {
+		add_figure_button_ui_panel(_figures[i])
 	}
 }
 
+add_figure_button_ui_panel = function(_figure) {
+	var _struct = deep_copy(default_figure_button_struct);
+	_struct.name = "figureButtonElement" + string(_figure);
+	array_push(_struct.layerElements, figure_button_instance_create());
+	var _panel = flexpanel_create_node(_struct);
+	
+	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel), _panel, 0);
+	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure);
+}
 
-create_figure_button_instacne = function() {
+figure_button_instance_create = function() {
 	var _struct = { type : "Instance", instanceVariables : {  }, 
 		instanceObjectIndex : O_figureSelectionButton, instanceOffsetX : 0, instanceOffsetY : 0, 
 		instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, 
@@ -186,6 +199,14 @@ create_figure_button_instacne = function() {
 		flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0, 
 		flexStretchKeepAspect : 0, elementOrder : 20 }
 	return deep_copy(_struct)
+}
+
+clear_figure_buttons = function() {
+	var _figure_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel);
+	for (i = flexpanel_node_get_num_children(_figure_buttons_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
+		flexpanel_delete_node(node, true);
+	}
 }
 
 default_card_struct = { gapColumn : 0, gapRow : 0, justifyContent : "center", 
@@ -197,5 +218,9 @@ default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justif
 	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0, 
 	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 155, 
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
+	
+save_deck = function() {
+	selected_deck.units = get_deck_from_cards();
+}
 
 show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "Cards")).nodes)
