@@ -202,6 +202,7 @@
     {"id":{"name":"S_Dark","path":"sprites/S_Dark/S_Dark.yy",},},
     {"id":{"name":"S_deck_sprite","path":"sprites/S_deck_sprite/S_deck_sprite.yy",},},
     {"id":{"name":"S_Deck","path":"sprites/S_Deck/S_Deck.yy",},},
+    {"id":{"name":"S_delete_icon","path":"sprites/S_delete_icon/S_delete_icon.yy",},},
     {"id":{"name":"S_End_turn","path":"sprites/S_End_turn/S_End_turn.yy",},},
     {"id":{"name":"S_events_icon","path":"sprites/S_events_icon/S_events_icon.yy",},},
     {"id":{"name":"S_Exit_card_display_button","path":"sprites/S_Exit_card_display_button/S_Exit_card_display_button.yy",},},

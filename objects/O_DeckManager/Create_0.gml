@@ -3,15 +3,19 @@
 
 
 decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"warrior": 3, "spearman": 7, "shieldbearer": 5}},
-	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6, "archer": 3}}];
+	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6, "archer": 3}},
+	{deckid: "322100971", author: "000", owner: "000", name: "test2", units: { "warrior": 4, "spearman": 6, "archer": 3, "shieldbearer": 7}},
+	{deckid: "32222971", author: "000", owner: "000", name: "tet2", units: { "warrior": 4, "spearman": 6, "archer": 3, "shieldbearer": 7}}];
 deck_layer = "MenuDeckSettings";
 decks_panel = "DeckList";
 cards_panel = "CardPlaces";
 figure_buttons_panel = "ButtonInstances";
+deck_create_button = "CreateButton";
 deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
 default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
 available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
 max_figures_in_deck = 20;
+deck_limit = 5;
 
 selected_deck = decks[1];
 
@@ -20,21 +24,19 @@ set_decks = function(_decks) {
 	reset_decks_page();
 }
 
-get_deck = function(_deck_name) {
-	for (i = 0; i < array_length(decks); i++) {
-		var _deck = decks[i];
-		if _deck.name == "deckelement" + _deck_name {
-			return _deck
-		}
+get_deck_from_id = function(_deck_id) {
+	var _index = get_deck_index(_deck_id);
+	if _index != undefined {
+		return decks[_index];
 	}
 	return undefined;
 }
 
-get_deck_from_id = function(_deck_id) {
+get_deck_index = function(_deck_id) {
 	for (i = 0; i < array_length(decks); i++) {
 		var _deck = decks[i];
 		if _deck.deckid == _deck_id {
-			return _deck
+			return i
 		}
 	}
 	return undefined;
@@ -75,14 +77,26 @@ reset_decks_page = function() {
 	clear_deck_buttons();
 	create_figure_buttons(available_figures);
 	create_deck_buttons();
+	var _display = flexpanel_display.none;
+	if array_length(decks) < deck_limit { _display = flexpanel_display.flex; }
+	flexpanel_node_style_set_display(UI_controller.get_element_on_ui(deck_layer, deck_create_button), _display);
 }
 
 create_new_deck = function() {
-	var _name = "Deck" + string(array_length(decks));
-	O_LoginController.create_deck(_name, default_deck.units);
-	reset_decks_page();
+	if array_length(decks) < deck_limit {
+		var _name = "Deck" + string(array_length(decks));
+		O_LoginController.create_deck(_name, default_deck.units);
+	}
+	show_message("1")
 }
 
+delete_deck = function(_deck_id) {
+	var _to_delete = get_deck_index(_deck_id);
+	if _to_delete != undefined {
+		array_delete(decks, i, 1);
+		O_LoginController.delete_deck(_deck_id);
+	}
+}
 
 deck_button_click = function(_deck_id) {
 	if get_deck_from_id(_deck_id) != undefined {
@@ -162,6 +176,7 @@ clear_cards = function() {
 
 save_deck = function() {
 	selected_deck.units = get_deck_from_cards();
+	O_LoginController.update_deck(selected_deck.deckid, selected_deck.name, selected_deck.units)
 }
 
 get_deck_from_cards = function() {
@@ -261,6 +276,6 @@ default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justif
 	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 155, 
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
 
-show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "DeckList")).nodes)
+//show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "DeckList")).nodes)
 
 switch_deck(selected_deck)
