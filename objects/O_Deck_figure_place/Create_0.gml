@@ -1,5 +1,6 @@
 figure_inside = undefined;
 figure_amount = 1;
+figure_max_amount = 1;
 image_speed = 0;
 
 clear = function() {
@@ -11,7 +12,10 @@ clear = function() {
 
 change_amount = function(_amount = 1) {
 	figure_amount += _amount;
-	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) or figure_amount < 1 {
+	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) {
+		figure_amount = Behaviours.get_max_deck_amount(figure_inside);
+	}
+	if figure_amount < 1 {
 		clear();
 	}
 }
@@ -19,6 +23,7 @@ change_amount = function(_amount = 1) {
 set_figure = function(_figure, _amount = 1) {
 	figure_inside = _figure;
 	figure_amount = _amount;
+	figure_max_amount = Behaviours.get_max_deck_amount(figure_inside);
 	sprite_index = Behaviours.get_sprite(figure_inside);
 }
 

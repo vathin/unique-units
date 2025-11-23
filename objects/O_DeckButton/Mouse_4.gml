@@ -1,1 +1,1 @@
-O_DeckManager.deck_button_click(deck_id);
+O_DeckManager.switch_deck(deck_id);

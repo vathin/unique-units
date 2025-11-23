@@ -1,0 +1,1 @@
+O_DeckManager.card_delete_click(figure_inside);

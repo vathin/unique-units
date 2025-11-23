@@ -62,10 +62,25 @@ set_ui_text_alpha = function(_layer, _panel, _alpha) {
 }
 
 ui_scissor = function(_layer, _panel) {
+	var _node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel);
 	var _p = flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel));
-	var _width = _p.width;
-	var _height = _p.height;
-	gpu_set_scissor(window_get_width()/2-_width/2, window_get_height()/2-_height/2, _width, _height)
+	//show_message(_p)
+	var _width, _height;
+	if is_string(_p.width) {_width = window_get_width()*int64(_p.width)/100}
+	else {_width = _p.width}
+	if is_string(_p.height) {_height = window_get_height()*int64(_p.height)/100}
+	else {_height = _p.height}
+	var _x = window_get_width()/2-_width/2;;
+	var _y = window_get_height()/2-_height/2;
+	if (flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit != 0) {
+		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).value
+		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit
+		if _unit == 2 {
+			_offset = _offset*window_get_height()/100;
+		}
+		_y -= _offset;
+	}
+	gpu_set_scissor(_x, _y, _width, _height)
 }
 
 main_button = get_element_on_ui(InGame_layer, "MainButton");
@@ -99,7 +114,6 @@ enum menu_pages {
 
 menu_scroll_position = 0;
 current_page = menu_pages.HomePage;
-default_window_percent_size = 65;
 
 enum LOGIN_MODES {
 	login,
@@ -141,7 +155,7 @@ check_scroll = function() {
 }
 
 get_upper_percent_border = function(_page){
-	return (flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*100 -default_window_percent_size)/2
+	return (flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*100 -65)/2
 }
 
 switch_menu_page = function(_new_page) {

@@ -14,8 +14,8 @@
     "path":"folders/Objects/Buttons/MainMenu.yy",
   },
   "parentObjectId":{
-    "name":"O_ButtonParent",
-    "path":"objects/O_ButtonParent/O_ButtonParent.yy",
+    "name":"O_BParent",
+    "path":"objects/O_BParent/O_BParent.yy",
   },
   "persistent":false,
   "physicsAngularDamping":0.1,
@@ -37,8 +37,8 @@
   "resourceVersion":"2.0",
   "solid":false,
   "spriteId":{
-    "name":"S_ui_circle",
-    "path":"sprites/S_ui_circle/S_ui_circle.yy",
+    "name":"S_Deck",
+    "path":"sprites/S_Deck/S_Deck.yy",
   },
   "spriteMaskId":null,
   "visible":true,

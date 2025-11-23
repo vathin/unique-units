@@ -4,6 +4,8 @@
   "eventList":[
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":0,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
     {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":0,"eventType":8,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":4,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
+    {"$GMEvent":"v1","%Name":"","collisionObjectId":null,"eventNum":5,"eventType":6,"isDnD":false,"name":"","resourceType":"GMEvent","resourceVersion":"2.0",},
   ],
   "managed":true,
   "name":"O_Deck_figure_place",
@@ -13,8 +15,8 @@
     "path":"folders/Objects/Buttons/MainMenu.yy",
   },
   "parentObjectId":{
-    "name":"O_ButtonParent",
-    "path":"objects/O_ButtonParent/O_ButtonParent.yy",
+    "name":"O_BParent",
+    "path":"objects/O_BParent/O_BParent.yy",
   },
   "persistent":false,
   "physicsAngularDamping":0.1,

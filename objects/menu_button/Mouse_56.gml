@@ -27,5 +27,8 @@ bbox_left, bbox_top, bbox_right, bbox_bottom)) {
 		case "deck_reset":
 			O_DeckManager.switch_deck(O_DeckManager.selected_deck);
 		break;
+		case "deck_create":
+			//
+		break;
 	}
 }

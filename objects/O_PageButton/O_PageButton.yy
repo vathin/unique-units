@@ -13,8 +13,8 @@
     "path":"folders/Objects/Buttons/MainMenu.yy",
   },
   "parentObjectId":{
-    "name":"O_ButtonParent",
-    "path":"objects/O_ButtonParent/O_ButtonParent.yy",
+    "name":"O_BParent",
+    "path":"objects/O_BParent/O_BParent.yy",
   },
   "persistent":false,
   "physicsAngularDamping":0.1,
