@@ -22,13 +22,16 @@ bbox_left, bbox_top, bbox_right, bbox_bottom)) {
 		break;
 		//deck_page
 		case "deck_save":
-			O_DeckManager.save_deck();
+			O_DeckManager.update_deck();
 		break;
 		case "deck_reset":
-			O_DeckManager.switch_deck(O_DeckManager.selected_deck.deckid);
+			O_DeckManager.switch_deck(O_DeckManager.get_selected_deck().id);
 		break;
 		case "deck_create":
-			//
+			O_DeckManager.create_new_deck();
+		break;
+		case "deck_delete":
+			O_DeckManager.delete_deck(O_DeckManager.get_selected_deck().id);
 		break;
 	}
 }

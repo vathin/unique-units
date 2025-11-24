@@ -1,1 +1,1 @@
-UI_controller.switch_menu_page(page);
+if is_active {UI_controller.switch_menu_page(page);}

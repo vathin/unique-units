@@ -2,25 +2,27 @@
 // ПКМ - Удалить фигуру из колоды
 
 
-decks = [ {deckid: "30391203921", author: "000", owner: "000", name: "123123", units: {"warrior": 3, "spearman": 7, "shieldbearer": 5}},
-	{deckid: "30391203311", author: "000", owner: "000", name: "23", units: {"trader": 1, "warrior": 4, "spearman": 6, "archer": 3}},
-	{deckid: "322100971", author: "000", owner: "000", name: "test2", units: { "warrior": 4, "spearman": 6, "archer": 3, "shieldbearer": 7}},
-	{deckid: "32222971", author: "000", owner: "000", name: "tet2", units: { "warrior": 4, "spearman": 6, "archer": 3, "shieldbearer": 7}}];
+decks = [];
 deck_layer = "MenuDeckSettings";
 decks_panel = "DeckList";
-cards_panel = "CardPlaces";
+cards_panel = "CardInstances";
 figure_buttons_panel = "ButtonInstances";
 deck_create_button = "CreateButton";
-deck_window_default_height = flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, "Window")).height
-default_deck = {units: {"trader": 1, "archer": 4, "warrior": 5, "shieldbearer": 5, "spearman": 5}}
+default_deck = {id: "0", name: "", owner: "",units: {"trader": 1, "archer": 1, "warrior": 1, "shieldbearer": 1, "spearman": 1}}
 available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
 max_figures_in_deck = 20;
 deck_limit = 5;
 
-selected_deck = decks[1];
+selected_deck = {default_deck};
+
+get_selected_deck = function() {
+	return selected_deck
+}
 
 set_decks = function(_decks) {
-	//decks = _decks;
+	decks = _decks;
+	if array_length(decks) == 0 {create_new_deck()}
+	selected_deck = default_deck;
 	reset_decks_page();
 }
 
@@ -35,7 +37,7 @@ get_deck_from_id = function(_deck_id) {
 get_deck_index = function(_deck_id) {
 	for (i = 0; i < array_length(decks); i++) {
 		var _deck = decks[i];
-		if _deck.deckid == _deck_id {
+		if _deck.id == _deck_id {
 			return i
 		}
 	}
@@ -87,7 +89,12 @@ create_new_deck = function() {
 		var _name = "Deck" + string(array_length(decks));
 		O_LoginController.create_deck(_name, default_deck.units);
 	}
-	show_message("1")
+}
+
+update_deck = function() {
+	selected_deck.units = get_deck_from_cards();
+	O_LoginController.update_deck(selected_deck.id, selected_deck.name, selected_deck.units);
+	switch_deck(selected_deck)
 }
 
 delete_deck = function(_deck_id) {
@@ -96,6 +103,7 @@ delete_deck = function(_deck_id) {
 		array_delete(decks, i, 1);
 		O_LoginController.delete_deck(_deck_id);
 	}
+	reset_decks_page();
 }
 
 deck_button_click = function(_deck_id) {
@@ -174,11 +182,6 @@ clear_cards = function() {
 	}
 }
 
-save_deck = function() {
-	selected_deck.units = get_deck_from_cards();
-	O_LoginController.update_deck(selected_deck.deckid, selected_deck.name, selected_deck.units)
-}
-
 get_deck_from_cards = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	figures_struct = {};
@@ -230,7 +233,7 @@ clear_figure_buttons = function() {
 
 create_deck_buttons = function() {
 	for (i = 0; i < array_length(decks); i++) {
-		add_deck_button_ui_panel(decks[i].deckid)
+		add_deck_button_ui_panel(decks[i].id)
 	}
 }
 
@@ -278,4 +281,4 @@ default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justif
 
 //show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "DeckList")).nodes)
 
-switch_deck(selected_deck)
+//switch_deck(selected_deck)

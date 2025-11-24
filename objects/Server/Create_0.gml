@@ -1,6 +1,8 @@
-//address = "ws://127.0.0.1";
-address = "109.195.28.230"
-port = 987;
+//address = "109.195.28.230"
+//port = 987;
+
+address = "wss://uniq-units-server.ru/ws";
+port = 443;
 
 socket = undefined;
 connect_request = noone;

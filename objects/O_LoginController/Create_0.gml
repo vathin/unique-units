@@ -5,7 +5,7 @@ login_window_x = 840;
 login_window_y = 540;
 x_offset = 25;
 y_offset = 25;
-logged_in = true;
+logged_in = false;
 active = false;
 reason = "";
 enemy = undefined;
@@ -102,7 +102,7 @@ invite_decline = function() {
 log_in = function() {
 	logged_in = true
 	UI_controller.check_layers();
-	set_text_on_ui_layer("MainMenu", "Nickname", _nickname)
+	set_text_on_ui_layer("MenuHome", "Nickname", _nickname)
 	//Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: "test2", units: {"archer": 4, "warrior": 5, "shieldbearer": 2}}))
 }
 
