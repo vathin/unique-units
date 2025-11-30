@@ -12,8 +12,8 @@ if active
 
 if logged_in {
 	if room == R_Main_menu {
-		draw_set_font(F_test)
-		if reason != "" {draw_text(room_width/2, 215, reason)}
+		draw_set_font(F_test);
+		//if reason != "" {draw_text(room_width/2, 215, reason)}
 	}
 	else if room == R_Game_end {
 		draw_set_font(F_menu)

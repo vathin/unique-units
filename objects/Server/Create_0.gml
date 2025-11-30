@@ -14,7 +14,7 @@ callbacks = [];
 ping = 0;
 
 connect = function() {
-	socket = network_create_socket(network_socket_ws);
+	socket = network_create_socket(network_socket_wss);
 	network_connect_raw_async(socket, address, port);
 }
 disconnected_callback = function() {

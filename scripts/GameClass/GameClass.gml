@@ -41,12 +41,16 @@ function GameClass() constructor{
 			if role == "host" {
 				Player1 = new Player(O_LoginController._id, "local");
 				Player1.deck = O_DeckManager.get_selected_deck_array();
+				user_data.save(Player1.player_id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
+				player_figures: O_DeckManager.get_selected_deck_array()});
 				Player2 = new Player(O_LoginController.enemy, "online");
 			}
 			else {
 				Player1 = new Player(O_LoginController.enemy, "online");
 				Player2 = new Player(O_LoginController._id, "local");
-				Player2.deck = O_DeckManager.get_selected_deck_array();
+				Player2.deck = O_DeckManager.get_selected_deck_names_list();
+				user_data.save(Player2.player_id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
+				player_figures: O_DeckManager.get_selected_deck_array()});
 			}
 		}
 		else {

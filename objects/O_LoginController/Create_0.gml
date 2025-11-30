@@ -173,6 +173,7 @@ Server.add_reaction(function(msg)
 			break;
 		case ServerMessageType.Decks:
 			O_DeckManager.set_decks(msg.data.decks);
+			if array_length(msg.data.decks) != 0 {O_DeckManager.selected_deck = O_DeckManager.decks[0]}
 			break;
 		case ServerMessageType.GameStart:
 			room_goto(R_Test);
