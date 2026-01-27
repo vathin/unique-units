@@ -70,7 +70,7 @@ ui_scissor = function(_layer, _panel) {
 	else {_width = _p.width}
 	if is_string(_p.height) {_height = window_get_height()*int64(_p.height)/100}
 	else {_height = _p.height}
-	var _x = window_get_width()/2-_width/2;;
+	var _x = window_get_width()/2-_width/2;
 	var _y = window_get_height()/2-_height/2;
 	if (flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit != 0) {
 		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).value
@@ -101,6 +101,7 @@ turn_off_button(register_button);
 menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeckSettings", "MenuSettings", "MenuShop", "MenuProfile", "MenuDeckSettings"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
 menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop", "MenuDeck"]
+menu_scrollable_elements = ["ButtonInstances"]
 
 enum menu_pages {
 	HomePage,

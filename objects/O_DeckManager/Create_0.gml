@@ -99,7 +99,7 @@ reset_decks_page = function() {
 create_new_deck = function() {
 	if array_length(decks) < deck_limit {
 		var _name = "Deck" + string(array_length(decks)+1);
-		O_LoginController.create_deck(_name, default_deck.units);
+		server_create_deck(_name, default_deck.units);
 	}
 }
 
@@ -107,7 +107,7 @@ update_deck = function() {
 	if get_selected_deck() != undefined {
 		selected_deck.units = get_deck_from_cards();
 		selected_deck.name = get_name_from_textfield();
-		O_LoginController.update_deck(selected_deck.id, selected_deck.name, selected_deck.units);
+		server_update_deck(selected_deck.id, selected_deck.name, selected_deck.units);
 	}
 }
 
@@ -121,7 +121,7 @@ delete_deck = function(_deck_id) {
 		var _to_delete = get_deck_index(_deck_id);
 		if _to_delete != undefined {
 			array_delete(decks, i, 1);
-			O_LoginController.delete_deck(_deck_id);
+			server_delete_deck(_deck_id);
 		}
 		selected_deck = {id: undefined}
 		reset_decks_page();
@@ -302,6 +302,27 @@ default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justif
 	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 155, 
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
 
-//show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "DeckList")).nodes)
+#region server
+server_create_deck = function(_name, _deck) {
+	Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: _name, units: _deck}));
+}
 
+server_update_deck = function(_deck_id, _name, _new_deck) {
+	Server.send(new ServerMessage(ServerMessageType.DeckUpdate, {deckid: _deck_id, name: _name, units: _new_deck}))
+}
+
+server_delete_deck = function(_deck_id) {
+	Server.send(new ServerMessage(ServerMessageType.DeckRemove, {deckid: _deck_id}))
+}
+
+Server.add_reaction(function(msg)
+{
+	if (msg.type == ServerMessageType.Decks) {
+		O_DeckManager.set_decks(msg.data.decks);
+		if array_length(msg.data.decks) != 0 {O_DeckManager.selected_deck = O_DeckManager.decks[0]}
+	}
+})
+#endregion
+//show_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "ButtonInstances")))
+show_message(flexpanel_node_style_get_border(UI_controller.get_element_on_ui("MenuDeckSettings", "ButtonInstances"), flexpanel_edge.top))
 //switch_deck(selected_deck)

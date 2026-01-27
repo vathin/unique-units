@@ -119,18 +119,6 @@ send_data = function(type) {
 	_password = "";
 }
 
-create_deck = function(_name, _deck) {
-	Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: _name, units: _deck}));
-}
-
-update_deck = function(_deck_id, _name, _new_deck) {
-	Server.send(new ServerMessage(ServerMessageType.DeckUpdate, {deckid: _deck_id, name: _name, units: _new_deck}))
-}
-
-delete_deck = function(_deck_id) {
-	Server.send(new ServerMessage(ServerMessageType.DeckRemove, {deckid: _deck_id}))
-}
-
 Server.add_reaction(function(msg)
 {
 	switch msg.type{
@@ -170,11 +158,7 @@ Server.add_reaction(function(msg)
 					UI_controller.check_layers();
 				}
 			}
-			break;
-		case ServerMessageType.Decks:
-			O_DeckManager.set_decks(msg.data.decks);
-			if array_length(msg.data.decks) != 0 {O_DeckManager.selected_deck = O_DeckManager.decks[0]}
-			break;
+			break
 		case ServerMessageType.GameStart:
 			room_goto(R_Test);
 			enemy = msg.data.opponent;

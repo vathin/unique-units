@@ -85,6 +85,7 @@
     {"name":"O_SummonInputController","order":1,"path":"objects/O_SummonInputController/O_SummonInputController.yy",},
     {"name":"O_TextInputField","order":15,"path":"objects/O_TextInputField/O_TextInputField.yy",},
     {"name":"O_TraderAbilityButton","order":5,"path":"objects/O_TraderAbilityButton/O_TraderAbilityButton.yy",},
+    {"name":"O_UI_Element_scroll","order":2,"path":"objects/O_UI_Element_scroll/O_UI_Element_scroll.yy",},
     {"name":"O_UI_Scroll","order":1,"path":"objects/O_UI_Scroll/O_UI_Scroll.yy",},
     {"name":"UI_controller","order":10,"path":"objects/UI_controller/UI_controller.yy",},
     {"name":"R_Game_end","order":5,"path":"rooms/R_Game_end/R_Game_end.yy",},
