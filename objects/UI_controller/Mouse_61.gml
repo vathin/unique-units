@@ -1,1 +1,0 @@
-if check_scroll() != undefined {scroll_menu_page(current_page, -1);}

@@ -9,6 +9,7 @@ end_turn_button = undefined;
 InGame_layer = "GameRoom";
 
 
+
 enum INGAMEBUTTONFRAMES {
 	opponent_turn,
 	can_summon,
@@ -100,8 +101,7 @@ turn_off_button(register_button);
 #region Main_menu
 menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeckSettings", "MenuSettings", "MenuShop", "MenuProfile", "MenuDeckSettings"];
 menu_icons_panels = ["HomeIcon", "BattlePassIcon", "DeckIcon", "SettingsIcon", "ShopIcon"];
-menu_scrollable_pages = ["MenuBattlePass", "MenuSettings", "MenuShop", "MenuDeck"]
-menu_scrollable_elements = ["ButtonInstances"]
+
 
 enum menu_pages {
 	HomePage,
@@ -111,6 +111,13 @@ enum menu_pages {
 	ShopPage,
 	ProfilePage,
 	DeckSettingsPage
+}
+
+set_element_position = function(_layer, _element, _position, _edge, _unit = 2, _offset = 0) {
+	if _position < 0 {_position = 0}
+	if _position > 1 {_position = 1}
+	var _el = get_element_on_ui(_layer, _element);
+	flexpanel_node_style_set_position(_el, _edge, (_position+_offset)*100, _unit)
 }
 
 menu_scroll_position = 0;
@@ -149,24 +156,9 @@ get_password_text = function() {
 	return password_text_field.get_text()
 }
 
-check_scroll = function() {
-	if layer_get_visible(layer_get_id("MainMenu")) 
-	and page_is_scrollable(current_page) {return current_page}
-	return undefined;
-}
-
-get_upper_percent_border = function(_page){
-	return (flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(menu_layers[_page]), "Window")).height/window_get_height()*100 -65)/2
-}
-
 switch_menu_page = function(_new_page) {
 	current_page = _new_page;
 	check_layers();
-	menu_scroll_position = 0;
-	if (page_is_scrollable(_new_page)) {
-		menu_scroll_position = get_upper_percent_border(_new_page);
-	}
-	scroll_menu_page(current_page, 0);
 	O_LoginController.delete_invite_text_field();
 }
 
@@ -192,26 +184,6 @@ clear_menu_layers = function() {
 
 turn_on_menu_layer = function() {
 	layer_set_visible(menu_layers[current_page], 1)
-}
-
-scroll_menu_page = function(_page, _direction, _scroll_speed = undefined) {
-	if _scroll_speed != undefined {menu_scroll_position += _scroll_speed}
-	else {menu_scroll_position += _direction*5;}
-	var _layer = menu_layers[_page];
-	var _panel = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), "Window");
-	if menu_scroll_position < -25 {menu_scroll_position = -25}
-	else if menu_scroll_position > get_upper_percent_border(current_page) {menu_scroll_position = get_upper_percent_border(current_page)}
-	flexpanel_node_style_set_position(_panel, flexpanel_edge.top, menu_scroll_position, flexpanel_unit.percent)
-}
-
-page_is_scrollable = function(_page) {
-	if array_get_index(menu_scrollable_pages, menu_layers[_page]) != -1 {return true}
-	return false;
-}
-
-is_current_page_scrollable = function() {
-	if page_is_scrollable(current_page) {return true}
-	return false
 }
 
 #endregion

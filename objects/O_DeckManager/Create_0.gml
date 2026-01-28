@@ -323,6 +323,4 @@ Server.add_reaction(function(msg)
 	}
 })
 #endregion
-//show_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("MenuDeckSettings", "ButtonInstances")))
-show_message(flexpanel_node_style_get_border(UI_controller.get_element_on_ui("MenuDeckSettings", "ButtonInstances"), flexpanel_edge.top))
-//switch_deck(selected_deck)
+//show_message(flexpanel_node_style_get_border(UI_controller.get_element_on_ui("MenuDeckSettings", "ButtonInstances"), flexpanel_edge.top))
