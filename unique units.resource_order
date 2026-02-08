@@ -13,6 +13,7 @@
     {"name":"Counters","order":7,"path":"folders/Objects/Counters.yy",},
     {"name":"FigurePlaces","order":8,"path":"folders/Objects/FigurePlaces.yy",},
     {"name":"UI","order":13,"path":"folders/Objects/UI.yy",},
+    {"name":"User Interface","order":14,"path":"folders/Objects/User Interface.yy",},
     {"name":"Particle Systems","order":15,"path":"folders/Particle Systems.yy",},
     {"name":"Paths","order":4,"path":"folders/Paths.yy",},
     {"name":"Rooms","order":10,"path":"folders/Rooms.yy",},
@@ -43,7 +44,6 @@
     {"name":"Other","order":16,"path":"folders/Sprites/Other.yy",},
     {"name":"Tile Sets","order":2,"path":"folders/Tile Sets.yy",},
     {"name":"Timelines","order":8,"path":"folders/Timelines.yy",},
-    {"name":"User Interface","order":14,"path":"folders/Objects/User Interface.yy",},
   ],
   "ResourceOrderSettings":[
     {"name":"F_menu","order":2,"path":"fonts/F_menu/F_menu.yy",},

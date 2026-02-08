@@ -8,4 +8,4 @@ if(horizontal){
 } else {
     draw_sprite_stretched(thumb_sprite,0,_tx,_ty,10,thumb_height);
 }*/
-draw_text(x, y, scroll_speed)
+//draw_text(x, y, scroll_speed)

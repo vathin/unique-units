@@ -1,3 +1,4 @@
+event_inherited();
 figure_inside = undefined;
 
 set_figure = function(_figure) {

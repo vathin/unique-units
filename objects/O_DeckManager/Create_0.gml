@@ -85,6 +85,7 @@ switch_deck = function(_new_deck_id) {
 		flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, deck_name_panel)).layerElements[0].instanceId.set_text(selected_deck.name);
 	}
 }
+
 reset_decks_page = function() {
 	clear_figure_buttons();
 	clear_cards();

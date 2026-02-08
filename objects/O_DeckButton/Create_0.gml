@@ -1,3 +1,4 @@
+event_inherited();
 destroy_self = function() {instance_destroy()}
 deck_name = "";
 

@@ -8,7 +8,7 @@ function Timer() constructor{
 	active = 0;
 	using_time_bank = false;
 	draw_x = (room_width/2)
-	draw_y = 100;
+	draw_y = 65;
 	player_out_of_time = undefined;
 
 	max_time_bank = 7200;

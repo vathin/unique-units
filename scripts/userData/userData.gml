@@ -16,7 +16,7 @@ function userData() constructor {
 	
 	
 	load = function(player) {
-		if player = Game.Player1.player_id {
+		if player == Game.Player1.player_id {
 			try {
 				file = file_text_open_read("player1_data.json");
 				data = json_parse(file_text_read_string(file))
@@ -27,7 +27,7 @@ function userData() constructor {
 				return standart_data_struct
 			}
 		}
-		if player = Game.Player2.player_id {
+		else if player == Game.Player2.player_id {
 			try {
 				file = file_text_open_read("player2_data.json");
 				data = json_parse(file_text_read_string(file))
@@ -42,13 +42,13 @@ function userData() constructor {
 	}
 	
 	save = function(player, data_struct) {
-		if player = Game.Player1.player_id {
+		if player == Game.Player1.player_id {
 				file = file_text_open_write("player1_data.json");
 				data = json_stringify(data_struct);
 				file_text_write_string(file, data)
 				file_text_close(file);
 		}
-		if player = Game.Player2.player_id {
+		else if player == Game.Player2.player_id {
 				file = file_text_open_write("player2_data.json");
 				data = json_stringify(data_struct);
 				file_text_write_string(file, data)

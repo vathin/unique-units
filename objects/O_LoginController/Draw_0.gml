@@ -20,9 +20,16 @@ if logged_in {
 		draw_set_halign(fa_center);
 		draw_text(room_width/2, room_height/2, "Победитель: " + _winner)
 		var draw_frame = 2
-		if _winner == _id {draw_frame = 0}
-		else if _winner == enemy {draw_frame = 1}
-		else {draw_frame = 2}
+		switch (_winner) {
+			case _id:
+				draw_frame = 0;
+				break;
+			case enemy:
+				draw_frame = 1;
+				break;
+			default:
+				draw_frame = 2;
+		}
 		draw_sprite_ext(Spr_end_game, draw_frame, room_width/2, room_height/3.8, 1.2, 1.2, 0, c_white, 1);
 		draw_set_halign(fa_left);
 	}

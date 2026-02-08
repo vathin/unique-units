@@ -14,7 +14,8 @@ function GameLoopController() constructor{
 	player1_cards = [];
 	player2_cards = [];
 	cards_x = room_width/2 - 150;
-	cards_y = room_height/1.25 - 60;
+	cards_1y = room_height/1.25 - 70;
+	cards_2y = room_height*0.2 + 8;
 	cards_offset = 10
 	
 	turn_timer = new Timer();
@@ -97,20 +98,23 @@ function GameLoopController() constructor{
 		}
 	}
 	
-	create_cards = function(_player) {
+	create_cards = function(_player_id, _position) {
 		var _start_x = cards_x;
-		var _start_y = cards_y;
-		cards_offset = 300/(array_length(get_player(_player).deck)-1)
-		for (i = 0; i <array_length(get_player(_player).deck); i++) {
+		var _start_y = cards_1y;
+		var _deck = Game.user_data.load(_player_id).player_cards;
+		var _array = get_cards_array(_player_id);
+		if _position == 2 {_start_y = cards_2y}
+		cards_offset = 300/(array_length(_deck)-1)
+		for (i = 0; i <array_length(_deck); i++) {
 			new_card = new FigureCard();
-			new_card.set_figure(get_player(_player).deck[i]);
+			new_card.set_figure(_deck[i]);
 			new_card.set_cord(_start_x + i*cards_offset, _start_y);
-			array_push(get_cards_array(_player), new_card);
+			array_push(_array, new_card);
 		}
 	}
 	
-	create_cards(Game.Player1.player_id);
-	//create_cards(Game.Player2.player_id);
+	//create_cards(Game.Player1.player_id, 1);
+	//create_cards(Game.Player2.player_id, 2);
 
 	end_move = function() {
 		//if global.moving_figure {
@@ -214,7 +218,6 @@ function GameLoopController() constructor{
 		clean_controllers();
 		O_BoardDraw.clear();
 		Game.field.clear_all_marks(); 
-		//O_SummonButton.go_away();
 		global.using_ability = 1;
 		global.cell_click_callback = global.selected_cell;
 		Game.figure_action_controller = new FigureActionController()
@@ -304,7 +307,7 @@ function GameLoopController() constructor{
 		}
 	}
 
-	export = function() {
+	export = function(_additional_data = undefined) {
 		export_data = {
 			ex_turn_owner: global.turn_owner,
 			ex_player1_captured: player1_captured,
@@ -314,7 +317,9 @@ function GameLoopController() constructor{
 			ex_gamefield: Game.field.export(),
 			ex_player1_figures: Game.user_data.load(Game.Player1.player_id),
 			ex_player2_figures: Game.user_data.load(Game.Player2.player_id),
-			ex_state: state
+			ex_state: state,
+			additional_data: _additional_data,
+			import_field: true
 		}
 		return export_data
 	}
@@ -330,7 +335,6 @@ function GameLoopController() constructor{
 		Game.user_data.save(Game.Player1.player_id, import_data.ex_player1_figures);
 		Game.user_data.save(Game.Player2.player_id, import_data.ex_player2_figures);
 
-		//state = import_data.ex_state;
 	}
 
 	import_action = function(import_struct) {

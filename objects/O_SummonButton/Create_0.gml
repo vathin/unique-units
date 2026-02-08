@@ -1,5 +1,4 @@
-/// @description Вставьте описание здесь
-// Вы можете записать свой код в этом редакторе
+event_inherited();
 standart_sprite = S_Summon_button
 standart_scale = 0.21;
 standart_x = x;

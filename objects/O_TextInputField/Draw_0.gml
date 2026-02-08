@@ -1,5 +1,4 @@
-/// @description Вставьте описание здесь
-// Вы можете записать свой код в этом редакторе
+
 draw_set_font(F_test);
 event_inherited();
 if selected { image_alpha = 0.55 }

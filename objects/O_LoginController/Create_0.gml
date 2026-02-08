@@ -166,8 +166,15 @@ Server.add_reaction(function(msg)
 			Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
 			break;
 		case ServerMessageType.GameplayTurn:
-			if msg.data.turn.fieldState.ex_turn_owner != _id {
+			if msg.data.turn.turnOwner != _id {
 				Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
+				var _add = msg.data.turn.fieldState.additional_data
+				if _add != undefined {
+					if _add.type == "GetEnemyDeck" {
+						Game.get_enemy_deck(_add);
+						if _add.count == 0 {Game.send_deck(_add.count+1)}
+					}
+				}
 			}
 			break;
 		case ServerMessageType.GameEnd: 
