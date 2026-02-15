@@ -23,7 +23,6 @@ function GameLoopController() constructor{
 	
 	figures_counter = new FiguresCounter();
 	
-	
 	TEST_action_draw = function() {
 		if have_action() {
 			action.draw();
@@ -38,17 +37,6 @@ function GameLoopController() constructor{
 			player2_cards[i].draw();
 		}
 	}
-	
-	TEST_check_cards = function() {
-		for (i = 0; i < array_length(player1_cards); i++) {
-			if keyboard_check_released(vk_alt) and abs(mouse_x - (cards_x + cards_offset*i)) < 40
-			and abs(mouse_y - (cards_y)) < 60{
-				var _display = instance_create_depth(room_width/2, room_height/2, -5, O_Card_display);
-				_display.set_sprite(player1_cards[i].sprite)
-			}
-		}
-	}
-	
 	
 	enum STATE_LIST {
 		wait,
@@ -112,9 +100,6 @@ function GameLoopController() constructor{
 			array_push(_array, new_card);
 		}
 	}
-	
-	//create_cards(Game.Player1.player_id, 1);
-	//create_cards(Game.Player2.player_id, 2);
 
 	end_move = function() {
 		//if global.moving_figure {
@@ -364,6 +349,6 @@ function GameLoopController() constructor{
 	}
 
 	global.cell_action = default_cell_click_action;
-	array_push(Game.do_every_step_list, TEST_draw_cards);
-	array_push(Game.do_every_step_list, TEST_check_cards);
+	//array_push(Game.do_every_step_list, TEST_draw_cards);
+	//array_push(Game.do_every_step_list, TEST_check_cards);
 }

@@ -9,8 +9,8 @@
   "name":"Server",
   "overriddenProperties":[],
   "parent":{
-    "name":"unique units",
-    "path":"unique units.yyp",
+    "name":"unique_units",
+    "path":"unique_units.yyp",
   },
   "parentObjectId":null,
   "persistent":true,

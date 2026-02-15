@@ -44,8 +44,8 @@ function GameClass() constructor{
 	get_enemy_deck = function(_deck_data) {
 		var _id = O_LoginController.enemy;
 		user_data.save(_id, {player_cards: _deck_data.cards, player_figures: _deck_data.figures});
-		game_loop_controller.create_cards(Player1.player_id, 1);
-		game_loop_controller.create_cards(Player2.player_id, 2);
+		O_DeckManager.create_card_displays(Player1.player_id, 0);
+		O_DeckManager.create_card_displays(Player2.player_id, 1);
 		if global.turn_owner != O_LoginController._id {game_loop_controller.state = STATE_LIST.enemy_turn}
 	}
 	
@@ -81,7 +81,6 @@ function GameClass() constructor{
 			randomize();
 			user_data.save(O_LoginController._id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
 				player_figures: array_shuffle(O_DeckManager.get_selected_deck_array())});
-			//show_message(user_data.load(local_player.player_id));
 		}
 		else {
 			Player1 = new Player(1, "local");
@@ -98,6 +97,7 @@ function GameClass() constructor{
 		Maps_list.start(global.map);
 		in_match = 1;
 		if global.turn_owner == O_LoginController._id {send_deck(0)}
+		O_DeckManager.clear_card_displays();
 	}
 	
 	end_game = function() {

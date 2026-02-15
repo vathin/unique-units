@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"ServerMessage",
   "parent":{
-    "name":"unique units",
-    "path":"unique units.yyp",
+    "name":"unique_units",
+    "path":"unique_units.yyp",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

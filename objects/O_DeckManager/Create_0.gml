@@ -4,11 +4,13 @@
 
 decks = [];
 deck_layer = "MenuDeckSettings";
+ingame_layer = UI_controller.InGame_layer;
 decks_panel = "DeckList";
 cards_panel = "CardInstances";
 figure_buttons_panel = "ButtonInstances";
 deck_create_button = "CreateButton";
 deck_name_panel = "DeckNameField";
+card_display_panel = ["CardsDisplay_1", "CardsDisplay_2"];
 default_deck = {id: "000", name: "", owner: "",units: {"trader": 1, "archer": 1, "warrior": 1, "shieldbearer": 1, "spearman": 1}}
 available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
 max_figures_in_deck = 20;
@@ -41,7 +43,7 @@ get_deck_from_id = function(_deck_id) {
 }
 
 get_deck_index = function(_deck_id) {
-	for (i = 0; i < array_length(decks); i++) {
+	for (var i = 0; i < array_length(decks); i++) {
 		var _deck = decks[i];
 		if _deck.id == _deck_id {
 			return i
@@ -53,8 +55,8 @@ get_deck_index = function(_deck_id) {
 get_deck_figures_array = function(_deck_units) {
 	var _names = struct_get_names(_deck_units);
 	var _array = [];
-	for (i = 0; i < array_length(_names); i++) {
-		for (m = 0; m < struct_get(_deck_units, _names[i]); m++) {
+	for (var i = 0; i < array_length(_names); i++) {
+		for (var m = 0; m < struct_get(_deck_units, _names[i]); m++) {
 			array_push(_array, _names[i]);
 		}
 	}
@@ -75,7 +77,7 @@ switch_deck = function(_new_deck_id) {
 	if get_deck_from_id(_new_deck_id) != undefined {
 		selected_deck = get_deck_from_id(_new_deck_id);
 		var _names = struct_get_names(selected_deck.units);
-		for (i = 0; i < array_length(_names); i++) {
+		for (var i = 0; i < array_length(_names); i++) {
 			var _figure = _names[i];
 			var _amount = struct_get(selected_deck.units, _figure);
 			add_card_ui_panel(_figure, _amount);
@@ -166,7 +168,7 @@ card_get_instance = function(_figure) {
 
 card_get_node = function(_figure) {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
-	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node);
 		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == _figure {
@@ -222,7 +224,7 @@ get_deck_from_cards = function() {
 }
 
 create_figure_buttons = function(_figures) {
-	for (i = 0; i < array_length(_figures); i++) {
+	for (var i = 0; i < array_length(_figures); i++) {
 		add_figure_button_ui_panel(_figures[i])
 	}
 }
@@ -288,6 +290,59 @@ clear_deck_buttons = function() {
 	}
 }
 
+create_card_displays = function(_player_id, _position) {
+	_figures = Game.user_data.load(_player_id).player_cards;
+	for (var i = 0; i < array_length(_figures); i++) {
+		var _index = find_card_insert_index(Behaviours.get_rarity(_figures[i]), _position);
+		add_card_display_ui_panel(_figures[i], _position, _index);
+	}
+}
+
+find_card_insert_index = function(_rarity, _position) {
+	var _length = flexpanel_node_get_num_children(UI_controller.get_element_on_ui(ingame_layer, 
+	card_display_panel[_position]));
+	for (var i = 0; i < _length; i++) {
+		if flexpanel_node_get_struct(flexpanel_node_get_child(UI_controller.get_element_on_ui(ingame_layer, 
+		card_display_panel[_position]), i)).layerElements[0].instanceId.rarity <= _rarity {
+			return i
+			}
+	}
+	return 0
+}
+
+add_card_display_ui_panel = function(_figure, _position, _index = 0) {
+	var _struct = deep_copy(default_card_display_struct);
+	var _name = _figure + string(flexpanel_node_get_num_children(UI_controller.get_element_on_ui(ingame_layer, 
+	card_display_panel[_position])));
+	_struct.name = "cardDisplay" + _name;
+	array_push(_struct.layerElements, card_display_instance_create());
+	var _panel = flexpanel_create_node(_struct);
+	flexpanel_node_insert_child(UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]), _panel, _index);
+	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure);
+}
+
+card_display_instance_create = function() {
+	var _struct = { type : "Instance", instanceVariables : {}, instanceObjectIndex : O_Card_display, 
+	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, 
+	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, flexVisible : 1, 
+	flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, 
+	flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 30 }
+	return deep_copy(_struct)
+}
+
+clear_card_displays = function() {
+	var _card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[0]);
+	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_card_display_list_node, i);
+		if flexpanel_node_get_name(node) != "CreateButton" { flexpanel_delete_node(node, true); }
+	}
+	_card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[1]);
+	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_card_display_list_node, i);
+		if flexpanel_node_get_name(node) != "CreateButton" { flexpanel_delete_node(node, true); }
+	}
+}
+
 default_deck_button_struct = { layerElements : [ ], height : "95%", gapColumn : 0,
 	gapRow : 0, justifyContent : "center", marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0, 
 	name : "Deckel1", clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 94, 
@@ -303,6 +358,11 @@ default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justif
 	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 155, 
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
 
+default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justifyContent : "center", 
+	layerElements: [], marginLeft : 0, marginRight : 0, 
+	marginTop : 0, marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 64, 
+	name : "CardDisplay", paddingBottom : 0, alignItems : "center"}
+show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("GameRoom", "CardDisplay")));
 #region server
 server_create_deck = function(_name, _deck) {
 	Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: _name, units: _deck}));
