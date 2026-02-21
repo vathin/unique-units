@@ -105,7 +105,7 @@ function GameLoopController() constructor{
 		//if global.moving_figure {
 		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 		//}
-		if ready_to_send and Game.online_match{
+		if ready_to_send and Game.online_match and have_action(){
 			if O_LoginController._id == global.turn_owner{
 				action_export_data = [action.export()]
 				export_data = [export(), action_export_data]

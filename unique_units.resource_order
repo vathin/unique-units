@@ -161,6 +161,7 @@
     {"name":"S_events_icon","order":6,"path":"sprites/S_events_icon/S_events_icon.yy",},
     {"name":"S_Exit_card_display_button","order":4,"path":"sprites/S_Exit_card_display_button/S_Exit_card_display_button.yy",},
     {"name":"S_friends_icon","order":5,"path":"sprites/S_friends_icon/S_friends_icon.yy",},
+    {"name":"S_grad","order":1,"path":"sprites/S_grad/S_grad.yy",},
     {"name":"S_Ingame_button","order":9,"path":"sprites/S_Ingame_button/S_Ingame_button.yy",},
     {"name":"S_invite_button","order":1,"path":"sprites/S_invite_button/S_invite_button.yy",},
     {"name":"S_Login_window","order":1,"path":"sprites/S_Login_window/S_Login_window.yy",},

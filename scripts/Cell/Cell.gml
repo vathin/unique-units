@@ -88,7 +88,9 @@ function Cell() constructor{
 			ex_can_be_conquested: can_be_conquested,
 			ex_draw_mark: draw_mark,
 			ex_filled_figure: filled_figure,
-			ex_filled_figure_struct: filled_figure_struct
+			ex_filled_figure_struct: filled_figure_struct,
+			ex_xcord: xcord,
+			ex_ycord: ycord
 		}
 		return export_data
 	}
@@ -98,10 +100,11 @@ function Cell() constructor{
 		can_be_conquested = _import_data.ex_can_be_conquested;
 		ex_draw_mark = _import_data.ex_draw_mark;
 		if _import_data.ex_filled_figure_struct != undefined {
-			filled_figure = new Figure()
-			filled_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour
+			_figure = new Figure();
+			_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour;
 			//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
-			filled_figure.import(_import_data.ex_filled_figure_struct);
+			_figure.import(_import_data.ex_filled_figure_struct);
+			fill(_figure, 0);
 		}
 	}
 }

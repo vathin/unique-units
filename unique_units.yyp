@@ -209,6 +209,7 @@
     {"id":{"name":"S_events_icon","path":"sprites/S_events_icon/S_events_icon.yy",},},
     {"id":{"name":"S_Exit_card_display_button","path":"sprites/S_Exit_card_display_button/S_Exit_card_display_button.yy",},},
     {"id":{"name":"S_friends_icon","path":"sprites/S_friends_icon/S_friends_icon.yy",},},
+    {"id":{"name":"S_grad","path":"sprites/S_grad/S_grad.yy",},},
     {"id":{"name":"S_home_icon","path":"sprites/S_home_icon/S_home_icon.yy",},},
     {"id":{"name":"S_Ingame_button","path":"sprites/S_Ingame_button/S_Ingame_button.yy",},},
     {"id":{"name":"S_invite_button","path":"sprites/S_invite_button/S_invite_button.yy",},},

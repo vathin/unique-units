@@ -1,6 +1,8 @@
 image_speed = 0;
 scale = image_xscale;
 default_sprite = sprite_index;
+previous_sprite = sprite_index;
+have_overlay = false;
 
 set_frame = function(_frame) {
 	image_index = _frame;
@@ -20,3 +22,4 @@ set_sprite = function(_sprite, _frame) {
 	image_xscale = _scale;
 	image_yscale = _scale;
 }
+

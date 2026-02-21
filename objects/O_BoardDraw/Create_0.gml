@@ -1,5 +1,3 @@
-/// @description Вставьте описание здесь
-// Вы можете записать свой код в этом редакторе
 in_game = 1
 selected_cell = undefined
 game_state = undefined
@@ -11,7 +9,7 @@ move_button_x = [room_width/2-100, room_width/2 -40];
 move_button_y = [room_height/1.25-30, room_height/1.25+30];
 ability_button_x = [room_width/2+55, room_width/2 +115];
 ability_button_y = [room_height/1.25-30, room_height/1.25+30];
-drop_cord = [room_width/2 - 250, room_height/2-40];
+drop_cord = [room_width/2 - 275, room_height/2-40];
 capture_cord = [room_width/2 + 195, room_height/2-40];
 turn_owner_cord = [room_width/1.85, room_height/7.5];
 end_button = false;
@@ -110,8 +108,11 @@ capture_draw = function() {
 figure_counters_draw = function() {
 	//drop_draw();
 	//capture_draw();
+	var _font = draw_get_font();
+	draw_set_font(F_menu);
 	draw_text_transformed(drop_cord[0], drop_cord[1], "СБРОС", 0.55, 0.55, 0);
 	draw_text_transformed(capture_cord[0], capture_cord[1], "ПЛЕН", 0.55, 0.55, 0);
+	draw_set_font(_font);
 }
 
 turn_owner_draw = function() {
@@ -125,6 +126,12 @@ clear_button_overlay = function() {
 
 set_button_overlay = function(_sprite, _subimg = 0) {
 	UI_controller.get_button_instance(UI_controller.main_button).set_sprite(_sprite, _subimg)
+	UI_controller.get_button_instance(UI_controller.main_button).have_overlay = 1;
+}
+
+is_button_have_overlay = function() {
+	if UI_controller.get_button_instance(UI_controller.main_button).have_overlay == 1 {return true}
+	return false
 }
 
 clear = function() {

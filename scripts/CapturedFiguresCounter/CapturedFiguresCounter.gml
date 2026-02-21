@@ -1,8 +1,11 @@
 
-function CapturedFiguresCounter(_owner) constructor{
+function CapturedFiguresCounter(_owner, _position = 1) constructor{
 	figures = [];
 	owner = _owner
+	position = _position
 	//last_added_figure = undefined;
+
+	set_position = function(_new_position) {position = _new_position}
 
 	add_figure = function(_new_figure, _animation) {
 		array_push(figures, _new_figure);
@@ -17,7 +20,7 @@ function CapturedFiguresCounter(_owner) constructor{
 				figure_x_offset += 58;
 				figure_y_offset = 0;
 			}
-			if figures[i].owner == Game.Player2.player_id {facing = 1}
+			if position == 1 {facing = 1}
 			else {facing = -1}
 			new_figure_x = O_BoardDraw.capture_cord[0] + 30 + figure_x_offset;
 			new_figure_y = O_BoardDraw.capture_cord[1] + 7 + 55*facing + figure_y_offset*facing;

@@ -9,7 +9,6 @@ image_speed = 0;
 image_index = 1;
 do_something = undefined;
 back = false;
-
 hovering = false;
 is_active = true;
 

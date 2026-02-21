@@ -8,9 +8,9 @@ function GameClass() constructor{
 		}
 	}
 	online_match = false;
-	var server_id;
-	var opponent;
-	var role;
+	server_id = "";
+	opponent = "";
+	role = "host";
 	user_data = new userData();
 	in_match = false;
 	local_player = undefined;
@@ -18,7 +18,7 @@ function GameClass() constructor{
 	
 	start_online = function(_server_id, _opponent, _role) {
 		server_id = _server_id;
-		enemy = _opponent;
+		opponent = _opponent;
 		role = _role;
 		online_match = 1;
 	}
@@ -44,8 +44,8 @@ function GameClass() constructor{
 	get_enemy_deck = function(_deck_data) {
 		var _id = O_LoginController.enemy;
 		user_data.save(_id, {player_cards: _deck_data.cards, player_figures: _deck_data.figures});
-		O_DeckManager.create_card_displays(Player1.player_id, 0);
-		O_DeckManager.create_card_displays(Player2.player_id, 1);
+		O_DeckManager.create_card_displays(O_LoginController._id, 0);
+		O_DeckManager.create_card_displays(opponent, 1);
 		if global.turn_owner != O_LoginController._id {game_loop_controller.state = STATE_LIST.enemy_turn}
 	}
 	
