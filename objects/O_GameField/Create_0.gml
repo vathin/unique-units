@@ -149,7 +149,6 @@ cell_get_neightbors = function(cell) {
 	if (get_cell(cell.xcord , cell.ycord +1) != undefined) {
 		array_push(neightbors, get_cell(cell.xcord , cell.ycord +1))
 	}
-	//show_debug_message(neightbors)
 	return neightbors
 }
 

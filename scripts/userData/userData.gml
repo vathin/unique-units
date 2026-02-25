@@ -6,7 +6,8 @@ function userData() constructor {
 		player_cards: ["trader", "archer", "shieldbearer", "warrior", "spearman"],
 		player_figures: ["trader", "archer", "archer", "archer", "archer", "shieldbearer", 
 		"shieldbearer", "shieldbearer", "shieldbearer", "warrior", "warrior", "warrior", 
-		"warrior", "warrior", "warrior", "warrior", "spearman", "spearman", "spearman", "spearman"]
+		"warrior", "warrior", "warrior", "warrior", "spearman", "spearman", "spearman", "spearman"],
+		player_deck_size: 20
 		/*player_figures: ["trader", "trader", "trader", "trader", "trader", "trader","trader", "warrior", 
 		"warrior", "warrior", "warrior", "warrior", "warrior", "warrior"]*/
 	}
@@ -19,7 +20,7 @@ function userData() constructor {
 		if player == Game.Player1.player_id {
 			try {
 				file = file_text_open_read("player1_data.json");
-				data = json_parse(file_text_read_string(file))
+				data = json_parse(file_text_read_string(file));
 				file_text_close(file);
 				return data
 			}
@@ -30,7 +31,7 @@ function userData() constructor {
 		else if player == Game.Player2.player_id {
 			try {
 				file = file_text_open_read("player2_data.json");
-				data = json_parse(file_text_read_string(file))
+				data = json_parse(file_text_read_string(file));
 				file_text_close(file);
 				return data
 			}
@@ -45,13 +46,13 @@ function userData() constructor {
 		if player == Game.Player1.player_id {
 				file = file_text_open_write("player1_data.json");
 				data = json_stringify(data_struct);
-				file_text_write_string(file, data)
+				file_text_write_string(file, data);
 				file_text_close(file);
 		}
 		else if player == Game.Player2.player_id {
 				file = file_text_open_write("player2_data.json");
 				data = json_stringify(data_struct);
-				file_text_write_string(file, data)
+				file_text_write_string(file, data);
 				file_text_close(file);
 		}
 	}

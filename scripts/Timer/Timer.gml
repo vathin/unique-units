@@ -1,14 +1,14 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Timer() constructor{
-	seconds = 0
+	seconds = 0;
 	bank_seconds = 0;
 	all_time = undefined;
 	current_frame = 0;
 	active = 0;
 	using_time_bank = false;
-	draw_x = (room_width/2)
-	draw_y = 65;
+	draw_x = (room_width/2);
+	draw_y = 72;
 	player_out_of_time = undefined;
 
 	max_time_bank = 7200;
@@ -45,10 +45,10 @@ function Timer() constructor{
 		else {
 			draw_set_color(c_red);
 			bank_seconds = get_player_time_bank(global.turn_owner) div Settings.FPS;
-			draw_text_transformed(random_range((draw_x + 47), (draw_x + 53)), random_range((draw_y - 10), (draw_y - 15)), bank_seconds, 1.25, 1.25, 0);
+			draw_text_transformed(random_range((draw_x + 47), (draw_x + 53)), random_range((draw_y - 10), (draw_y - 15)), bank_seconds, 1.1, 1.1, 0);
 		}
 		draw_set_halign(fa_center)
-		draw_text_transformed(draw_x, draw_y, seconds, 0.75, 0.75, 0);
+		draw_text_transformed(draw_x, draw_y, seconds, 0.9, 0.9, 0);
 		draw_set_halign(fa_left)
 		draw_set_color(c_white);
 	}

@@ -19,7 +19,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	}
 	draw = function() {
 		if target_x != undefined {
-			draw_sprite_ext(figure_sprite, (global.turn_owner == O_LoginController.enemy), Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[0],
+			draw_sprite_ext(figure_sprite, (global.turn_owner == O_Server.enemy), Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[0],
 			Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
 			cords = Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))
@@ -52,7 +52,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 			//O_SummonButton.back = 0;
 			global.cell_click_callback = undefined;
 			O_BoardDraw.clear();
-			O_BoardDraw.set_button_overlay(Behaviours.get_sprite(summon_figure), (global.turn_owner==O_LoginController.enemy))
+			O_BoardDraw.set_button_overlay(Behaviours.get_sprite(summon_figure), (global.turn_owner==O_Server.enemy))
 			array_push(Game.do_every_step_list, Button_set_overlay);
 		}
 	}

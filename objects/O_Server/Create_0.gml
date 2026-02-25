@@ -1,6 +1,3 @@
-/// @description Вставьте описание здесь
-// Вы можете записать свой код в этом редакторе
-
 login_window_x = 840;
 login_window_y = 540;
 x_offset = 25;
@@ -20,6 +17,7 @@ _winner = undefined;
 deck = []
 instance_create_depth(0, 0, 0, UI_controller);
 UI_controller.check_layers();
+//global.vk.init()
 
 #macro Game global.game
 Game = undefined;
@@ -32,7 +30,7 @@ email_y = login_window_y-y_offset;
 password_x = login_window_x-x_offset;
 password_y = login_window_y+75-y_offset;
 LoginButton_x = login_window_x + 128;
-LoginButton_y = login_window_y + 102;;
+LoginButton_y = login_window_y + 102;
 RegisterButton_x = login_window_x - 35;
 RegisterButton_y = login_window_y + 102;
 invite_text_field = undefined;
@@ -78,14 +76,6 @@ cancel_fast_search = function() {
 	room_goto(R_Main_menu);
 }
 
-set_text_on_ui_layer = function(_layer_name, _panel_name, _text) {
-	var _layer = layer_get_flexpanel_node(_layer_name);
-	var _text_panel = flexpanel_node_get_child(_layer, _panel_name);
-	var _text_struct = flexpanel_node_get_struct(_text_panel);
-	var _textID = _text_struct.layerElements[0].elementId;
-	layer_text_text(_textID, _text);
-}
-
 invite_accept = function() {
 	Server.send(new ServerMessage(ServerMessageType.InviteAccept, {sender: enemy}));
 	invited = 0;
@@ -99,14 +89,14 @@ invite_decline = function() {
 //create_window();
 
 
-log_in = function() {
+log_in_callback = function() {
 	logged_in = true
 	UI_controller.check_layers();
-	set_text_on_ui_layer("MenuHome", "Nickname", _nickname)
-	//Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: "test2", units: {"archer": 4, "warrior": 5, "shieldbearer": 2}}))
+	UI_controller.set_text_on_ui_layer("MenuHome", "Nickname", _nickname);
+	UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "PlayerNickname", _nickname);
 }
 
-send_data = function(type) {
+log_in = function(type) {
 	_nickname = UI_controller.get_login_text();
 	_email = UI_controller.get_email_text();
 	_password = UI_controller.get_password_text();
@@ -122,31 +112,33 @@ send_data = function(type) {
 Server.add_reaction(function(msg)
 {
 	switch msg.type{
+		case ServerMessageType.LoginVK:
+			_id = msg.data.userid;
+			_nickname = msg.data.vk_user.first_name
+			log_in_callback();
+			break;
 		case ServerMessageType.LoginAccept:
 			_id = msg.data.playerData.id;
-			show_debug_message(msg.data.playerData.id);
-			log_in()
+			log_in_callback()
 			break;
 		case ServerMessageType.LoginRefuse:
 			reason = msg.data.description;
-			set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
+			UI_controller.set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
 			break;
 		case ServerMessageType.RegistrationAccept:
 			_id = msg.data.playerData.id;
-			show_debug_message(msg.data.playerData.id);
-			log_in();
+			log_in_callback();
 			break;
 		case ServerMessageType.RegistrationRefuse:
 			reason = msg.data.description;
-			set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
+			UI_controller.set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
 			break;
 		case ServerMessageType.InviteCancelled:
 			room_goto(R_Main_menu)
 			reason = "ошибка";
-			show_debug_message(msg.data)
 			break;
 		case ServerMessageType.InviteCancel:
-			//room_goto(R_Main_menu);
+			room_goto(R_Main_menu);
 			reason = "отмена";
 			break;
 		case ServerMessageType.Invite:
@@ -154,7 +146,7 @@ Server.add_reaction(function(msg)
 				enemy = msg.data.invite.sender;
 				if room == R_Main_menu{
 					invited = 1;
-					set_text_on_ui_layer("InviteWindow", "Text_2", "от: " + enemy)
+					UI_controller.set_text_on_ui_layer("InviteWindow", "Text_2", "от: " + enemy)
 					UI_controller.check_layers();
 				}
 			}
@@ -181,6 +173,12 @@ Server.add_reaction(function(msg)
 			_winner = msg.data.winner;
 			if _winner == "" {winner = "draw"}
 			alarm[0] = 35;
+			break;
+		case ServerMessageType.PlayerInfo:
+			if msg.data.player.id != _id {
+				var _name = msg.data.player.info.nickname;
+				UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", _name);
+			}
 			break;
 	}
 }

@@ -10,7 +10,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	target_cell = undefined;
 	using_figure = using_cell.filled_figure;
 	using_ability = false;
-	if using_figure.owner == O_LoginController._id {
+	if using_figure.owner == O_Server._id {
 		Game.figure_action_controller = new FigureActionController();
 		Game.figure_action_controller.move_and_ability = 1;
 		Game.figure_action_controller.figure_can_move = 0;
@@ -117,7 +117,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		return(found_cells)
 	}
 	
-	if using_figure.owner == O_LoginController._id {
+	if using_figure.owner == O_Server._id {
 		if !check_ability_targets(0, 0) {
 			Game.figure_action_controller.figure_have_ability = 0
 		}

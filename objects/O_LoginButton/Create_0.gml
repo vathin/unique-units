@@ -1,6 +1,6 @@
 event_inherited();
 image_speed = 0
-send_to = O_LoginController
+send_to = O_Server
 enum MODES {
 	go_to_registration,
 	go_to_login
@@ -19,7 +19,7 @@ set_address = function(new_address) {
 click = function() {
 	
 	if type != "Mode_switch"{
-		send_to.send_data(type)
+		send_to.log_in(type)
 	}
 	else {
 		UI_controller.switch_login_mode()

@@ -6,22 +6,22 @@ bbox_left, bbox_top, bbox_right, bbox_bottom)) {
 	switch button_function {
 		case "invite":
 		if O_DeckManager.get_selected_deck != undefined {
-				O_LoginController.start_invite();
+				O_Server.start_invite();
 			}
 		break;
 		case "fast_search":
 			if O_DeckManager.get_selected_deck != undefined {
-				O_LoginController.start_fast_search();
+				O_Server.start_fast_search();
 			}
 		break;
 		case "invite_cancel":
-			O_LoginController.cancel_invite();
+			O_Server.cancel_invite();
 		break;
 		case "search_cancel":
-			O_LoginController.cancel_fast_search();
+			O_Server.cancel_fast_search();
 		break;
 		case "to_menu":
-			O_LoginController.enemy = undefined;
+			O_Server.enemy = undefined;
 			room_goto(R_Main_menu);
 		break;
 		//deck_page

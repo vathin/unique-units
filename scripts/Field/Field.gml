@@ -112,7 +112,7 @@ function Field() constructor{
 							var _draw_alpha = 1
 							if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {
 								O_BoardDraw.set_button_overlay(Behaviours.get_sprite(draw_figure.behaviour),
-								(draw_figure.owner != O_LoginController._id));
+								(draw_figure.owner != O_Server._id));
 								_draw_alpha = 0.3
 								}
 							draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
@@ -149,7 +149,7 @@ function Field() constructor{
 			else {
 				draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 				draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
-				if (draw_figure.state.is_captured and draw_figure.owner == O_LoginController._id){
+				if (draw_figure.state.is_captured and draw_figure.owner == O_Server._id){
 					var _draw_alpha = 1
 					draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 					draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, _draw_alpha);
@@ -353,7 +353,6 @@ function Field() constructor{
 	}
 
 	get_place = function(type, player) {
-		show_debug_message("0")
 		if type = "drop" {
 			if player = Game.Player1.player_id {
 				return player1_dropped;
@@ -364,11 +363,9 @@ function Field() constructor{
 		}
 		if type = "capture" {
 			if player = Game.Player1.player_id {
-				show_debug_message("1");
 				return player1_captured;
 			}
 			else {
-				show_debug_message("1");
 				return player2_captured;
 			}
 		}

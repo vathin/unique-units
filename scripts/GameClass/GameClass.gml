@@ -4,7 +4,7 @@ function GameClass() constructor{
 	do_every_step_list = [];
 	do_every_step = function(list) {
 		for (i = 0; i < array_length(list); i++) {
-			list[i]()
+			list[i]();
 		}
 	}
 	online_match = false;
@@ -21,14 +21,15 @@ function GameClass() constructor{
 		opponent = _opponent;
 		role = _role;
 		online_match = 1;
+		Server.send(new ServerMessage(ServerMessageType.PlayerInfo, {player: opponent}))
 	}
 	
 	send_turn = function(_field_data, _action_data) {
-		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: _action_data, state: _field_data, turnOwner: O_LoginController._id}))
+		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: _action_data, state: _field_data, turnOwner: O_Server._id}))
 	}
 	
 	get_turn = function(_field_data, _action_data) {
-		if _field_data.ex_turn_owner != O_LoginController._id{
+		if _field_data.ex_turn_owner != O_Server._id{
 			if _field_data.import_field {
 				Game.game_loop_controller.import(_field_data);
 			}
@@ -42,15 +43,15 @@ function GameClass() constructor{
 	}
 	
 	get_enemy_deck = function(_deck_data) {
-		var _id = O_LoginController.enemy;
-		user_data.save(_id, {player_cards: _deck_data.cards, player_figures: _deck_data.figures});
-		O_DeckManager.create_card_displays(O_LoginController._id, 0);
+		var _id = O_Server.enemy;
+		user_data.save(_id, {player_cards: _deck_data.cards, player_figures: _deck_data.figures, player_deck_size: array_length(_deck_data.figures)});
+		O_DeckManager.create_card_displays(O_Server._id, 0);
 		O_DeckManager.create_card_displays(opponent, 1);
-		if global.turn_owner != O_LoginController._id {game_loop_controller.state = STATE_LIST.enemy_turn}
+		if global.turn_owner != O_Server._id {game_loop_controller.state = STATE_LIST.enemy_turn}
 	}
 	
 	send_deck = function(_count = 0) {
-		var _id = O_LoginController._id
+		var _id = O_Server._id;
 		_export_data = {
 			type: "GetEnemyDeck",
 			cards: user_data.load(_id).player_cards,
@@ -59,33 +60,31 @@ function GameClass() constructor{
 		}
 		field_state = game_loop_controller.export(_export_data);
 		field_state.import_field = false;
-		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: undefined, state: field_state, turnowner: O_LoginController._id}))
-		//if _count == 1 {global.turn_owner = O_LoginController.enemy}
+		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: undefined, state: field_state, turnowner: O_Server._id}))
 	}
 	
 	init = function() {
 		if online_match {
 			if role == "host" {
-				Player1 = new Player(O_LoginController._id, "local");
-				Player2 = new Player(O_LoginController.enemy, "online");
-				//Player1.deck = O_DeckManager.get_selected_deck_names_list();
+				Player1 = new Player(O_Server._id, "local");
+				Player2 = new Player(O_Server.enemy, "online");
 				local_player = Player1;
 			}
 			else {
-				Player1 = new Player(O_LoginController.enemy, "online");
-				Player2 = new Player(O_LoginController._id, "local");
-				//Player2.deck = O_DeckManager.get_selected_deck_names_list();
+				Player1 = new Player(O_Server.enemy, "online");
+				Player2 = new Player(O_Server._id, "local");
 				local_player = Player2;
 			}
 			user_data.reset();
 			randomize();
-			user_data.save(O_LoginController._id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
-				player_figures: array_shuffle(O_DeckManager.get_selected_deck_array())});
+			user_data.save(O_Server._id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
+				player_figures: array_shuffle(O_DeckManager.get_selected_deck_array()), 
+				player_deck_size: array_length(O_DeckManager.get_selected_deck_array())});
 		}
 		else {
 			Player1 = new Player(1, "local");
 			Player2 = new Player(2, "local");
-			user_data.reset()
+			user_data.reset();
 		}
 		game_loop_controller = new GameLoopController();
 		field = new Field();
@@ -96,7 +95,7 @@ function GameClass() constructor{
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
 		in_match = 1;
-		if global.turn_owner == O_LoginController._id {send_deck(0)}
+		if global.turn_owner == O_Server._id {send_deck(0)}
 		O_DeckManager.clear_card_displays();
 	}
 	
@@ -110,4 +109,6 @@ function GameClass() constructor{
 		in_match = 0;
 		do_every_step_list = [];
 	}
+	
+	
 }

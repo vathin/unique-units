@@ -362,7 +362,7 @@ default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justi
 	layerElements: [], marginLeft : 0, marginRight : 0, 
 	marginTop : 0, marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 64, 
 	name : "CardDisplay", paddingBottom : 0, alignItems : "center"}
-show_debug_message(flexpanel_node_get_struct(UI_controller.get_element_on_ui("GameRoom", "CardDisplay")));
+
 #region server
 server_create_deck = function(_name, _deck) {
 	Server.send(new ServerMessage(ServerMessageType.DeckCreate, {name: _name, units: _deck}));

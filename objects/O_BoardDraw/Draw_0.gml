@@ -2,7 +2,7 @@ if in_game {
 	Game.do_every_step(Game.do_every_step_list)
 	draw_set_font(F_test);
 	
-	turn_owner_draw();
+	Game.game_loop_controller.figures_counter.display_opponent_available_figures();
 	
 	UI_controller.clear_ingame_layer();
 	if Game.game_loop_controller.have_action() {
@@ -20,6 +20,7 @@ if in_game {
 		UI_controller.turn_on_button(UI_controller.main_button);
 		if Game.game_loop_controller.get_player(global.turn_owner).able_to_summon and !is_button_have_overlay() {
 			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.can_summon);
+			Game.game_loop_controller.figures_counter.display_available_figures();
 		}
 		break;
 	case STATE_LIST.figure_action:

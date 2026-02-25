@@ -1,3 +1,4 @@
+event_inherited();
 image_speed = 0;
 scale = image_xscale;
 default_sprite = sprite_index;

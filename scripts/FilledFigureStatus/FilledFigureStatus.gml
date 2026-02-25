@@ -41,12 +41,26 @@ function FilledFigureStatus() constructor{
 	}
 	
 	set_status = function(_new_status, _value) {
-		if _new_status == "will_be_captured" {will_be_captured = _value}
-		if _new_status == "will_be_dropped" {will_be_dropped = _value}
-		if _new_status == "will_be_summoned" {will_be_summoned = _value}
-		if _new_status == "will_be_moved" {will_be_moved = _value}
-		if _new_status == "will_conquest" {will_conquest = _value}
-		if _new_status == "selected" {selected = _value}
+		switch (_new_status) {
+			case "will_be_captured":
+				will_be_captured = _value
+				break;
+			case "will_be_dropped":
+				will_be_dropped = _value
+				break;
+			case "will_be_summoned":
+				will_be_summoned = _value
+				break;
+			case "will_be_moved":
+				will_be_moved = _value
+				break;
+			case "will_conquest":
+				will_conquest = _value
+				break;
+			case "selected":
+				selected = _value
+				break;
+		}
 	}
 	
 	start();

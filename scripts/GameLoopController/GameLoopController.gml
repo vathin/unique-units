@@ -49,7 +49,7 @@ function GameLoopController() constructor{
 	}
 	state = STATE_LIST.wait;
 	if Game.online_match {
-		if global.turn_owner == O_LoginController.enemy {
+		if global.turn_owner == O_Server.enemy {
 			state = STATE_LIST.enemy_turn;
 		}
 	}
@@ -106,7 +106,7 @@ function GameLoopController() constructor{
 		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
 		//}
 		if ready_to_send and Game.online_match and have_action(){
-			if O_LoginController._id == global.turn_owner{
+			if O_Server._id == global.turn_owner{
 				action_export_data = [action.export()]
 				export_data = [export(), action_export_data]
 			}
@@ -123,7 +123,7 @@ function GameLoopController() constructor{
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
 		if Game.online_match {
-			if global.turn_owner == O_LoginController._id {
+			if global.turn_owner == O_Server._id {
 				state = STATE_LIST.wait;
 			}
 			else {

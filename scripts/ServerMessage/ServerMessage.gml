@@ -38,6 +38,9 @@ function ServerMessageType() constructor {
 	
 	static GameStart = "GameStart"; // сервер отправляет когда начинает игру между двух игроков {matchId: айди матча, opponent: айди игрока-оппонента, role: host/guest} если role = host, то именно этот компьютер будет смотреть кто победил и отправлять эту информацию
 	static GameEnd = "GameEnd"; // игра окончана {matchId: айди матча, winner: айди игрока-победителя либо пустая строка если ничья}
+	
+	static LoginVK = "LoginVK"; // просьба войти на сервер через вк профиль. {userid: "...", sign: "...", vk_data: {user_info}}
+	static PlayerInfo = "PlayerInfo"; // запрос информации об игроке. {"data": {"player": "..."}
 }
 new ServerMessageType();
 

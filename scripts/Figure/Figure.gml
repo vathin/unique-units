@@ -18,21 +18,14 @@ function Figure() constructor{
 	animation_queue = [];
 
 
-	/*
-	image_speed = 0;
-	image_xscale = Settings.figure_scale;
-	image_yscale = Settings.figure_scale;*/
-
 	able_to_move = true;
 
 	set_behaviour = function(new_behaviour) {
 		behaviour = Behaviours.get(new_behaviour);
-		//sprite_index = Behaviours.get_sprite(behaviour);
 	}
 	
 	update_stats = function() {
-		//if owner == Game.Player1.player_id {
-		if owner == O_LoginController._id {
+		if owner == O_Server._id {
 			image = 0;
 		}
 		else {
@@ -78,27 +71,16 @@ function Figure() constructor{
 		}
 	}
 
-
-
 	drop = function() {
 		state.is_active = 0;
 		state.is_dropped = 1;
-		//image_xscale = Settings.figure_scale*0.75;
-		//image_yscale = Settings.figure_scale*0.75;
 		place = Game.field.get_place("drop", owner)
 		place.add_figure(self, 1);
-		//Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
 	}
+	
 	capture = function(is_on_field) {
 		state.is_active = 0;
 		state.is_captured = 1;
-		//image_xscale = Settings.figure_scale*0.75;
-		//image_yscale = Settings.figure_scale*0.75;
-		//place = Game.field.get_place("capture", Game.game_loop_controller.get_opponent(owner));
-		//place.add_figure(self);
-		if is_on_field {
-			//Game.game_loop_controller.figures_counter.change_field_figures_amount(owner, -1);
-		}
 	}
 
 	conquest = function() {
@@ -106,21 +88,11 @@ function Figure() constructor{
 		state.is_conquesting = 1;
 		place = Game.field.get_place("capture", owner);
 		place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
-		//place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
-		//ov_animation = instance_create_depth(0, 0, 0, O_OverturnFigureAnimation);
-		//ov_animation.start_animation(1, 1, 1, 1, 30, self);
-		//Game.game_loop_controller.check_win_conditions();
 	}
 
 	click_while_conquesting = function() {
-		//draw_sprite_ext(S_Conquesting, image_index, x, y, image_xscale, image_yscale, 0, c_white, 0.25);
-		//draw_sprite_ext(sprite_index, image_index, O_SummonButton.standart_x, O_SummonButton.standart_y, 
-		//Settings.summon_button_figure_scale, Settings.summon_button_figure_scale, 0, c_white, 1);
-		//draw_sprite_ext(S_watching_overturned_figure, 0, O_SummonButton.standart_x, O_SummonButton.standart_y, 
-		//0.8, 0.8, 0, c_white, 0.35)
 		if Game.figure_action_controller != undefined {Game.figure_action_controller.set_buttons_alpha(0);}
 	}
-
 
 	get_ability = function() {return Behaviours.get_ablility(behaviour)}
 

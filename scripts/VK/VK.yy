@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"VK",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"VK",
+  "parent":{
+    "name":"VK",
+    "path":"folders/Extensions/VK.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

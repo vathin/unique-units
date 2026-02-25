@@ -58,6 +58,14 @@ set_ui_sprite_alpha = function(_layer, _panel, _alpha) {
 	_panel)).layerElements[0].elementId, _alpha);
 }
 
+set_text_on_ui_layer = function(_layer_name, _panel_name, _text) {
+	var _layer = layer_get_flexpanel_node(_layer_name);
+	var _text_panel = flexpanel_node_get_child(_layer, _panel_name);
+	var _text_struct = flexpanel_node_get_struct(_text_panel);
+	var _textID = _text_struct.layerElements[0].elementId;
+	layer_text_text(_textID, _text);
+}
+
 set_ui_text_alpha = function(_layer, _panel, _alpha) {
 	layer_text_alpha(flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel)).layerElements[0].elementId, _alpha)
 }
@@ -159,7 +167,7 @@ get_password_text = function() {
 switch_menu_page = function(_new_page) {
 	current_page = _new_page;
 	check_layers();
-	O_LoginController.delete_invite_text_field();
+	O_Server.delete_invite_text_field();
 }
 
 get_current_page = function() {
@@ -199,6 +207,7 @@ clear_ingame_layer = function(_full_clear = 0) {
 	get_button_instance(ability_button).clear(_full_clear);
 	get_button_instance(cancel_button).clear(_full_clear);
 	get_button_instance(end_turn_button).clear(_full_clear);
+	Game.game_loop_controller.figures_counter.clear_available_figures_text();
 }
 
 turn_off_layers = function() {
@@ -217,10 +226,10 @@ check_layers = function() {
 	turn_off_layers();
 	switch room {
 	case R_Main_menu:
-		if O_LoginController.logged_in{
+		if O_Server.logged_in{
 			layer_set_visible(layer_get_id("MainMenu"), 1);
 			turn_on_menu_layer();
-			if O_LoginController.invited {layer_set_visible("InviteWindow", 1)}
+			if O_Server.invited {layer_set_visible("InviteWindow", 1)}
 			}
 		else {layer_set_visible("LoginWindow", 1)}
 		break;
