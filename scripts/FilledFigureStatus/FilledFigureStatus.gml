@@ -1,7 +1,7 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function FilledFigureStatus() constructor{
-	start = function() {
+	reset = function() {
 		will_be_captured = false;
 		will_be_dropped = false;
 		will_be_filled = false;
@@ -9,20 +9,6 @@ function FilledFigureStatus() constructor{
 		will_conquest = false;
 		will_be_summoned = false;
 		selected = false;
-	}
-	
-	status_sprites_list = {
-		will_be_captured: undefined, //
-		will_be_dropped: undefined, //
-		will_be_moved: undefined, //
-		will_be_filled: undefined, //
-		will_conquest: undefined, //
-		will_be_summoned: undefined, //
-		selected: undefined //
-	}
-	
-	get_status_sprite = function(_status) {
-		return status_sprites_list[$ _status]
 	}
 	
 	get_active_draw_statuses = function() {
@@ -40,7 +26,11 @@ function FilledFigureStatus() constructor{
 		return array_length(get_active_statuses())
 	}
 	
-	set_status = function(_new_status, _value) {
+	get_status_sprite = function(_status) {
+		return status_sprites_list[$ _status]
+	}
+	
+	set_status = function(_new_status, _value = 1) {
 		switch (_new_status) {
 			case "will_be_captured":
 				will_be_captured = _value
@@ -63,6 +53,6 @@ function FilledFigureStatus() constructor{
 		}
 	}
 	
-	start();
+	reset();
 	
 }

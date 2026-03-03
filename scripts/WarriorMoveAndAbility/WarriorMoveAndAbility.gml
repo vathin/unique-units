@@ -82,10 +82,14 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	}
 	
 	set_new_target_coordinates = function(_new_x, _new_y) {
-		if to_x != undefined {Game.field.get_cell(to_x, to_y).set_draw_marks(1);}
+		if to_x != undefined {
+			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
+			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			}
 		to_x = _new_x;
 		to_y = _new_y;
 		Game.field.get_cell(_new_x, _new_y).set_draw_marks(0);
+		Game.field.get_cell(to_x, to_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		if !check_ability_targets(0, 0) {Game.figure_action_controller.figure_have_ability = 0}
 		else {Game.figure_action_controller.figure_have_ability = 1}
 		O_BoardDraw.unblock_end_button()
@@ -156,6 +160,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			if to_x != undefined {
 				Game.field.get_cell(to_x, to_y).set_draw_marks(1)
 				Game.figure_action_controller.figure_have_ability = 0;
+				Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 				to_x = undefined;
 				to_y = undefined;
 				O_BoardDraw.block_end_button();

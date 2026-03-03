@@ -45,18 +45,21 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 		if to_x != undefined {to_move.set_draw_marks(1)}
 		to_x = _new_x;
 		to_y = _new_y;
+		to_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		to_move = Game.field.get_cell(_new_x, _new_y);
 		to_move.set_draw_marks(0)
 		O_BoardDraw.unblock_end_button()
+		to_move.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 	}
 	
 	back = function() {
 		if to_x != undefined {
-			to_move.set_draw_marks(1)
+			to_move.set_draw_marks(1);
+			to_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 			to_x = undefined;
 			to_y = undefined;
 			to_move = undefined;
-			O_BoardDraw.block_end_button()
+			O_BoardDraw.block_end_button();
 		}
 		else {
 			Game.game_loop_controller.quit_from_action();

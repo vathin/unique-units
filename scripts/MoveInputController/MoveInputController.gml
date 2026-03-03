@@ -43,6 +43,7 @@ function MoveInputController() constructor{
 		action_set.previous_move_cell = previous_cell
 		Game.game_loop_controller.set_action(action_set);
 		set_new_cell_action();
+		Game.field.get_cell(to_x, to_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		Game.move_input_controller = undefined;
 	}
 

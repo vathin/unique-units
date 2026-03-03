@@ -4,3 +4,4 @@ if game_state != STATE_LIST.enemy_turn {
 		global.cell_action(selected_cell);
 	}
 }
+Game.field.check_status();

@@ -39,6 +39,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 		target_y = _new_y;
 		O_BoardDraw.unblock_end_button();
 		O_BoardDraw.clear_button_overlay();
+		Game.field.get_cell(target_x, target_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
 		//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
 		//O_SummonButton.back = 1;
 	}
@@ -46,6 +47,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 	back = function() {
 		if target_x != undefined {
 			Game.field.get_cell(target_x, target_y).marked = 1;
+			Game.field.get_cell(target_x, target_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned))
 			target_x = undefined;
 			target_y = undefined;
 			//O_SummonButton.change_sprite(figure_sprite, Settings.summon_button_figure_scale);

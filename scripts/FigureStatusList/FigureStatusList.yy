@@ -1,9 +1,9 @@
 {
   "$GMScript":"v1",
-  "%Name":"FilledFigureStatus",
+  "%Name":"FigureStatusList",
   "isCompatibility":false,
   "isDnD":false,
-  "name":"FilledFigureStatus",
+  "name":"FigureStatusList",
   "parent":{
     "name":"FigureStatus",
     "path":"folders/Scripts/FigureStatus.yy",

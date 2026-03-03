@@ -31,7 +31,7 @@ function Cell() constructor{
 	clear = function() 
 	{
 		filled_figure = undefined;
-		filled_figure_status.start();
+		filled_figure_status.reset();
 	}
 	
 	fill = function(_new_figure, animation) 
@@ -57,28 +57,19 @@ function Cell() constructor{
 				}
 			}
 		}
-	
 		return result;
 	}
 	
-	update_filled_figure_state = function() {
-			found_clear_cells = 0
-			for (i = -1; i <= 1; i++) {
-				for (m = -1; m <=1; m++) {
-					cell = Game.field.get_cell(xcord + i, ycord +m);
-					if cell != undefined{
-						if cell != Game.field.get_cell(xcord, ycord) {
-							if !cell.is_filled() {found_clear_cells++}
-							else {
-								if cell.filled_figure.state.is_dropped {found_clear_cells++}
-							}
-						}
-					}
-				}
-			}
-			if found_clear_cells == 0 {
-				Game.game_loop_controller.figures_counter.add_figure_to_capture(filled_figure, self);
-			}
+	add_figure_status = function(_status) {
+		filled_figure_status.set_status(_status);
+	}
+	
+	remove_figure_status = function(_status) {
+		filled_figure_status.set_status(_status, 0);
+	}
+	
+	clear_figure_status = function() {
+		filled_figure_status.reset();
 	}
 
 	export = function() {

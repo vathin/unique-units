@@ -25,8 +25,8 @@
   "nineSlice":null,
   "origin":4,
   "parent":{
-    "name":"icons",
-    "path":"folders/Sprites/icons.yy",
+    "name":"MainMenu",
+    "path":"folders/Sprites/icons/MainMenu.yy",
   },
   "preMultiplyAlpha":false,
   "resourceType":"GMSprite",

@@ -102,9 +102,6 @@ function GameLoopController() constructor{
 	}
 
 	end_move = function() {
-		//if global.moving_figure {
-		//	global.selected_cell.filled_figure.start_move_animation(global.cell_click_callback, Settings.move_animation_length)
-		//}
 		if ready_to_send and Game.online_match and have_action(){
 			if O_Server._id == global.turn_owner{
 				action_export_data = [action.export()]
@@ -119,6 +116,7 @@ function GameLoopController() constructor{
 		
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
+		Game.field.clear_every_status();
 		Game.field.check_if_any_cell_conquested();
 		Game.field.check_every_figure();
 		figures_counter.update_turn();

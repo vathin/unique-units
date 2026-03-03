@@ -1,1 +1,1 @@
-game_state = Game.game_loop_controller.get_game_state()
+game_state = Game.game_loop_controller.get_game_state();

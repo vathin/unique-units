@@ -16,6 +16,7 @@ function Field() constructor{
 	player2_captured = new CapturedFiguresCounter(Game.Player2.player_id);
 	player1_dropped = new DroppedFiguresCounter(Game.Player1.player_id);
 	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id);
+	movement_array = [];
 	
 	field_cord = {
 		top: start_y,
@@ -26,6 +27,8 @@ function Field() constructor{
 		y_center: start_y + size*field_height/2
 	}
 	
+	status_draw_offsets = [[0, 0], [-10, 0, 10, 0], [-10, -10, 10, -10, 0, 10], [-10, -10, -10, 10, 10, -10, 10, 10]]
+	
 	if Game.role == "host" {
 		player2_captured.set_position(2);
 		player2_dropped.set_position(2);
@@ -34,8 +37,6 @@ function Field() constructor{
 		player1_captured.set_position(2);
 		player1_dropped.set_position(2);
 	}
-	
-	movement_array = [];
 	
 	set_selected_cell = function(cell) {
 		selected_cell = cell
@@ -59,7 +60,7 @@ function Field() constructor{
 			{
 				if get_cell(w, h).is_filled() {
 					if get_cell(w, h).filled_figure.figure_id == _id {
-						return get_cell(w, h).filled_figure
+						return get_cell(w, h).filled_figure;
 					}
 				}
 			}
@@ -102,7 +103,6 @@ function Field() constructor{
 				if (get_cell(w, h).is_filled()) {
 					draw_figure = draw_cell.filled_figure;
 					if draw_figure.have_animation() {
-						//draw_figure.animate();
 						array_push(up_figures, draw_figure);
 					}
 					else {
@@ -125,9 +125,19 @@ function Field() constructor{
 					draw_sprite_ext(global.mark, 0, get_cell_xy(draw_cell)[0], get_cell_xy(draw_cell)[1], 
 					0.6, 0.6, 0, c_white, 1)
 				}
+				var _statuses = draw_cell.filled_figure_status.get_active_draw_statuses();
+				var _st_amount = array_length(_statuses);
+				var _draw_num = 0;
+				for (var i = 0; i < _st_amount; i++) {
+					draw_sprite_ext(FigureStatusList.get_status_sprite(_statuses[i]), 0, 
+					get_cell_xy(draw_cell)[0] + status_draw_offsets[_st_amount-1][_draw_num], get_cell_xy(draw_cell)[1] + status_draw_offsets[_st_amount-1][_draw_num+1], 
+					scale*0.6, scale*0.6, 0, c_white, 0.9);
+					_draw_num += 2;
+				}
 			}
 		}
 		other_figures = []
+		
 		for (var i = 0; i < array_length(player1_dropped.figures); i++) {
 			array_push(other_figures, player1_dropped.figures[i]);
 		}
@@ -143,7 +153,6 @@ function Field() constructor{
 		for (var i = 0; i < array_length(other_figures); i++) {
 			draw_figure = other_figures[i]
 			if draw_figure.have_animation() {
-				//draw_figure.animate()
 				array_push(up_figures, draw_figure)
 			}
 			else {
@@ -209,13 +218,6 @@ function Field() constructor{
 			else {
 				return cell_array[field_height - 1 - _ycord][field_width - 1 - _xcord]
 			}
-			/*for (i = 0; i < field_height; i++) {
-				for (m = 0; m < field_width; m++) {
-					if cell_array[i][m].xcord == _xcord and cell_array[i][m].ycord == _ycord {
-						return cell_array[i][m];
-					}
-				}
-			}*/
 		}
 		return undefined;
 	}
@@ -226,23 +228,15 @@ function Field() constructor{
 		cell.filled_figure.set_behaviour(_behaviour)
 	}
 
-	check_clear_move_cells = function(xcord, ycord) {
-		for (i = -1; i <= 1; i++) {
-			for (m = -1; m <= 1; m++) {
-				try {
-					cell = get_cell(xcord + i, ycord + m);
-					if !cell.is_filled() {
-						cell.marked = true;
-					}
-				}
-				catch(_exception) {
-				}
-			}
+	check_clear_move_cells = function(_xcord, _ycord) {
+		var _cells = check_clear_cells(_xcord, _ycord);
+		for (i = 0; i < array_length(_cells); i++) {
+			_cells[i].marked = true;
 		}
 	}
 
 	check_controlled_summon_cells = function(player){
-		var is_on_player_side
+		var is_on_player_side;
 		for (var i = 0; i < field_height; i++) {
 			for (var m = 0; m < field_width; m++) {
 				cell = get_cell(i, m);
@@ -327,13 +321,13 @@ function Field() constructor{
 	cell_get_neightbors = function(cell) {
 		neightbors = [];
 		if (get_cell(cell.xcord -1, cell.ycord) != undefined) {
-			array_push(neightbors, get_cell(cell.xcord -1, cell.ycord))
+			array_push(neightbors, get_cell(cell.xcord -1, cell.ycord));
 		}
 		if (get_cell(cell.xcord +1, cell.ycord) != undefined) {
-			array_push(neightbors, get_cell(cell.xcord +1, cell.ycord))
+			array_push(neightbors, get_cell(cell.xcord +1, cell.ycord));
 		}
 		if (get_cell(cell.xcord , cell.ycord -1) != undefined) {
-			array_push(neightbors, get_cell(cell.xcord , cell.ycord -1))
+			array_push(neightbors, get_cell(cell.xcord , cell.ycord -1));
 		}
 		if (get_cell(cell.xcord , cell.ycord +1) != undefined) {
 			array_push(neightbors, get_cell(cell.xcord , cell.ycord +1))
@@ -370,25 +364,81 @@ function Field() constructor{
 			}
 		}
 	}
-
-	check_every_figure = function() {
-		for (var i = 0; i < field_width; i++) {
-			for (var m = 0; m < field_height; m++) {
-				if get_cell(m, i).is_filled() {
-					get_cell(m, i).update_filled_figure_state();
-					if get_cell(m, i).filled_figure.state.is_dropped {get_cell(m, i).clear()}
+	
+	check_status = function() {
+		var _cells = check_every_figure(0);
+		for (var i = 0; i < array_length(_cells); i++) {
+			_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
+		}
+		for (var i = 0; i < field_height; i++) {
+			for (var m = 0; m < field_width; m++) {
+				if array_get_index(_cells, get_cell(m, i)) == -1 {
+					get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
 				}
 			}
 		}
 	}
 	
+	clear_every_status = function() {
+		for (var i = 0; i < field_height; i++) {
+			for (var m = 0; m < field_width; m++) {
+				get_cell(m, i).clear_figure_status();
+			}
+		}
+	}
+
+	check_every_figure = function(_drop = 1) {
+		var _surrounded_cells_array = []
+		for (var i = 0; i < field_width; i++) {
+			for (var m = 0; m < field_height; m++) {
+				var _cell = get_cell(m, i);
+				if _cell.is_filled() {
+					if check_if_cell_is_surrounded(_cell) {
+						array_push(_surrounded_cells_array, _cell);
+						if _drop {
+							Game.game_loop_controller.figures_counter.add_figure_to_capture(_cell.filled_figure, _cell);
+							_cell.clear();
+						}
+					}
+				}
+			}
+		}
+		return _surrounded_cells_array;
+	}
+	
+	check_if_cell_is_surrounded = function(_cell) {
+		if array_length(check_clear_cells(_cell.xcord, _cell.ycord)) == 0 {
+			return true
+		}
+		return false;
+	}
+	
+	check_clear_cells = function(_xcord, _ycord) {
+		var found_clear_cells = [];
+		for (i = -1; i <= 1; i++) {
+			for (m = -1; m <=1; m++) {
+				var cell = Game.field.get_cell(_xcord + i, _ycord +m);
+				if cell != undefined{
+					if cell != Game.field.get_cell(_xcord, _ycord) {
+						if !(cell.is_filled() or cell.filled_figure_status.will_be_moved 
+						or cell.filled_figure_status.will_be_summoned) {array_push(found_clear_cells, cell);}
+						/*else if cell.filled_figure.state.is_dropped {
+							array_push(found_clear_cells, cell);
+						}*/
+					}
+				}
+			}
+		}
+		return found_clear_cells;
+	}
+	
 	get_player_field_figures = function(_owner) {
-		field_figures = []
+		var field_figures = [];
 		for (var i = 0; i < field_width; i++) {
 			for (var m = 0; m < field_height; m++) {
 				cell = get_cell(m, i);
 				if cell.is_filled() and cell.filled_figure.owner == _owner {
-					array_push(field_figures, cell.filled_figure)
+					array_push(field_figures, cell.filled_figure);
 				}
 			}
 		}
