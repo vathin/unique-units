@@ -156,6 +156,7 @@
     {"id":{"name":"FiguresCounter","path":"scripts/FiguresCounter/FiguresCounter.yy",},},
     {"id":{"name":"FigureStatusList","path":"scripts/FigureStatusList/FigureStatusList.yy",},},
     {"id":{"name":"FilledFigureStatus","path":"scripts/FilledFigureStatus/FilledFigureStatus.yy",},},
+    {"id":{"name":"FindArcherTrajectory","path":"scripts/FindArcherTrajectory/FindArcherTrajectory.yy",},},
     {"id":{"name":"GameClass","path":"scripts/GameClass/GameClass.yy",},},
     {"id":{"name":"gameData","path":"scripts/gameData/gameData.yy",},},
     {"id":{"name":"GameLoopController","path":"scripts/GameLoopController/GameLoopController.yy",},},

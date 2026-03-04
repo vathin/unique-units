@@ -19,7 +19,7 @@ clear = function(_sprite = 0) {
 set_sprite = function(_sprite, _frame) {
 	var _scale = sprite_width/sprite_get_width(_sprite);
 	sprite_index = _sprite;
-	image_index = _frame;
+	set_frame(_frame);
 	image_xscale = _scale;
 	image_yscale = _scale;
 }

@@ -115,7 +115,7 @@ function Field() constructor{
 							var _draw_alpha = 1
 							if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {
 								O_BoardDraw.set_button_overlay(Behaviours.get_sprite(draw_figure.behaviour),
-								(draw_figure.owner != O_Server._id));
+								(draw_figure.owner == Game.opponent));
 								_draw_alpha = 0.3
 								}
 							draw_sprite_ext(S_Conquesting, draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
@@ -322,6 +322,15 @@ function Field() constructor{
 		return _conquested_cells;
 	}
 	
+	get_marked_cells = function() {
+		var _cells = []
+		for (var i = 0; i < field_height; i++) {
+			for (var m = 0; m < field_width; m++) {
+				if get_cell(m, i).is_marked() {array_push(_cells, get_cell(m, i))}
+			}
+		}
+		return _cells
+	}
 
 	clear_all_marks = function() {
 		for (var i = 0; i < field_height; i++) {

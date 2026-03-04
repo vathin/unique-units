@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"FindArcherTrajectory",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"FindArcherTrajectory",
+  "parent":{
+    "name":"animation",
+    "path":"folders/Scripts/animation.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

@@ -69,21 +69,6 @@ function GameLoopController() constructor{
 			return player2_cards
 		}
 	}
-	
-	/*create_cards = function(_player_id, _position) {
-		var _start_x = cards_x;
-		var _start_y = cards_1y;
-		var _deck = Game.user_data.load(_player_id).player_cards;
-		var _array = get_cards_array(_player_id);
-		if _position == 2 {_start_y = cards_2y}
-		cards_offset = 300/(array_length(_deck)-1)
-		for (i = 0; i <array_length(_deck); i++) {
-			new_card = new FigureCard();
-			new_card.set_figure(_deck[i]);
-			new_card.set_cord(_start_x + i*cards_offset, _start_y);
-			array_push(_array, new_card);
-		}
-	}*/
 
 	end_move = function() {
 		if ready_to_send and Game.online_match and have_action(){
@@ -100,7 +85,6 @@ function GameLoopController() constructor{
 		
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
-		Game.field.clear_every_status();
 		Game.field.check_conquested_cells();
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
@@ -228,6 +212,7 @@ function GameLoopController() constructor{
 		O_BoardDraw.clear();
 		global.selected_cell = undefined;
 		Game.field.clear_all_marks();
+		Game.field.clear_every_status();
 		global.cell_click_callback = undefined;
 		set_can_cancel(0);
 		global.cell_action = default_cell_click_action;

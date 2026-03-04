@@ -10,13 +10,15 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	from_x = _from_x;
 	from_y = _from_y;
 	figure_sprite = S_Archer;
-	figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image;
 	to_x = _to_x;
 	to_y = _to_y;
 	moving_figure = undefined;
 	found_move_cells = false;
 	cells_to_check = [];
-	using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
+	if from_x != undefined {
+		figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image;
+		using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
+	}
 	if Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
 	_found_id = []
 	previous_move_cell = undefined;
@@ -32,13 +34,19 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	execute = function() {
 		using_cell = Game.field.get_cell(from_x, from_y);
 		cell_for_move = Game.field.get_cell(to_x, to_y);
+		FindArcherTrajectory(from_x, from_y, to_x, to_y)
 		Game.field.add_movement(using_cell, cell_for_move, using_cell.filled_figure.figure_id);
 		cell_for_move.fill(using_figure, 1);
+		var _trajectory = FindArcherTrajectory(from_x, from_y, to_x, to_y);
+		for (var i = 0; i < array_length(_trajectory)-1; i++) {
+			figure_animation = new MoveAnimationController();
+			var _from = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i][0], _trajectory[i][1]));
+			var _to = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i+1][0], _trajectory[i+1][1]))
+			figure_animation.start_animation(_from[0], _from[1], _to[0], _to[1], 
+			Settings.move_animation_length*array_length(_trajectory)/array_length(_trajectory));
+			using_figure.add_animation(figure_animation);
+		}
 		using_cell.clear();
-		figure_animation = new MoveAnimationController();
-		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
-		Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length);
-		using_figure.add_animation(figure_animation);
 		_found_id = [];
 	}
 	
@@ -98,6 +106,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 			previous_move_cell = _previous_cell;
 		}
 	}
+	
 	check_all_cells = function() {
 		var start_cell = Game.field.get_cell(from_x, from_y);
 		Game.field.clear_all_marks();

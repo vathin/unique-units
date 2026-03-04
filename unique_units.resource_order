@@ -112,6 +112,7 @@
     {"name":"FigureCapture","order":10,"path":"scripts/FigureCapture/FigureCapture.yy",},
     {"name":"FigureCard","order":17,"path":"scripts/FigureCard/FigureCard.yy",},
     {"name":"FigureStatusList","order":1,"path":"scripts/FigureStatusList/FigureStatusList.yy",},
+    {"name":"FindArcherTrajectory","order":5,"path":"scripts/FindArcherTrajectory/FindArcherTrajectory.yy",},
     {"name":"GameClass","order":1,"path":"scripts/GameClass/GameClass.yy",},
     {"name":"gameData","order":10,"path":"scripts/gameData/gameData.yy",},
     {"name":"GameLoopController","order":3,"path":"scripts/GameLoopController/GameLoopController.yy",},
