@@ -23,21 +23,6 @@ function GameLoopController() constructor{
 	
 	figures_counter = new FiguresCounter();
 	
-	TEST_action_draw = function() {
-		if have_action() {
-			action.draw();
-		}
-	}
-	
-	TEST_draw_cards = function() {
-		for (i = 0; i < array_length(player1_cards); i++) {
-			player1_cards[i].draw();
-		}
-		for (i = 0; i < array_length(player2_cards); i++) {
-			player2_cards[i].draw();
-		}
-	}
-	
 	enum STATE_LIST {
 		wait,
 		summon,
@@ -67,8 +52,7 @@ function GameLoopController() constructor{
 	}
 
 	startInput = function() {
-		//O_SummonButton.unblock()
-		state = STATE_LIST.wait
+		state = STATE_LIST.wait;
 	}
 	
 	
@@ -86,7 +70,7 @@ function GameLoopController() constructor{
 		}
 	}
 	
-	create_cards = function(_player_id, _position) {
+	/*create_cards = function(_player_id, _position) {
 		var _start_x = cards_x;
 		var _start_y = cards_1y;
 		var _deck = Game.user_data.load(_player_id).player_cards;
@@ -99,7 +83,7 @@ function GameLoopController() constructor{
 			new_card.set_cord(_start_x + i*cards_offset, _start_y);
 			array_push(_array, new_card);
 		}
-	}
+	}*/
 
 	end_move = function() {
 		if ready_to_send and Game.online_match and have_action(){
@@ -117,7 +101,7 @@ function GameLoopController() constructor{
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
 		Game.field.clear_every_status();
-		Game.field.check_if_any_cell_conquested();
+		Game.field.check_conquested_cells();
 		Game.field.check_every_figure();
 		figures_counter.update_turn();
 		if Game.online_match {
@@ -347,6 +331,4 @@ function GameLoopController() constructor{
 	}
 
 	global.cell_action = default_cell_click_action;
-	//array_push(Game.do_every_step_list, TEST_draw_cards);
-	//array_push(Game.do_every_step_list, TEST_check_cards);
 }

@@ -5,9 +5,9 @@ if in_game {
 	Game.game_loop_controller.figures_counter.display_opponent_available_figures();
 	
 	UI_controller.clear_ingame_layer();
-	if Game.game_loop_controller.have_action() {
+	/*if Game.game_loop_controller.have_action() {
 		Game.game_loop_controller.action.draw();
-	}
+	}*/
 	if end_button {
 		UI_controller.set_button_frame(UI_controller.end_turn_button, SIDEBUTTONFRAMES.end_turn_active);
 	}

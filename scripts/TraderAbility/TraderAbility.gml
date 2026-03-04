@@ -119,19 +119,15 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			draw_sprite_ext(S_Back_chosen, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
 			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.75);
 		}
-		/*if buttons != [] {
-			for (i = 0; i < 3; i ++) {
-				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
-				Settings.figure_scale*1.2, Settings.figure_scale*1.2, 0, c_white, 1/(1+(chosen_button == i  or target_cell == undefined)));
-			}
-		}*/
 	}
 	
 	global.cell_action = function(cell) {
 		if (cell.marked) {
 			global.cell_click_callback.set_draw_marks(1);
+			global.cell_click_callback.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
 			global.cell_click_callback = cell;
-			cell.set_draw_marks(0)
+			cell.set_draw_marks(0);
+			cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
 			if !Game.game_loop_controller.have_action() {
 				Game.ability_input_controller.start_ability();
 			}
@@ -144,6 +140,9 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		if chosen_button != undefined or target_cell != undefined{
 			chosen_button = undefined;
 			sprite_draw = undefined;
+			if target_cell != undefined {
+				target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
+			}
 			target_cell = undefined;
 			global.cell_click_callback.set_draw_marks(1);
 			O_BoardDraw.block_end_button();

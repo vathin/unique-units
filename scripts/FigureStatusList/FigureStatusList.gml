@@ -11,10 +11,10 @@ function FigureStatusList() constructor{
 	
 	static status_sprites_list = {
 		will_be_captured: S_surrounded, //
-		will_be_dropped: undefined, //
+		will_be_dropped: S_dropped, //
 		will_be_moved: S_moved, //
 		will_be_filled: S_moved, //
-		will_conquest: undefined, //
+		will_conquest: S_conquest, //
 		will_be_summoned: S_summoned, //
 		selected: undefined //
 	}

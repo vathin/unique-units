@@ -95,6 +95,9 @@ function Field() constructor{
 	TEST_draw_cells = function() {
 		draw_sprite_ext(map_sprite, 0, room_width/2, room_height/2-size/2, map_scale, map_scale, 180*(Game.role == "guest"), c_white, 1);
 		up_figures = [];
+		if Game.game_loop_controller.have_action() {
+			Game.game_loop_controller.action.draw();
+		}
 		for (var h = 0; h < field_height; h++) 
 		{
 			for (var w = 0; w < field_width; w++) 
@@ -127,11 +130,13 @@ function Field() constructor{
 				}
 				var _statuses = draw_cell.filled_figure_status.get_active_draw_statuses();
 				var _st_amount = array_length(_statuses);
+				var _scale = scale*0.8;
+				if _st_amount > 1 {_scale*= 0.7}
 				var _draw_num = 0;
 				for (var i = 0; i < _st_amount; i++) {
 					draw_sprite_ext(FigureStatusList.get_status_sprite(_statuses[i]), 0, 
 					get_cell_xy(draw_cell)[0] + status_draw_offsets[_st_amount-1][_draw_num], get_cell_xy(draw_cell)[1] + status_draw_offsets[_st_amount-1][_draw_num+1], 
-					scale*0.6, scale*0.6, 0, c_white, 0.9);
+					_scale, _scale, 0, c_white, 0.9);
 					_draw_num += 2;
 				}
 			}
@@ -277,37 +282,46 @@ function Field() constructor{
 		}
 	}
 	
-	check_if_any_cell_conquested = function() {
-		_player1 = Maps_list.get_cells_for_conquest()[0]
-		_player2 = Maps_list.get_cells_for_conquest()[1]
-		for (var i = 0; i < array_length(_player1); i++) {
-			cell = get_cell(_player1[i][0], _player1[i][1])
-			if cell.is_filled() {
-				var _figure = cell.filled_figure
-				if _figure.owner == Game.Player2.player_id and _figure.state.is_active {
-					figure_animation = new OverturnAnimationController();
-					figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
-					_figure.add_animation(figure_animation)
-					_figure.conquest();
-					Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);
-				}
+	check_conquested_cells = function() {
+		var _cells = get_conquested_cells(0);
+		for (var i = 0; i < array_length(_cells); i++) {
+			var _figure = _cells[i].filled_figure;
+			var figure_animation = new OverturnAnimationController();
+			figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
+			_figure.add_animation(figure_animation)
+			_figure.conquest();
+			if _figure.owner == Game.Player1.player_id {
+				Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);
 			}
-		}
-		for (var i = 0; i < array_length(_player2); i++) {
-			cell = get_cell(_player2[i][0], _player2[i][1])
-			if cell.is_filled() {
-				var _figure = cell.filled_figure
-				if _figure.owner == Game.Player1.player_id and _figure.state.is_active {
-					figure_animation = new OverturnAnimationController();
-					figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
-					_figure.add_animation(figure_animation)
-					_figure.conquest();
-					Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
-				}
+			else {
+				Game.game_loop_controller.add_captured_figure(Game.Player1.player_id);
 			}
 		}
 	}
-
+	
+	get_conquested_cells = function(_check_state = false) {
+		var _player1 = Maps_list.get_cells_for_conquest()[0]
+		var _player2 = Maps_list.get_cells_for_conquest()[1]
+		var _conquested_cells = [];
+		for (var i = 0; i < array_length(_player1); i++) {
+			var cell = get_cell(_player1[i][0], _player1[i][1])
+			if (cell.is_filled() and cell.filled_figure.state.is_active and cell.filled_figure.owner == Game.Player2.player_id)
+			or (_check_state and global.turn_owner == Game.Player2.player_id
+			and (cell.filled_figure_status.will_be_moved or cell.filled_figure_status.will_be_summoned)) {
+				array_push(_conquested_cells, cell);
+			}
+		}
+		for (var i = 0; i < array_length(_player2); i++) {
+			var cell = get_cell(_player2[i][0], _player2[i][1])
+			if (cell.is_filled() and cell.filled_figure.state.is_active and cell.filled_figure.owner == Game.Player1.player_id)
+			or (_check_state and global.turn_owner == Game.Player1.player_id
+			and (cell.filled_figure_status.will_be_moved or cell.filled_figure_status.will_be_summoned)) {
+				array_push(_conquested_cells, cell);
+			}
+		}
+		return _conquested_cells;
+	}
+	
 
 	clear_all_marks = function() {
 		for (var i = 0; i < field_height; i++) {
@@ -366,16 +380,19 @@ function Field() constructor{
 	}
 	
 	check_status = function() {
-		var _cells = check_every_figure(0);
-		for (var i = 0; i < array_length(_cells); i++) {
-			_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
-		}
+		var _surrounded_cells = check_every_figure(0);
+		var _conquested_cells = get_conquested_cells(1);
 		for (var i = 0; i < field_height; i++) {
 			for (var m = 0; m < field_width; m++) {
-				if array_get_index(_cells, get_cell(m, i)) == -1 {
-					get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
-				}
+				get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
+				get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_conquest));
 			}
+		}
+		for (var i = 0; i < array_length(_surrounded_cells); i++) {
+			_surrounded_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
+		}
+		for (var i = 0; i < array_length(_conquested_cells); i++) {
+			_conquested_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_conquest));
 		}
 	}
 	
@@ -392,13 +409,11 @@ function Field() constructor{
 		for (var i = 0; i < field_width; i++) {
 			for (var m = 0; m < field_height; m++) {
 				var _cell = get_cell(m, i);
-				if _cell.is_filled() {
+				if _cell.is_filled() or _cell.filled_figure_status.will_be_summoned 
+				or _cell.filled_figure_status.will_be_filled {
 					if check_if_cell_is_surrounded(_cell) {
 						array_push(_surrounded_cells_array, _cell);
-						if _drop {
-							Game.game_loop_controller.figures_counter.add_figure_to_capture(_cell.filled_figure, _cell);
-							_cell.clear();
-						}
+						if _drop {Game.game_loop_controller.figures_counter.add_figure_to_capture(_cell.filled_figure, _cell);}
 					}
 				}
 			}
@@ -422,9 +437,6 @@ function Field() constructor{
 					if cell != Game.field.get_cell(_xcord, _ycord) {
 						if !(cell.is_filled() or cell.filled_figure_status.will_be_moved 
 						or cell.filled_figure_status.will_be_summoned) {array_push(found_clear_cells, cell);}
-						/*else if cell.filled_figure.state.is_dropped {
-							array_push(found_clear_cells, cell);
-						}*/
 					}
 				}
 			}

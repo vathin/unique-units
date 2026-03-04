@@ -35,9 +35,13 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 			check_ability_targets();
 		}
 		else {
+			if fill_cell != undefined {
+				fill_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			}
 			selected = 1;
 			O_BoardDraw.unblock_end_button();
 			fill_cell = global.cell_click_callback;
+			fill_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		}
 	}
 	
@@ -65,6 +69,7 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 		if target_figure != undefined {
 			if fill_cell != undefined {
 				fill_cell.set_draw_marks(1);
+				fill_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 				fill_cell = undefined;
 				global.cell_click_callback = target_cell;
 				selected = 0;

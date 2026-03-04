@@ -8,7 +8,9 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	
 	execute = function() {
 		using_figure.drop();
+		using_cell.clear();
 		target_figure.drop();
+		target_cell.clear();
 	}
 	
 	draw = function() {
@@ -18,8 +20,13 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	}
 	
 	set_target = function(_new_target, _new_cell) {
+		if target_cell != undefined {
+			target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
+		}
+		using_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 		target_figure = _new_target;
 		target_cell = _new_cell
+		target_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 		O_BoardDraw.unblock_end_button();
 	}
 	
@@ -42,8 +49,11 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	
 	back = function() {
 		if target_figure != undefined {
-			global.cell_click_callback.set_draw_marks(1)
+			global.cell_click_callback.set_draw_marks(1);
+			target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
+			using_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 			target_figure = undefined;
+			target_cell = undefined;
 			O_BoardDraw.block_end_button();
 		}
 		else {

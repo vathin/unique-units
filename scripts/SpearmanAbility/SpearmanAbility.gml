@@ -21,8 +21,12 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 		using_figure.add_animation(figure_animation);
 	}
 	
-	set_target = function(useless_data, useless_data2) {
+	set_target = function(a, b) {
+		if cell_for_move != undefined {
+			cell_for_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+		}
 		cell_for_move = global.cell_click_callback;
+		cell_for_move.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		O_BoardDraw.unblock_end_button();
 	}
 	
@@ -91,6 +95,7 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 	back = function() {
 		if global.cell_click_callback != global.selected_cell {
 			global.cell_click_callback.set_draw_marks(1);
+			global.cell_click_callback.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 			global.cell_click_callback = using_cell;
 			O_BoardDraw.block_end_button();
 		}

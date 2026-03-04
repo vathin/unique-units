@@ -33,7 +33,7 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		using_cell = Game.field.get_cell(from_x, from_y);
 		cell_for_move = Game.field.get_cell(to_x, to_y);
 		Game.field.add_movement(using_cell, cell_for_move, using_cell.filled_figure.figure_id);
-		cell_for_move.fill(using_figure);
+		cell_for_move.fill(using_figure, 1);
 		using_cell.clear();
 		figure_animation = new MoveAnimationController();
 		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
@@ -54,9 +54,13 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
-		if to_x != undefined {Game.field.get_cell(to_x, to_y).set_draw_marks(1)}
+		if to_x != undefined {
+			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
+			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			}
 		self.to_x = new_x;
 		self.to_y = new_y;
+		Game.field.get_cell(to_x, to_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		Game.field.get_cell(new_x, new_y).set_draw_marks(0);
 		O_BoardDraw.unblock_end_button()
 	}
@@ -247,10 +251,10 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	
 	back = function() {
 		if to_x != undefined {
-			Game.field.get_cell(to_x, to_y).set_draw_marks(1)
+			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
+			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 			to_x = undefined;
 			to_y = undefined;
-			//Game.field.block();
 			O_BoardDraw.block_end_button();
 		}
 		else {

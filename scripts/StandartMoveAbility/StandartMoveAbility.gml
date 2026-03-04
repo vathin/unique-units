@@ -42,10 +42,12 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 		if draw_previous_cell and previous_move_cell != undefined{
 			previous_move_cell.marked = 0;
 		}
-		if to_x != undefined {to_move.set_draw_marks(1)}
+		if to_move != undefined {
+			to_move.set_draw_marks(1);
+			to_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			}
 		to_x = _new_x;
 		to_y = _new_y;
-		to_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		to_move = Game.field.get_cell(_new_x, _new_y);
 		to_move.set_draw_marks(0)
 		O_BoardDraw.unblock_end_button()

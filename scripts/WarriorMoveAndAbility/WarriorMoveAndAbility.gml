@@ -26,7 +26,6 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 
 	
 	execute = function() {
-		//global.moving_figure = 1;
 		to_move = Game.field.get_cell(to_x, to_y);
 		from_move = Game.field.get_cell(from_x, from_y)
 		figure_animation = new MoveAnimationController();
@@ -41,14 +40,16 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			hit_animation.start_animation(Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1],
 			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.hit_animation_length);
 			using_figure.add_animation(hit_animation)
-			using_figure.drop()
+			using_figure.drop();
+			to_move.clear();
 			
 			target_animation = new StandAnimationController();
 			target_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
 			Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
 			Settings.move_animation_length+Settings.hit_animation_length);
-			target_cell.filled_figure.add_animation(target_animation)
-			target_cell.filled_figure.drop()
+			target_cell.filled_figure.add_animation(target_animation);
+			target_cell.filled_figure.drop();
+			target_cell.clear();
 		}
 		else {
 			Game.field.add_movement(from_move, to_move, using_figure.figure_id)
@@ -98,9 +99,14 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	}
 	
 	set_target = function(_target_figure, _target_cell) {
-		if target_cell != undefined {target_cell.set_draw_marks(1)}
+		if target_cell != undefined {
+			target_cell.set_draw_marks(1)
+			target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped))
+			}
+		Game.field.get_cell(to_x, to_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 		target_cell = _target_cell;
 		target_cell.set_draw_marks(0);
+		target_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 		O_BoardDraw.unblock_end_button();
 	}
 	
@@ -135,6 +141,8 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		if using_ability {
 			if target_cell!= undefined{
 				target_cell.set_draw_marks(1);
+				target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
+				Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped));
 				target_cell = undefined;
 				O_BoardDraw.block_end_button();
 			}
@@ -144,8 +152,6 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 				Game.figure_action_controller.move_and_ability = 1;
 				Game.figure_action_controller.figure_can_move = 0;
 				using_ability = 0;
-				if target_cell != undefined {target_cell.set_draw_marks(1)}
-				target_cell = undefined;
 				O_BoardDraw.unblock_end_button();
 				global.cell_click_callback = Game.field.get_cell(to_x, to_y);
 				Game.field.check_clear_move_cells(from_x, from_y);
