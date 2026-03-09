@@ -1,7 +1,6 @@
 // ЛКМ - Добавить фигуру в колоду
 // ПКМ - Удалить фигуру из колоды
 
-
 decks = [];
 deck_layer = "MenuDeckSettings";
 ingame_layer = UI_controller.InGame_layer;
@@ -12,7 +11,7 @@ deck_create_button = "CreateButton";
 deck_name_panel = "DeckNameField";
 card_display_panel = ["CardsDisplay_1", "CardsDisplay_2"];
 default_deck = {id: "000", name: "", owner: "",units: {"trader": 1, "archer": 1, "warrior": 1, "shieldbearer": 1, "spearman": 1}}
-available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"]
+available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"];
 max_figures_in_deck = 20;
 deck_limit = 5;
 
@@ -29,9 +28,10 @@ set_decks = function(_decks) {
 		_index = get_deck_index(selected_deck.id);
 	}
 	decks = _decks;
+	reset_decks_page();
 	if array_length(decks) == 0 {create_new_deck()}
 	if _index != undefined and array_length(decks) > _index {switch_deck(decks[_index].id)}
-	else {reset_decks_page();}
+	else {switch_deck(decks[0].id)}
 }
 
 get_deck_from_id = function(_deck_id) {
@@ -83,7 +83,7 @@ switch_deck = function(_new_deck_id) {
 			add_card_ui_panel(_figure, _amount);
 		}
 	}
-	if get_selected_deck != undefined {
+	if get_selected_deck() != undefined {
 		flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, deck_name_panel)).layerElements[0].instanceId.set_text(selected_deck.name);
 	}
 }
@@ -180,7 +180,6 @@ card_get_node = function(_figure) {
 
 add_card_ui_panel = function(_figure, _amount = 1) {
 	var _struct = deep_copy(default_card_struct);
-	//var _struct = Default_card_struct;
 	_struct.name = "cardelement" + string(_figure);
 	//_struct.nodes[0].layerElements[0].textText = _name;
 	array_push(_struct.layerElements, card_instance_create());
@@ -380,7 +379,7 @@ Server.add_reaction(function(msg)
 {
 	if (msg.type == ServerMessageType.Decks) {
 		O_DeckManager.set_decks(msg.data.decks);
-		if array_length(msg.data.decks) != 0 {O_DeckManager.selected_deck = O_DeckManager.decks[0]}
+		//if array_length(msg.data.decks) != 0 {switch_deck(decks[0].id)}
 	}
 })
 #endregion

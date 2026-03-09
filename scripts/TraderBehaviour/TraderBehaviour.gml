@@ -4,6 +4,7 @@ function TraderBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Trader;
 	index = "trader";
 	card = S_trader_card;
+	logo = S_TraderLogo;
 	ability = TraderAbility;
 	move_ability = StandartMoveAbility;
 	rarity = 5;

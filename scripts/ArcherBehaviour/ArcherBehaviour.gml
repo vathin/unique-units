@@ -4,6 +4,7 @@ function ArcherBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Archer;
 	index = "archer";
 	card = S_archer_card;
+	logo = S_ArcherLogo;
 	ability = undefined;
 	move_ability = ArcherMoveAbility;
 	rarity = 4;

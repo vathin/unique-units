@@ -305,16 +305,16 @@ function Field() constructor{
 		var _conquested_cells = [];
 		for (var i = 0; i < array_length(_player1); i++) {
 			var cell = get_cell(_player1[i][0], _player1[i][1])
-			if (cell.is_filled() and cell.filled_figure.state.is_active and cell.filled_figure.owner == Game.Player2.player_id)
-			or (_check_state and global.turn_owner == Game.Player2.player_id
+			if (cell.is_filled() and (cell.filled_figure.state.is_active or cell.filled_figure.state.is_dropped) 
+			and cell.filled_figure.owner == Game.Player2.player_id) or (_check_state and global.turn_owner == Game.Player2.player_id
 			and (cell.filled_figure_status.will_be_moved or cell.filled_figure_status.will_be_summoned)) {
 				array_push(_conquested_cells, cell);
 			}
 		}
 		for (var i = 0; i < array_length(_player2); i++) {
 			var cell = get_cell(_player2[i][0], _player2[i][1])
-			if (cell.is_filled() and cell.filled_figure.state.is_active and cell.filled_figure.owner == Game.Player1.player_id)
-			or (_check_state and global.turn_owner == Game.Player1.player_id
+			if (cell.is_filled() and (cell.filled_figure.state.is_active or cell.filled_figure.state.is_dropped) 
+			and cell.filled_figure.owner == Game.Player1.player_id) or (_check_state and global.turn_owner == Game.Player1.player_id
 			and (cell.filled_figure_status.will_be_moved or cell.filled_figure_status.will_be_summoned)) {
 				array_push(_conquested_cells, cell);
 			}
@@ -439,8 +439,8 @@ function Field() constructor{
 	
 	check_clear_cells = function(_xcord, _ycord) {
 		var found_clear_cells = [];
-		for (i = -1; i <= 1; i++) {
-			for (m = -1; m <=1; m++) {
+		for (var i = -1; i <= 1; i++) {
+			for (var m = -1; m <=1; m++) {
 				var cell = Game.field.get_cell(_xcord + i, _ycord +m);
 				if cell != undefined{
 					if cell != Game.field.get_cell(_xcord, _ycord) {
@@ -451,6 +451,16 @@ function Field() constructor{
 			}
 		}
 		return found_clear_cells;
+	}
+	
+	check_dropped_figures = function() {
+		for (var i = 0; i < field_width; i++) {
+			for (var m = 0; m < field_height; m++) {
+				if get_cell(m, i).is_filled() and get_cell(m, i).filled_figure.state.is_dropped {
+					get_cell(m, i).clear();
+				}
+			}
+		}
 	}
 	
 	get_player_field_figures = function(_owner) {

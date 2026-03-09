@@ -8,9 +8,7 @@ function WarriorAbility(_using_figure=undefined, _using_cell=undefined) : Figure
 	
 	execute = function() {
 		using_figure.drop();
-		using_cell.clear();
 		target_figure.drop();
-		target_cell.clear();
 	}
 	
 	draw = function() {

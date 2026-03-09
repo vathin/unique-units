@@ -3,7 +3,8 @@
 function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	sprite = S_Shieldbearer;
 	index = "shieldbearer";
-	card = S_shieldbearer_card
+	card = S_shieldbearer_card;
+	logo = S_ShieldbearerLogo;
 	ability = ShieldbearerAbility;
 	move_ability = StandartMoveAbility;
 	rarity = 3;

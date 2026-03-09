@@ -87,6 +87,7 @@ function GameLoopController() constructor{
 		clear_all();
 		Game.field.check_conquested_cells();
 		Game.field.check_every_figure();
+		Game.field.check_dropped_figures();
 		figures_counter.update_turn();
 		if Game.online_match {
 			if global.turn_owner == O_Server._id {

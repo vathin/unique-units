@@ -41,7 +41,6 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.hit_animation_length);
 			using_figure.add_animation(hit_animation)
 			using_figure.drop();
-			to_move.clear();
 			
 			target_animation = new StandAnimationController();
 			target_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
@@ -49,7 +48,6 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			Settings.move_animation_length+Settings.hit_animation_length);
 			target_cell.filled_figure.add_animation(target_animation);
 			target_cell.filled_figure.drop();
-			target_cell.clear();
 		}
 		else {
 			Game.field.add_movement(from_move, to_move, using_figure.figure_id)

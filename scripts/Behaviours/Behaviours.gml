@@ -1,7 +1,7 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Behaviours() constructor{
-	static figure_list = ["archer", "warrior", "trader", "spearman", "shieldbearer"]
+	static figure_list = ["archer", "warrior", "trader", "spearman", "shieldbearer"];
 	static behaviour_list = {
 		archer : new ArcherBehaviour(),
 		warrior : new WarriorBehaviour(),
@@ -15,6 +15,9 @@ function Behaviours() constructor{
 	}
 	static get_card_sprite = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].card
+	}
+	static get_logo_sprite = function(behaviour_type) {
+		return behaviour_list[$ behaviour_type].logo
 	}
 	static get = function(behaviour_type) {
 		return behaviour_list[$ behaviour_type].index

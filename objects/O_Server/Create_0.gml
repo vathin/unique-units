@@ -169,7 +169,7 @@ Server.add_reaction(function(msg)
 				}
 			}
 			break;
-		case ServerMessageType.GameEnd: 
+		case ServerMessageType.GameEnd:
 			_winner = msg.data.winner;
 			if _winner == "" {winner = "draw"}
 			alarm[0] = 35;
