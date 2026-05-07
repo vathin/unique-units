@@ -14,8 +14,15 @@ default_deck = {id: "000", name: "", owner: "",units: {"trader": 1, "archer": 1,
 available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"];
 max_figures_in_deck = 20;
 deck_limit = 5;
+next_dynamic_element_id = 1000;
 
 selected_deck = {id: undefined};
+
+allocate_dynamic_element_id = function() {
+	var _id = next_dynamic_element_id;
+	next_dynamic_element_id++;
+	return _id;
+}
 
 get_selected_deck = function() {
 	if selected_deck.id == undefined {return undefined}
@@ -182,19 +189,23 @@ add_card_ui_panel = function(_figure, _amount = 1) {
 	var _struct = deep_copy(default_card_struct);
 	_struct.name = "cardelement" + string(_figure);
 	//_struct.nodes[0].layerElements[0].textText = _name;
-	array_push(_struct.layerElements, card_instance_create());
+	array_push(_struct.layerElements, card_instance_create(_figure, _amount));
 	var _panel = flexpanel_create_node(_struct);
 	
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, cards_panel), _panel, 0);
-	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure, _amount);
 }
 
-card_instance_create = function() {
-	var _struct = { type : "Instance", instanceVariables : {  },
+card_instance_create = function(_figure, _amount = 1) {
+	var _struct = { type : "Instance", instanceVariables : {
+		initial_figure : _figure,
+		initial_figure_amount : _amount,
+		layout_width : default_card_struct.width,
+		layout_height : default_card_struct.height
+	},
 	instanceObjectIndex : O_Deck_figure_place, instanceOffsetX : 0, instanceOffsetY : 0,
 	instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, 
-	instanceAngle : 0, elementId : 43, flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, 
-	flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, 
+	instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1,
+	flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0,
 	elementOrder : 10 }
 	return deep_copy(_struct)
 }
@@ -231,19 +242,22 @@ create_figure_buttons = function(_figures) {
 add_figure_button_ui_panel = function(_figure) {
 	var _struct = deep_copy(default_figure_button_struct);
 	_struct.name = "figureButtonElement" + string(_figure);
-	array_push(_struct.layerElements, figure_button_instance_create());
+	array_push(_struct.layerElements, figure_button_instance_create(_figure));
 	var _panel = flexpanel_create_node(_struct);
 	
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel), _panel, 0);
-	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure);
 }
 
-figure_button_instance_create = function() {
-	var _struct = { type : "Instance", instanceVariables : {  }, 
+figure_button_instance_create = function(_figure) {
+	var _struct = { type : "Instance", instanceVariables : {
+		initial_figure : _figure,
+		layout_width : default_figure_button_struct.width,
+		layout_height : default_figure_button_struct.height
+	},
 		instanceObjectIndex : O_figureSelectionButton, instanceOffsetX : 0, instanceOffsetY : 0, 
 		instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, 
-		instanceColour : -1, instanceAngle : 0, elementId : 44, flexVisible : 1, flexAnchor : "MiddleCentre", 
-		flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0, 
+		instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre",
+		flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0,
 		flexStretchKeepAspect : 0, elementOrder : 20 }
 	return deep_copy(_struct)
 }
@@ -266,17 +280,21 @@ add_deck_button_ui_panel = function(_deck_id) {
 	var _struct = deep_copy(default_deck_button_struct);
 	var _name = get_deck_from_id(_deck_id).name;
 	_struct.name = "deckButtonElement" + _name;
-	array_push(_struct.layerElements, deck_button_instance_create());
+	array_push(_struct.layerElements, deck_button_instance_create(_deck_id, _name));
 	var _panel = flexpanel_create_node(_struct);
 	
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, decks_panel), _panel, 0);
-	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_deck(_deck_id, _name);
 }
 
-deck_button_instance_create = function() {
-	var _struct = { type : "Instance", instanceVariables : {  }, 
+deck_button_instance_create = function(_deck_id, _name) {
+	var _struct = { type : "Instance", instanceVariables : {
+		initial_deck_id : _deck_id,
+		initial_deck_name : _name,
+		layout_width : default_deck_button_struct.width,
+		layout_height : default_deck_button_struct.height
+	},
 	instanceObjectIndex : O_DeckButton, instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, 
-	instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, 
+	instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1,
 	flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 50 }
 	return deep_copy(_struct)
 }
@@ -314,17 +332,19 @@ add_card_display_ui_panel = function(_figure, _position, _index = 0) {
 	var _name = _figure + string(flexpanel_node_get_num_children(UI_controller.get_element_on_ui(ingame_layer, 
 	card_display_panel[_position])));
 	_struct.name = "cardDisplay" + _name;
-	array_push(_struct.layerElements, card_display_instance_create());
+	array_push(_struct.layerElements, card_display_instance_create(_figure));
 	var _panel = flexpanel_create_node(_struct);
 	flexpanel_node_insert_child(UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]), _panel, _index);
-	flexpanel_node_get_struct(_panel).layerElements[0].instanceId.set_figure(_figure);
 }
 
-card_display_instance_create = function() {
-	var _struct = { type : "Instance", instanceVariables : {}, instanceObjectIndex : O_Card_display, 
+card_display_instance_create = function(_figure) {
+	var _struct = { type : "Instance", instanceVariables : {
+		figure_to_display : _figure,
+		layout_width : default_card_display_struct.width
+	}, instanceObjectIndex : O_Card_display,
 	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, 
-	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, flexVisible : 1, 
-	flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, 
+	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1,
+	flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0,
 	flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 30 }
 	return deep_copy(_struct)
 }
@@ -342,25 +362,27 @@ clear_card_displays = function() {
 	}
 }
 
-default_deck_button_struct = { layerElements : [ ], height : "95%", gapColumn : 0,
-	gapRow : 0, justifyContent : "center", marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0, 
-	name : "Deckel1", clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 94, 
-	paddingBottom : 0, alignItems : "center" } 
+default_deck_button_struct = { layerElements : [ ], flexDirection : 0, height : 90, gapColumn : 0,
+	gapRow : 0, justifyContent : "center", marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0,
+	name : "Deckel1", clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 88,
+	paddingBottom : 0, alignItems : "center" }
 
-default_card_struct = { gapColumn : 0, gapRow : 0, justifyContent : "center", 
-	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0, clipContent : 0, 
-	paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 115, paddingBottom : 0, alignItems : "center", 
+default_card_struct = { gapColumn : 0, gapRow : 0, justifyContent : "center", flexDirection : 0,
+	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0, marginBottom : 0, clipContent : 0,
+	paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 110, paddingBottom : 0, alignItems : "center",
 	name : "Figure1", height : 125 }
-	
-default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justifyContent : "center", 
-	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0, 
-	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 155, 
+
+default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justifyContent : "center", flexDirection : 0,
+	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0,
+	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 138,
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
 
-default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justifyContent : "center", 
-	layerElements: [], marginLeft : 0, marginRight : 0, 
-	marginTop : 0, marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 64, 
+default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justifyContent : "center", flexDirection : 0,
+	layerElements: [], marginLeft : 0, marginRight : 0,
+	marginTop : 0, marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 64,
 	name : "CardDisplay", paddingBottom : 0, alignItems : "center"}
+
+reset_decks_page();
 
 #region server
 server_create_deck = function(_name, _deck) {
@@ -378,7 +400,9 @@ server_delete_deck = function(_deck_id) {
 Server.add_reaction(function(msg)
 {
 	if (msg.type == ServerMessageType.Decks) {
-		O_DeckManager.set_decks(msg.data.decks);
+		try {
+			O_DeckManager.set_decks(msg.data.decks);
+		} catch(e) {}
 		//if array_length(msg.data.decks) != 0 {switch_deck(decks[0].id)}
 	}
 })

@@ -8,6 +8,68 @@ cancel_button = undefined;
 end_turn_button = undefined;
 InGame_layer = "GameRoom";
 
+sync_gui_size = function() {
+	display_set_gui_size(room_width, room_height);
+}
+
+gui_width = function() {
+	return display_get_gui_width();
+}
+
+gui_height = function() {
+	return display_get_gui_height();
+}
+
+gui_mouse_x = function() {
+	return device_mouse_x_to_gui(0);
+}
+
+gui_mouse_y = function() {
+	return device_mouse_y_to_gui(0);
+}
+
+gui_mouse_delta_x = function() {
+	return window_mouse_get_delta_x()*gui_width()/max(1, window_get_width());
+}
+
+gui_mouse_delta_y = function() {
+	return window_mouse_get_delta_y()*gui_height()/max(1, window_get_height());
+}
+
+gui_mouse_in_bbox = function(_left, _top, _right, _bottom) {
+	return point_in_rectangle(gui_mouse_x(), gui_mouse_y(), _left, _top, _right, _bottom);
+}
+
+resolve_flex_size = function(_size, _full_size) {
+	if is_real(_size) {
+		return _size;
+	}
+	if is_string(_size) {
+		return _full_size*real(_size)/100;
+	}
+	if is_struct(_size) {
+		var _unit = 1;
+		var _value = 0;
+		if variable_struct_exists(_size, "unit") {
+			_unit = _size.unit;
+		}
+		if variable_struct_exists(_size, "value") {
+			_value = _size.value;
+		}
+		if _unit == 2 {
+			return _full_size*_value/100;
+		}
+		return _value;
+	}
+	return _full_size;
+}
+
+sync_gui_size();
+
+if os_browser != browser_not_a_browser {
+	browser_input_capture(true);
+}
+
 
 
 enum INGAMEBUTTONFRAMES {
@@ -74,18 +136,15 @@ ui_scissor = function(_layer, _panel) {
 	var _node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel);
 	var _p = flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel));
 	//show_message(_p)
-	var _width, _height;
-	if is_string(_p.width) {_width = window_get_width()*int64(_p.width)/100}
-	else {_width = _p.width}
-	if is_string(_p.height) {_height = window_get_height()*int64(_p.height)/100}
-	else {_height = _p.height}
-	var _x = window_get_width()/2-_width/2;
-	var _y = window_get_height()/2-_height/2;
+	var _width = resolve_flex_size(_p.width, gui_width());
+	var _height = resolve_flex_size(_p.height, gui_height());
+	var _x = gui_width()/2-_width/2;
+	var _y = gui_height()/2-_height/2;
 	if (flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit != 0) {
 		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).value
 		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit
 		if _unit == 2 {
-			_offset = _offset*window_get_height()/100;
+			_offset = _offset*gui_height()/100;
 		}
 		_y -= _offset;
 	}
@@ -178,6 +237,19 @@ get_page_from_array = function(_page) {
 	return menu_layers[_page]
 }
 
+set_layer_visible_safe = function(_layer, _visible) {
+	if is_string(_layer) {
+		if _layer == "HomeMenu" {
+			return;
+		}
+		layer_set_visible(_layer, _visible);
+		return;
+	}
+	if is_real(_layer) and _layer != -1 {
+		layer_set_visible(_layer, _visible);
+	}
+}
+
 clear_menu_layers = function() {
 	for (i = 0; i < array_length(menu_icons_panels); i++) {
 		set_ui_sprite_alpha("MainMenu", menu_icons_panels[i], 1);
@@ -186,12 +258,12 @@ clear_menu_layers = function() {
 		set_ui_sprite_alpha("MainMenu", menu_icons_panels[current_page], 0.45);
 	}
 	for (i = 0; i < array_length(menu_layers); i++) {
-		layer_set_visible(menu_layers[i], 0);
+		set_layer_visible_safe(menu_layers[i], 0);
 	}
 }
 
 turn_on_menu_layer = function() {
-	layer_set_visible(menu_layers[current_page], 1)
+	set_layer_visible_safe(menu_layers[current_page], 1)
 }
 
 #endregion
@@ -211,14 +283,14 @@ clear_ingame_layer = function(_full_clear = 0) {
 }
 
 turn_off_layers = function() {
-	layer_set_visible("HomeMenu", 0);
-	layer_set_visible("MainMenu", 0);
-	layer_set_visible("LoginWindow", 0);
-	layer_set_visible("InviteWindow", 0);
-	layer_set_visible("InviteRoom", 0);
-	layer_set_visible("SearchRoom", 0);
-	layer_set_visible("GameEndRoom", 0);
-	layer_set_visible(InGame_layer, 0);
+	set_layer_visible_safe("HomeMenu", 0);
+	set_layer_visible_safe("MainMenu", 0);
+	set_layer_visible_safe("LoginWindow", 0);
+	set_layer_visible_safe("InviteWindow", 0);
+	set_layer_visible_safe("InviteRoom", 0);
+	set_layer_visible_safe("SearchRoom", 0);
+	set_layer_visible_safe("GameEndRoom", 0);
+	set_layer_visible_safe(InGame_layer, 0);
 	clear_menu_layers();
 }
 
@@ -227,23 +299,23 @@ check_layers = function() {
 	switch room {
 	case R_Main_menu:
 		if O_Server.logged_in{
-			layer_set_visible(layer_get_id("MainMenu"), 1);
+			set_layer_visible_safe("MainMenu", 1);
 			turn_on_menu_layer();
-			if O_Server.invited {layer_set_visible("InviteWindow", 1)}
+			if O_Server.invited {set_layer_visible_safe("InviteWindow", 1)}
 			}
-		else {layer_set_visible("LoginWindow", 1)}
+		else {set_layer_visible_safe("LoginWindow", 1)}
 		break;
 	case R_Invite:
-		layer_set_visible("InviteRoom", 1);
+		set_layer_visible_safe("InviteRoom", 1);
 		break;
 	case R_Game_search:
-		layer_set_visible("SearchRoom", 1);
+		set_layer_visible_safe("SearchRoom", 1);
 		break;
 	case R_Game_end:
-		layer_set_visible("GameEndRoom", 1);
+		set_layer_visible_safe("GameEndRoom", 1);
 		break;
 	case R_Test:
-		layer_set_visible(InGame_layer, 1)
+		set_layer_visible_safe(InGame_layer, 1)
 		break;
 	}
 }

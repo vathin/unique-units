@@ -37,9 +37,9 @@ Scroll = function(_size){
 SetPosition = function(_position){
 	changing_position = 1;
     if(horizontal){
-        percentage = clamp((mouse_x-scroll_top) / (scroll_bottom-scroll_top),0,1);
+        percentage = clamp((UI_controller.gui_mouse_x()-scroll_top) / (scroll_bottom-scroll_top),0,1);
     } else {
-        percentage = clamp((mouse_y-scroll_top) / (scroll_bottom-scroll_top),0,1);
+        percentage = clamp((UI_controller.gui_mouse_y()-scroll_top) / (scroll_bottom-scroll_top),0,1);
     }
 }
 

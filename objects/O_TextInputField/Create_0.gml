@@ -19,3 +19,10 @@ get_text = function() {
 clear_text = function() {
 	text = ""
 }
+
+delete_last_character = function() {
+	var _len = string_length(text);
+	if _len > 0 {
+		text = string_delete(text, _len, 1);
+	}
+}
