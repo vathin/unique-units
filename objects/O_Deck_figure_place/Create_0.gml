@@ -1,6 +1,6 @@
 event_inherited();
 figure_inside = undefined;
-figure_amount = 1;
+figure_amount = 0;
 figure_max_amount = 1;
 image_speed = 0;
 
@@ -60,10 +60,9 @@ end_button_draw = function() {
 }
 
 clear = function() {
-	flexpanel_delete_node(O_DeckManager.card_get_node(figure_inside), 1)
 	figure_inside = undefined;
 	figure_amount = 0;
-	instance_destroy();
+	figure_max_amount = 1;
 }
 
 change_amount = function(_amount = 1) {

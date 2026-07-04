@@ -87,7 +87,7 @@ switch_deck = function(_new_deck_id) {
 		for (var i = 0; i < array_length(_names); i++) {
 			var _figure = _names[i];
 			var _amount = struct_get(selected_deck.units, _figure);
-			add_card_ui_panel(_figure, _amount);
+			card_add(_figure, _amount);
 		}
 	}
 	if get_selected_deck() != undefined {
@@ -101,9 +101,17 @@ reset_decks_page = function() {
 	clear_deck_buttons();
 	create_figure_buttons(available_figures);
 	create_deck_buttons();
+	update_create_button_position();
 	var _display = flexpanel_display.none;
 	if array_length(decks) < deck_limit { _display = flexpanel_display.flex; }
 	flexpanel_node_style_set_display(UI_controller.get_element_on_ui(deck_layer, deck_create_button), _display);
+}
+
+update_create_button_position = function() {
+	var _create_button = UI_controller.get_element_on_ui(deck_layer, deck_create_button);
+	var _deck_list =  UI_controller.get_element_on_ui(deck_layer, decks_panel);
+	flexpanel_node_remove_child(_deck_list, _create_button);
+	flexpanel_node_insert_child(_deck_list, _create_button, array_length(decks))
 }
 
 create_new_deck = function() {
@@ -139,22 +147,40 @@ delete_deck = function(_deck_id) {
 }
 
 deck_button_click = function(_deck_id) {
-	if get_deck_from_id(_deck_id) != undefined {
+	if get_deck_from_id(_deck_id) != "-1" {
 		UI_controller.switch_menu_page(menu_pages.DeckSettingsPage);
 		switch_figure_buttons(get_deck_figures_array(get_deck_from_id(_deck_id).units));
 	}
 }
 
+card_add = function(_figure, _amount) {
+	var _node = find_first_available_card();
+	flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure, _amount);
+	flexpanel_node_style_set_display(_node, 1);
+}
+
 card_click = function(_figure) {
 	var _card = card_get_instance(_figure);
-	if array_length(get_deck_figures_array(get_deck_from_cards())) < max_figures_in_deck
-	and get_selected_deck() != undefined{
+	if array_length(get_deck_figures_array(get_deck_from_cards())) <= max_figures_in_deck
+	and get_selected_deck() != undefined {
 		if _card != undefined {
 			_card.change_amount();
 		}
 		else {
-			add_card_ui_panel(_figure);
+			var _node = find_first_available_card();
+			flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure);
+			flexpanel_node_style_set_display(_node, 1);
 		}
+	}
+}
+
+find_first_available_card = function() {
+	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
+	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_cards_list_node, i);
+		if flexpanel_node_get_struct(node).layerElements[0].instanceId.figure_inside == undefined {
+			return node
+			}
 	}
 }
 
@@ -178,43 +204,20 @@ card_get_node = function(_figure) {
 	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node);
-		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == _figure {
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == _figure 
+		and _struct.layerElements[0].instanceId.figure_amount > 0 {
 			return _node
 		}
 	}
 	return undefined;
 }
 
-add_card_ui_panel = function(_figure, _amount = 1) {
-	var _struct = deep_copy(default_card_struct);
-	_struct.name = "cardelement" + string(_figure);
-	//_struct.nodes[0].layerElements[0].textText = _name;
-	array_push(_struct.layerElements, card_instance_create(_figure, _amount));
-	var _panel = flexpanel_create_node(_struct);
-	
-	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, cards_panel), _panel, 0);
-}
-
-card_instance_create = function(_figure, _amount = 1) {
-	var _struct = { type : "Instance", instanceVariables : {
-		initial_figure : _figure,
-		initial_figure_amount : _amount,
-		layout_width : default_card_struct.width,
-		layout_height : default_card_struct.height
-	},
-	instanceObjectIndex : O_Deck_figure_place, instanceOffsetX : 0, instanceOffsetY : 0,
-	instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, 
-	instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1,
-	flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0,
-	elementOrder : 10 }
-	return deep_copy(_struct)
-}
-
 clear_cards = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_cards_list_node, i);
-		flexpanel_delete_node(node, true);
+		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+		flexpanel_node_style_set_display(node, 0);
 	}
 }
 
@@ -224,7 +227,7 @@ get_deck_from_cards = function() {
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node)
-		if array_length(_struct.layerElements) > 0 {
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.figure_inside != undefined {
 			var _figure = _struct.layerElements[0].instanceId.figure_inside;
 			var _amount = _struct.layerElements[0].instanceId.figure_amount;
 			struct_set(figures_struct, _figure, _amount)
@@ -234,76 +237,63 @@ get_deck_from_cards = function() {
 }
 
 create_figure_buttons = function(_figures) {
-	for (var i = 0; i < array_length(_figures); i++) {
-		add_figure_button_ui_panel(_figures[i])
+	var _figure_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel);
+	var m = min(array_length(_figures), flexpanel_node_get_num_children(_figure_buttons_list_node))
+	for (var i = 0; i < m; i++) {
+		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
+		if flexpanel_node_get_struct(node).layerElements[0].instanceId.get_figure() == undefined {
+			flexpanel_node_style_set_display(node, 1);
+			flexpanel_node_get_struct(node).layerElements[0].instanceId.set_figure(_figures[i])
+		}
 	}
 }
 
-add_figure_button_ui_panel = function(_figure) {
-	var _struct = deep_copy(default_figure_button_struct);
-	_struct.name = "figureButtonElement" + string(_figure);
-	array_push(_struct.layerElements, figure_button_instance_create(_figure));
-	var _panel = flexpanel_create_node(_struct);
-	
-	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel), _panel, 0);
-}
-
-figure_button_instance_create = function(_figure) {
-	var _struct = { type : "Instance", instanceVariables : {
-		initial_figure : _figure,
-		layout_width : default_figure_button_struct.width,
-		layout_height : default_figure_button_struct.height
-	},
-		instanceObjectIndex : O_figureSelectionButton, instanceOffsetX : 0, instanceOffsetY : 0, 
-		instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, 
-		instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre",
-		flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0, flexTileVertical : 0,
-		flexStretchKeepAspect : 0, elementOrder : 20 }
-	return deep_copy(_struct)
-}
 
 clear_figure_buttons = function() {
 	var _figure_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel);
-	for (i = flexpanel_node_get_num_children(_figure_buttons_list_node) - 1; i >= 0; i--) {
+	for (var i = flexpanel_node_get_num_children(_figure_buttons_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
-		flexpanel_delete_node(node, true);
+		var _struct = flexpanel_node_get_struct(node);
+		_struct.layerElements[0].instanceId.clear();
+		flexpanel_node_style_set_display(node, 0);
 	}
 }
 
 create_deck_buttons = function() {
-	for (i = 0; i < array_length(decks); i++) {
-		add_deck_button_ui_panel(decks[i].id)
+	for (var i = 0; i < array_length(decks); i++) {
+		add_deck_button(decks[i].id);
 	}
 }
 
-add_deck_button_ui_panel = function(_deck_id) {
-	var _struct = deep_copy(default_deck_button_struct);
+add_deck_button = function(_deck_id) {
 	var _name = get_deck_from_id(_deck_id).name;
-	_struct.name = "deckButtonElement" + _name;
-	array_push(_struct.layerElements, deck_button_instance_create(_deck_id, _name));
-	var _panel = flexpanel_create_node(_struct);
-	
-	flexpanel_node_insert_child(UI_controller.get_element_on_ui(deck_layer, decks_panel), _panel, 0);
+	var _node = find_first_available_deck_button();
+	if _node != undefined {
+		var _struct = flexpanel_node_get_struct(_node);
+		flexpanel_node_style_set_display(_node, 1);
+		_struct.layerElements[0].instanceId.set_deck(_deck_id, _name);
+	}
 }
 
-deck_button_instance_create = function(_deck_id, _name) {
-	var _struct = { type : "Instance", instanceVariables : {
-		initial_deck_id : _deck_id,
-		initial_deck_name : _name,
-		layout_width : default_deck_button_struct.width,
-		layout_height : default_deck_button_struct.height
-	},
-	instanceObjectIndex : O_DeckButton, instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, 
-	instanceScaleY : 1, instanceImageSpeed : 1, instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1, flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1,
-	flexTileHorizontal : 0, flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 50 }
-	return deep_copy(_struct)
+find_first_available_deck_button = function() {
+	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel)
+	for (i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
+		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
+		if flexpanel_node_get_struct(node).layerElements[0].instanceId != menu_button and flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
+			return node
+			}
+	}
+	return undefined;
 }
 
 clear_deck_buttons = function() {
 	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel);
 	for (i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
-		if flexpanel_node_get_name(node) != "CreateButton" { flexpanel_delete_node(node, true); }
+		if flexpanel_node_get_name(node) != "CreateButton" {
+			flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+			flexpanel_node_style_set_display(node, 0);
+		}
 	}
 }
 

@@ -13,7 +13,7 @@ begin_button_draw = function() {
 }
 
 get_button_draw_bounds = function(_padding = 0) {
-	var _width = bbox_right - bbox_left + 1;
+	var _width = (bbox_right - bbox_left + 1);
 	var _height = bbox_bottom - bbox_top + 1;
 	if variable_instance_exists(id, "layout_width") {
 		_width = layout_width;
@@ -55,6 +55,13 @@ end_button_draw = function() {
 		if mouse_check_button(mb_any) {image_alpha = 1}
 	}
 	else if image_alpha < 1 {image_alpha = lerp(image_alpha, 1, 0.14)}
+}
+
+clear = function() {deck_id = -1; deck_name = undefined}
+
+is_available = function() {
+	if deck_id == "-1" and deck_name == undefined {return true}
+	return false;
 }
 
 set_deck = function(_id, _name) {

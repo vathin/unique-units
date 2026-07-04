@@ -56,9 +56,17 @@ end_button_draw = function() {
 	else if image_alpha < 1 {image_alpha = lerp(image_alpha, 1, 0.14)}
 }
 
+clear = function() {
+	figure_inside = undefined
+}
+
 set_figure = function(_figure) {
 	figure_inside = _figure;
 	sprite_index = Behaviours.get_logo_sprite(_figure)
+}
+
+get_figure = function() {
+	return figure_inside
 }
 
 if variable_instance_exists(id, "initial_figure") {
