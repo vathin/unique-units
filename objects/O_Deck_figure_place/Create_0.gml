@@ -70,9 +70,9 @@ change_amount = function(_amount = 1) {
 	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) {
 		figure_amount = Behaviours.get_max_deck_amount(figure_inside);
 	}
-	if figure_amount < 1 {
+	/*if figure_amount < 1 {
 		clear();
-	}
+	}*/
 }
 
 set_figure = function(_figure, _amount = 1) {
@@ -84,6 +84,10 @@ set_figure = function(_figure, _amount = 1) {
 
 get_figure = function() {
 	return figure_inside
+}
+
+get_amount = function() {
+	return figure_amount
 }
 
 cancel = function() {

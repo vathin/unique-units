@@ -156,7 +156,7 @@ deck_button_click = function(_deck_id) {
 card_add = function(_figure, _amount) {
 	var _node = find_first_available_card();
 	flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure, _amount);
-	flexpanel_node_style_set_display(_node, 1);
+	flexpanel_node_style_set_display(_node, 0);
 }
 
 card_click = function(_figure) {
@@ -169,7 +169,7 @@ card_click = function(_figure) {
 		else {
 			var _node = find_first_available_card();
 			flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure);
-			flexpanel_node_style_set_display(_node, 1);
+			flexpanel_node_style_set_display(_node, 0);
 		}
 	}
 }
@@ -178,7 +178,8 @@ find_first_available_card = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_cards_list_node, i);
-		if flexpanel_node_get_struct(node).layerElements[0].instanceId.figure_inside == undefined {
+		var _instance = flexpanel_node_get_struct(node).layerElements[0].instanceId
+		if _instance.figure_inside == undefined {
 			return node
 			}
 	}
@@ -188,6 +189,10 @@ card_delete_click = function(_figure) {
 	var _card = card_get_instance(_figure);
 	if _card != undefined and get_selected_deck() != undefined{
 		_card.change_amount(-1);
+	}
+	if _card.get_amount() <= 0 {
+		flexpanel_node_style_set_display(card_get_node_with_0(_figure), 1);
+		_card.clear();
 	}
 }
 
@@ -212,12 +217,24 @@ card_get_node = function(_figure) {
 	return undefined;
 }
 
+card_get_node_with_0 = function(_figure) {
+	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
+	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+		var _node = flexpanel_node_get_child(_cards_list_node, i);
+		var _struct = flexpanel_node_get_struct(_node);
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == _figure {
+			return _node
+		}
+	}
+	return undefined;
+}
+
 clear_cards = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
 	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_cards_list_node, i);
 		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
-		flexpanel_node_style_set_display(node, 0);
+		flexpanel_node_style_set_display(node, 1);
 	}
 }
 
@@ -242,8 +259,8 @@ create_figure_buttons = function(_figures) {
 	for (var i = 0; i < m; i++) {
 		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
 		if flexpanel_node_get_struct(node).layerElements[0].instanceId.get_figure() == undefined {
-			flexpanel_node_style_set_display(node, 1);
-			flexpanel_node_get_struct(node).layerElements[0].instanceId.set_figure(_figures[i])
+			flexpanel_node_style_set_display(node, 0);
+			flexpanel_node_get_struct(node).layerElements[0].instanceId.set_figure(_figures[i]);
 		}
 	}
 }
@@ -255,7 +272,7 @@ clear_figure_buttons = function() {
 		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
 		var _struct = flexpanel_node_get_struct(node);
 		_struct.layerElements[0].instanceId.clear();
-		flexpanel_node_style_set_display(node, 0);
+		flexpanel_node_style_set_display(node, 1);
 	}
 }
 
@@ -270,18 +287,20 @@ add_deck_button = function(_deck_id) {
 	var _node = find_first_available_deck_button();
 	if _node != undefined {
 		var _struct = flexpanel_node_get_struct(_node);
-		flexpanel_node_style_set_display(_node, 1);
+		flexpanel_node_style_set_display(_node, 0);
 		_struct.layerElements[0].instanceId.set_deck(_deck_id, _name);
 	}
 }
 
 find_first_available_deck_button = function() {
-	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel)
-	for (i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
+	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel);
+	for (i = 0; i < flexpanel_node_get_num_children(_deck_buttons_list_node); i++) {
 		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
-		if flexpanel_node_get_struct(node).layerElements[0].instanceId != menu_button and flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
-			return node
+		if flexpanel_node_get_name(node) != "CreateButton" {
+			if flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
+				return node;
 			}
+		}  
 	}
 	return undefined;
 }
@@ -290,9 +309,9 @@ clear_deck_buttons = function() {
 	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel);
 	for (i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
-		if flexpanel_node_get_name(node) != "CreateButton" {
+		if flexpanel_node_get_struct(node).name != "CreateButton" {
 			flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
-			flexpanel_node_style_set_display(node, 0);
+			flexpanel_node_style_set_display(node, 1);
 		}
 	}
 }
@@ -372,7 +391,7 @@ default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justi
 	marginTop : 0, marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 64,
 	name : "CardDisplay", paddingBottom : 0, alignItems : "center"}
 
-reset_decks_page();
+//reset_decks_page();
 
 #region server
 server_create_deck = function(_name, _deck) {
@@ -391,7 +410,8 @@ Server.add_reaction(function(msg)
 {
 	if (msg.type == ServerMessageType.Decks) {
 		try {
-			O_DeckManager.set_decks(msg.data.decks);
+			set_decks(msg.data.decks);
+			reset_decks_page();
 		} catch(e) {}
 		//if array_length(msg.data.decks) != 0 {switch_deck(decks[0].id)}
 	}

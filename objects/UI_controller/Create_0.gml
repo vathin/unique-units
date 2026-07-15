@@ -136,15 +136,33 @@ ui_scissor = function(_layer, _panel) {
 	var _node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel);
 	var _p = flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel));
 	//show_message(_p)
-	var _width = resolve_flex_size(_p.width, gui_width());
-	var _height = resolve_flex_size(_p.height, gui_height());
-	var _x = gui_width()/2-_width/2;
-	var _y = gui_height()/2-_height/2;
+	var _gui_width = window_get_width();
+	var _gui_height = gui_height()//window_get_height();
+	var _width = resolve_flex_size(_p.width, _gui_width);
+	var _height = resolve_flex_size(_p.height, _gui_height);
+	var _x = _gui_width/2-_width/2;
+	var _y = _gui_height/2-_height/2;
 	if (flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit != 0) {
 		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).value
 		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit
 		if _unit == 2 {
-			_offset = _offset*gui_height()/100;
+			_offset = _offset*_gui_height/100;
+		}
+		_y -= _offset;
+	}
+	if (flexpanel_node_style_get_position(_node, flexpanel_edge.right).unit != 0) {
+		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.right).value
+		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.right).unit
+		if _unit == 2 {
+			_offset = _offset*_gui_width/100;
+		}
+		_x -= _offset;
+	}
+	if (flexpanel_node_style_get_position(_node, flexpanel_edge.top).unit != 0) {
+		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.top).value
+		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.top).unit
+		if _unit == 2 {
+			_offset = _offset*_gui_height/100;
 		}
 		_y -= _offset;
 	}

@@ -118,6 +118,7 @@
     {"id":{"name":"O_MoveInputController","path":"objects/O_MoveInputController/O_MoveInputController.yy",},},
     {"id":{"name":"O_OverturnFigureAnimation","path":"objects/O_OverturnFigureAnimation/O_OverturnFigureAnimation.yy",},},
     {"id":{"name":"O_PageButton","path":"objects/O_PageButton/O_PageButton.yy",},},
+    {"id":{"name":"O_ScissorController","path":"objects/O_ScissorController/O_ScissorController.yy",},},
     {"id":{"name":"O_Server","path":"objects/O_Server/O_Server.yy",},},
     {"id":{"name":"O_Side_button","path":"objects/O_Side_button/O_Side_button.yy",},},
     {"id":{"name":"O_SummonButton","path":"objects/O_SummonButton/O_SummonButton.yy",},},

@@ -83,6 +83,7 @@
     {"name":"O_MoveFigureAnimation","order":1,"path":"objects/O_MoveFigureAnimation/O_MoveFigureAnimation.yy",},
     {"name":"O_OverturnFigureAnimation","order":2,"path":"objects/O_OverturnFigureAnimation/O_OverturnFigureAnimation.yy",},
     {"name":"O_PageButton","order":4,"path":"objects/O_PageButton/O_PageButton.yy",},
+    {"name":"O_ScissorController","order":13,"path":"objects/O_ScissorController/O_ScissorController.yy",},
     {"name":"O_Server","order":9,"path":"objects/O_Server/O_Server.yy",},
     {"name":"O_Side_button","order":1,"path":"objects/O_Side_button/O_Side_button.yy",},
     {"name":"O_SummonButton","order":2,"path":"objects/O_SummonButton/O_SummonButton.yy",},

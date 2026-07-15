@@ -1,6 +1,6 @@
 event_inherited();
 destroy_self = function() {instance_destroy()}
-deck_name = "";
+deck_name = undefined;
 
 begin_button_draw = function() {
 	if in_animation {
