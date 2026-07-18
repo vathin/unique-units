@@ -95,8 +95,8 @@ function GameClass() constructor{
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
 		in_match = 1;
-		if global.turn_owner == O_Server._id {send_deck(0)}
 		O_DeckManager.clear_card_displays();
+		if global.turn_owner == O_Server._id {send_deck(0)}
 	}
 	
 	end_game = function() {

@@ -45,6 +45,7 @@
     {"$GMObjectProperty":"v2","%Name":"controlled_element","filters":[],"listItems":[],"multiselect":false,"name":"controlled_element","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"\"default\"","varType":2,},
     {"$GMObjectProperty":"v2","%Name":"controlled_el_layer","filters":[],"listItems":[],"multiselect":false,"name":"controlled_el_layer","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"\"default\"","varType":2,},
     {"$GMObjectProperty":"v2","%Name":"keep_vertical","filters":[],"listItems":[],"multiselect":false,"name":"keep_vertical","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"False","varType":3,},
+    {"$GMObjectProperty":"v2","%Name":"keep_horizontal","filters":[],"listItems":[],"multiselect":false,"name":"keep_horizontal","rangeEnabled":false,"rangeMax":10.0,"rangeMin":0.0,"resourceType":"GMObjectProperty","resourceVersion":"2.0","value":"False","varType":3,},
   ],
   "resourceType":"GMObject",
   "resourceVersion":"2.0",

@@ -172,6 +172,10 @@ card_click = function(_figure) {
 			flexpanel_node_style_set_display(_node, 0);
 		}
 	}
+	else {
+		return false
+	}
+	return true
 }
 
 find_first_available_card = function() {
@@ -320,7 +324,19 @@ create_card_displays = function(_player_id, _position) {
 	_figures = Game.user_data.load(_player_id).player_cards;
 	for (var i = 0; i < array_length(_figures); i++) {
 		var _index = find_card_insert_index(Behaviours.get_rarity(_figures[i]), _position);
-		add_card_display_ui_panel(_figures[i], _position, _index);
+		add_card_display(_figures[i], _position, _index);
+	}
+}
+
+add_card_display = function(_figure, _position, _index) {
+	var _node = find_first_available_card_display(_position);
+	if _node != undefined {
+		var _struct = flexpanel_node_get_struct(_node);
+		flexpanel_node_style_set_display(_node, 0);
+		flexpanel_node_remove_child(UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]), _node)
+		_struct.layerElements[0].instanceId.set_figure(_figure);
+		flexpanel_node_insert_child(UI_controller.get_element_on_ui(ingame_layer, 
+	card_display_panel[_position]), _node, _index);
 	}
 }
 
@@ -336,38 +352,31 @@ find_card_insert_index = function(_rarity, _position) {
 	return 0
 }
 
-add_card_display_ui_panel = function(_figure, _position, _index = 0) {
-	var _struct = deep_copy(default_card_display_struct);
-	var _name = _figure + string(flexpanel_node_get_num_children(UI_controller.get_element_on_ui(ingame_layer, 
-	card_display_panel[_position])));
-	_struct.name = "cardDisplay" + _name;
-	array_push(_struct.layerElements, card_display_instance_create(_figure));
-	var _panel = flexpanel_create_node(_struct);
-	flexpanel_node_insert_child(UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]), _panel, _index);
-}
-
-card_display_instance_create = function(_figure) {
-	var _struct = { type : "Instance", instanceVariables : {
-		figure_to_display : _figure,
-		layout_width : default_card_display_struct.width
-	}, instanceObjectIndex : O_Card_display,
-	instanceOffsetX : 0, instanceOffsetY : 0, instanceScaleX : 1, instanceScaleY : 1, instanceImageSpeed : 1, 
-	instanceImageIndex : 0, instanceColour : -1, instanceAngle : 0, elementId : allocate_dynamic_element_id(), flexVisible : 1,
-	flexAnchor : "MiddleCentre", flexStretchWidth : 1, flexStretchHeight : 1, flexTileHorizontal : 0,
-	flexTileVertical : 0, flexStretchKeepAspect : 0, elementOrder : 30 }
-	return deep_copy(_struct)
+find_first_available_card_display = function(_position) {
+	var _card_displays_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]);
+	for (i = 0; i < flexpanel_node_get_num_children(_card_displays_list_node); i++) {
+		var node = flexpanel_node_get_child(_card_displays_list_node, i);
+		if flexpanel_node_get_name(node) != "CreateButton" {
+			if flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
+				return node;
+			}
+		}  
+	}
+	return undefined;
 }
 
 clear_card_displays = function() {
 	var _card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[0]);
 	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_card_display_list_node, i);
-		if flexpanel_node_get_name(node) != "CreateButton" { flexpanel_delete_node(node, true); }
+		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+		flexpanel_node_style_set_display(node, 1);
 	}
 	_card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[1]);
 	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_card_display_list_node, i);
-		if flexpanel_node_get_name(node) != "CreateButton" { flexpanel_delete_node(node, true); }
+		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+		flexpanel_node_style_set_display(node, 1);
 	}
 }
 

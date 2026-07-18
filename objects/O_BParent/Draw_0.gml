@@ -1,3 +1,5 @@
+if image_yscale < 0 {image_yscale = -image_yscale}
+if image_xscale < 0 {image_xscale = -image_xscale}
 if in_animation {
 	image_blend = make_colour_rgb(255,
 	255/cancel_animation_length*cancel_animation_frame,

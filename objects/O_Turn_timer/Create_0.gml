@@ -6,7 +6,7 @@ all_time = undefined;
 current_frame = 0;
 active = 0;
 using_time_bank = false;
-draw_x = 815;
+draw_x = window_get_width()/2;
 draw_y = 190;
 player_out_of_time = undefined;
 

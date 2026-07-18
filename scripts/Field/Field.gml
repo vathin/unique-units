@@ -1,14 +1,16 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Field() constructor{
+	window_width = window_get_width();
+	window_height = window_get_height();
 	field_height = 6;
 	field_width = 6;
-	scale = 0.75;
+	scale = 0.7;
 	size = 80*scale;
 	map_sprite = Maps_list.get_map_sprite(global.map);
 	map_scale = size*field_width/2126; //0,1467545
-	start_x = (room_width/2) - size*2.5;
-	start_y = (room_height/2) - size*3;
+	start_x = window_width/2 - size*2.5//(room_width/2) - size*2.5;
+	start_y = window_height/2 - size*3//(room_height/2) - size*3;
 	field_x_size = size*field_width;
 	field_y_size = size*field_width;
 	selected_cell = undefined;
@@ -93,7 +95,7 @@ function Field() constructor{
 	}
 	
 	TEST_draw_cells = function() {
-		draw_sprite_ext(map_sprite, 0, room_width/2, room_height/2-size/2, map_scale, map_scale, 180*(Game.role == "guest"), c_white, 1);
+		draw_sprite_ext(map_sprite, 0, window_width/2, window_height/2-size/2, map_scale, map_scale, 180*(Game.role == "guest"), c_white, 1);
 		up_figures = [];
 		if Game.game_loop_controller.have_action() {
 			Game.game_loop_controller.action.draw();

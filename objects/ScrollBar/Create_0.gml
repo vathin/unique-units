@@ -4,7 +4,7 @@ bar_height = sprite_height;
 scroll_speed = 0;
 changing_position = false;
 move_edge = flexpanel_edge.top;
-if(bar_width > bar_height and !keep_vertical){
+if(bar_width > bar_height and !keep_vertical) or keep_horizontal{
     horizontal = true;
 	move_edge = flexpanel_edge.left
 }
