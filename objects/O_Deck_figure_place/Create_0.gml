@@ -66,6 +66,11 @@ clear = function() {
 }
 
 change_amount = function(_amount = 1) {
+	if !Behaviours.has(figure_inside) {
+		show_debug_message("Deck figure place: change_amount skipped unknown figure: " + string(figure_inside));
+		clear();
+		return;
+	}
 	figure_amount += _amount;
 	if figure_amount > Behaviours.get_max_deck_amount(figure_inside) {
 		figure_amount = Behaviours.get_max_deck_amount(figure_inside);
@@ -76,6 +81,11 @@ change_amount = function(_amount = 1) {
 }
 
 set_figure = function(_figure, _amount = 1) {
+	if !Behaviours.has(_figure) {
+		show_debug_message("Deck figure place: set_figure skipped unknown figure: " + string(_figure));
+		clear();
+		return;
+	}
 	figure_inside = _figure;
 	figure_amount = _amount;
 	figure_max_amount = Behaviours.get_max_deck_amount(figure_inside);

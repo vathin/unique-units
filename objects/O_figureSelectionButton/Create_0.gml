@@ -61,6 +61,11 @@ clear = function() {
 }
 
 set_figure = function(_figure) {
+	if !Behaviours.has(_figure) {
+		show_debug_message("Figure selection button: set_figure skipped unknown figure: " + string(_figure));
+		clear();
+		return;
+	}
 	figure_inside = _figure;
 	sprite_index = Behaviours.get_logo_sprite(_figure)
 }

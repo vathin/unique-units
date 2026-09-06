@@ -4,12 +4,17 @@ rarity = 0;
 figure_to_display = undefined
 
 set_figure = function(_new_figure) {
+	if !Behaviours.has(_new_figure) {
+		show_debug_message("Card display: set_figure skipped unknown figure: " + string(_new_figure));
+		clear();
+		return;
+	}
 	figure_to_display = _new_figure
 	update_sprite();
 }
 
 update_sprite = function() {
-	if figure_to_display != "" {
+	if Behaviours.has(figure_to_display) {
 		sprite_index = Behaviours.get_card_sprite(figure_to_display);
 		rarity = Behaviours.get_rarity(figure_to_display);
 	}

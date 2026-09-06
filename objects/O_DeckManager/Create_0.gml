@@ -29,16 +29,47 @@ get_selected_deck = function() {
 	return selected_deck
 }
 
+get_first_deck_id = function() {
+	for (var i = 0; i < array_length(decks); i++) {
+		if is_struct(decks[i]) {
+			if variable_struct_exists(decks[i], "id") {
+				return decks[i].id;
+			}
+		}
+	}
+	return undefined;
+}
+
 set_decks = function(_decks) {
-	var _index = undefined;
+	var _selected_id = undefined;
 	if get_selected_deck() != undefined {
-		_index = get_deck_index(selected_deck.id);
+		_selected_id = selected_deck.id;
+	}
+	if !is_array(_decks) {
+		show_debug_message("DeckManager: set_decks received non-array decks");
+		_decks = [];
 	}
 	decks = _decks;
 	reset_decks_page();
-	if array_length(decks) == 0 {create_new_deck()}
-	if _index != undefined and array_length(decks) > _index {switch_deck(decks[_index].id)}
-	else {switch_deck(decks[0].id)}
+	if array_length(decks) == 0 {
+		selected_deck = {id: undefined};
+		set_deck_name_text("");
+		create_new_deck();
+		return;
+	}
+	if _selected_id != undefined and get_deck_from_id(_selected_id) != undefined {
+		switch_deck(_selected_id);
+	}
+	else {
+		var _first_deck_id = get_first_deck_id();
+		if _first_deck_id != undefined {
+			switch_deck(_first_deck_id);
+		}
+		else {
+			selected_deck = {id: undefined};
+			set_deck_name_text("");
+		}
+	}
 }
 
 get_deck_from_id = function(_deck_id) {
@@ -52,19 +83,46 @@ get_deck_from_id = function(_deck_id) {
 get_deck_index = function(_deck_id) {
 	for (var i = 0; i < array_length(decks); i++) {
 		var _deck = decks[i];
-		if _deck.id == _deck_id {
-			return i
+		if is_struct(_deck) {
+			if variable_struct_exists(_deck, "id") {
+				if _deck.id == _deck_id {
+					return i
+				}
+			}
 		}
 	}
 	return undefined;
 }
 
 get_deck_figures_array = function(_deck_units) {
+	if !is_struct(_deck_units) {
+		show_debug_message("DeckManager: deck units is not a struct");
+		return [];
+	}
 	var _names = struct_get_names(_deck_units);
 	var _array = [];
 	for (var i = 0; i < array_length(_names); i++) {
-		for (var m = 0; m < struct_get(_deck_units, _names[i]); m++) {
-			array_push(_array, _names[i]);
+		var _figure = _names[i];
+		if !Behaviours.has(_figure) {
+			show_debug_message("DeckManager: skipped unknown figure in deck units: " + string(_figure));
+			continue;
+		}
+		var _amount = struct_get(_deck_units, _figure);
+		if (is_undefined(_amount)) {
+			show_debug_message("DeckManager: skipped undefined amount for figure: " + string(_figure));
+			continue;
+		}
+		if !is_real(_amount) {
+			show_debug_message("DeckManager: skipped invalid amount for figure: " + string(_figure) + ", amount=" + string(_amount));
+			continue;
+		}
+		if _amount <= 0 {
+			show_debug_message("DeckManager: skipped invalid amount for figure: " + string(_figure) + ", amount=" + string(_amount));
+			continue;
+		}
+		_amount = clamp(floor(_amount), 1, Behaviours.get_max_deck_amount(_figure));
+		for (var m = 0; m < _amount; m++) {
+			array_push(_array, _figure);
 		}
 	}
 	if array_length(_array) > 20 {array_resize(_array, 20)}
@@ -72,26 +130,74 @@ get_deck_figures_array = function(_deck_units) {
 }
 
 get_selected_deck_array = function() {
+	if get_selected_deck() == undefined {return []}
+	if !variable_struct_exists(selected_deck, "units") {return []}
 	return get_deck_figures_array(selected_deck.units)
 }
 
 get_selected_deck_names_list = function() {
+	if get_selected_deck() == undefined {return []}
+	if !variable_struct_exists(selected_deck, "units") {return []}
+	if !is_struct(selected_deck.units) {return []}
 	return struct_get_names(selected_deck.units)
 }
 
 switch_deck = function(_new_deck_id) {
 	reset_decks_page();
-	if get_deck_from_id(_new_deck_id) != undefined {
-		selected_deck = get_deck_from_id(_new_deck_id);
+	var _deck = get_deck_from_id(_new_deck_id);
+	if _deck != undefined {
+		selected_deck = _deck;
+		if !variable_struct_exists(selected_deck, "name") {
+			selected_deck.name = "";
+		}
+		if !variable_struct_exists(selected_deck, "units") {
+			show_debug_message("DeckManager: selected deck has invalid units: " + string(_new_deck_id));
+			selected_deck.units = {};
+		}
+		if !is_struct(selected_deck.units) {
+			show_debug_message("DeckManager: selected deck has invalid units: " + string(_new_deck_id));
+			selected_deck.units = {};
+		}
 		var _names = struct_get_names(selected_deck.units);
 		for (var i = 0; i < array_length(_names); i++) {
 			var _figure = _names[i];
+			if !Behaviours.has(_figure) {
+				show_debug_message("DeckManager: switch_deck skipped unknown figure: " + string(_figure));
+				continue;
+			}
 			var _amount = struct_get(selected_deck.units, _figure);
+			if !is_real(_amount) {
+				show_debug_message("DeckManager: switch_deck skipped invalid amount for figure: " + string(_figure) + ", amount=" + string(_amount));
+				continue;
+			}
+			if _amount <= 0 {
+				show_debug_message("DeckManager: switch_deck skipped invalid amount for figure: " + string(_figure) + ", amount=" + string(_amount));
+				continue;
+			}
 			card_add(_figure, _amount);
 		}
 	}
+	else {
+		show_debug_message("DeckManager: switch_deck failed, unknown deck id: " + string(_new_deck_id));
+		selected_deck = {id: undefined};
+	}
 	if get_selected_deck() != undefined {
-		flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, deck_name_panel)).layerElements[0].instanceId.set_text(selected_deck.name);
+		set_deck_name_text(selected_deck.name);
+	}
+	else {
+		set_deck_name_text("");
+	}
+}
+
+set_deck_name_text = function(_name) {
+	var _node = UI_controller.get_element_on_ui(deck_layer, deck_name_panel);
+	if _node == undefined {return;}
+	var _struct = flexpanel_node_get_struct(_node);
+	if array_length(_struct.layerElements) > 0 {
+		var _field = _struct.layerElements[0].instanceId;
+		if variable_instance_exists(_field, "set_text") {
+			_field.set_text(string(_name));
+		}
 	}
 }
 
@@ -104,12 +210,16 @@ reset_decks_page = function() {
 	update_create_button_position();
 	var _display = flexpanel_display.none;
 	if array_length(decks) < deck_limit { _display = flexpanel_display.flex; }
-	flexpanel_node_style_set_display(UI_controller.get_element_on_ui(deck_layer, deck_create_button), _display);
+	var _create_button = UI_controller.get_element_on_ui(deck_layer, deck_create_button);
+	if _create_button != undefined {
+		flexpanel_node_style_set_display(_create_button, _display);
+	}
 }
 
 update_create_button_position = function() {
 	var _create_button = UI_controller.get_element_on_ui(deck_layer, deck_create_button);
 	var _deck_list =  UI_controller.get_element_on_ui(deck_layer, decks_panel);
+	if _create_button == undefined or _deck_list == undefined {return;}
 	flexpanel_node_remove_child(_deck_list, _create_button);
 	flexpanel_node_insert_child(_deck_list, _create_button, array_length(decks))
 }
@@ -119,6 +229,9 @@ create_new_deck = function() {
 		var _name = "Deck" + string(array_length(decks)+1);
 		server_create_deck(_name, default_deck.units);
 	}
+	else {
+		show_debug_message("DeckManager: create_new_deck skipped, deck limit reached");
+	}
 }
 
 update_deck = function() {
@@ -127,47 +240,95 @@ update_deck = function() {
 		selected_deck.name = get_name_from_textfield();
 		server_update_deck(selected_deck.id, selected_deck.name, selected_deck.units);
 	}
+	else {
+		show_debug_message("DeckManager: update_deck skipped, no selected deck");
+	}
 }
 
 get_name_from_textfield = function() {
-	return flexpanel_node_get_struct(UI_controller.get_element_on_ui(deck_layer, deck_name_panel)).
-	layerElements[0].instanceId.get_text();
+	var _node = UI_controller.get_element_on_ui(deck_layer, deck_name_panel);
+	if _node == undefined {return ""}
+	var _struct = flexpanel_node_get_struct(_node);
+	if array_length(_struct.layerElements) > 0 {
+		var _field = _struct.layerElements[0].instanceId;
+		if variable_instance_exists(_field, "get_text") {
+			return _field.get_text();
+		}
+	}
+	return "";
 }
 
 delete_deck = function(_deck_id) {
 	if get_selected_deck() != undefined {
 		var _to_delete = get_deck_index(_deck_id);
 		if _to_delete != undefined {
-			array_delete(decks, i, 1);
+			array_delete(decks, _to_delete, 1);
 			server_delete_deck(_deck_id);
+		}
+		else {
+			show_debug_message("DeckManager: delete_deck skipped, unknown deck id: " + string(_deck_id));
+			return false;
 		}
 		selected_deck = {id: undefined}
 		reset_decks_page();
+		var _first_deck_id = get_first_deck_id();
+		if _first_deck_id != undefined {
+			switch_deck(_first_deck_id);
+		}
+		else {
+			set_deck_name_text("");
+		}
+	}
+	else {
+		show_debug_message("DeckManager: delete_deck skipped, no selected deck");
 	}
 }
 
 deck_button_click = function(_deck_id) {
-	if get_deck_from_id(_deck_id) != "-1" {
+	var _deck = get_deck_from_id(_deck_id);
+	if _deck != undefined {
 		UI_controller.switch_menu_page(menu_pages.DeckSettingsPage);
-		switch_figure_buttons(get_deck_figures_array(get_deck_from_id(_deck_id).units));
+		switch_deck(_deck_id);
 	}
 }
 
 card_add = function(_figure, _amount) {
+	if !Behaviours.has(_figure) {
+		show_debug_message("DeckManager: card_add skipped unknown figure: " + string(_figure));
+		return false;
+	}
+	if !is_real(_amount) {
+		show_debug_message("DeckManager: card_add fixed invalid amount for figure: " + string(_figure) + ", amount=" + string(_amount));
+		_amount = 1;
+	}
+	_amount = clamp(floor(_amount), 1, Behaviours.get_max_deck_amount(_figure));
 	var _node = find_first_available_card();
+	if _node == undefined {
+		show_debug_message("DeckManager: card_add failed, no free card slot for: " + string(_figure));
+		return false;
+	}
 	flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure, _amount);
 	flexpanel_node_style_set_display(_node, 0);
+	return true;
 }
 
 card_click = function(_figure) {
+	if !Behaviours.has(_figure) {
+		show_debug_message("DeckManager: card_click skipped unknown figure: " + string(_figure));
+		return false;
+	}
 	var _card = card_get_instance(_figure);
-	if array_length(get_deck_figures_array(get_deck_from_cards())) <= max_figures_in_deck
+	if array_length(get_deck_figures_array(get_deck_from_cards())) < max_figures_in_deck
 	and get_selected_deck() != undefined {
 		if _card != undefined {
 			_card.change_amount();
 		}
 		else {
 			var _node = find_first_available_card();
+			if _node == undefined {
+				show_debug_message("DeckManager: card_click failed, no free card slot for: " + string(_figure));
+				return false;
+			}
 			flexpanel_node_get_struct(_node).layerElements[0].instanceId.set_figure(_figure);
 			flexpanel_node_style_set_display(_node, 0);
 		}
@@ -180,23 +341,34 @@ card_click = function(_figure) {
 
 find_first_available_card = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
-	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+	if _cards_list_node == undefined {return undefined}
+	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_cards_list_node, i);
-		var _instance = flexpanel_node_get_struct(node).layerElements[0].instanceId
+		var _struct = flexpanel_node_get_struct(node);
+		if array_length(_struct.layerElements) <= 0 {continue;}
+		var _instance = _struct.layerElements[0].instanceId
 		if _instance.figure_inside == undefined {
 			return node
 			}
 	}
+	return undefined;
 }
 
 card_delete_click = function(_figure) {
-	var _card = card_get_instance(_figure);
-	if _card != undefined and get_selected_deck() != undefined{
-		_card.change_amount(-1);
+	if !Behaviours.has(_figure) {
+		show_debug_message("DeckManager: card_delete_click skipped unknown figure: " + string(_figure));
+		return false;
 	}
-	if _card.get_amount() <= 0 {
-		flexpanel_node_style_set_display(card_get_node_with_0(_figure), 1);
-		_card.clear();
+	var _card = card_get_instance(_figure);
+	if _card != undefined and get_selected_deck() != undefined {
+		_card.change_amount(-1);
+		if _card.get_amount() <= 0 {
+			var _node = card_get_node_with_0(_figure);
+			if _node != undefined {
+				flexpanel_node_style_set_display(_node, 1);
+			}
+			_card.clear();
+		}
 	}
 }
 
@@ -210,6 +382,7 @@ card_get_instance = function(_figure) {
 
 card_get_node = function(_figure) {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
+	if _cards_list_node == undefined {return undefined}
 	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node);
@@ -223,6 +396,7 @@ card_get_node = function(_figure) {
 
 card_get_node_with_0 = function(_figure) {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
+	if _cards_list_node == undefined {return undefined}
 	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node);
@@ -235,23 +409,34 @@ card_get_node_with_0 = function(_figure) {
 
 clear_cards = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
-	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+	if _cards_list_node == undefined {return;}
+	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_cards_list_node, i);
-		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+		var _struct = flexpanel_node_get_struct(node);
+		if array_length(_struct.layerElements) > 0 {
+			flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+		}
 		flexpanel_node_style_set_display(node, 1);
 	}
 }
 
 get_deck_from_cards = function() {
 	var _cards_list_node = UI_controller.get_element_on_ui(deck_layer, cards_panel);
-	figures_struct = {};
-	for (i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
+	var figures_struct = {};
+	if _cards_list_node == undefined {return figures_struct;}
+	for (var i = flexpanel_node_get_num_children(_cards_list_node) - 1; i >= 0; i--) {
 		var _node = flexpanel_node_get_child(_cards_list_node, i);
 		var _struct = flexpanel_node_get_struct(_node)
 		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.figure_inside != undefined {
 			var _figure = _struct.layerElements[0].instanceId.figure_inside;
 			var _amount = _struct.layerElements[0].instanceId.figure_amount;
-			struct_set(figures_struct, _figure, _amount)
+			if Behaviours.has(_figure) {
+				if is_real(_amount) {
+					if _amount > 0 {
+						struct_set(figures_struct, _figure, floor(_amount))
+					}
+				}
+			}
 		}
 	}
 	return figures_struct;
@@ -259,12 +444,15 @@ get_deck_from_cards = function() {
 
 create_figure_buttons = function(_figures) {
 	var _figure_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel);
+	if _figure_buttons_list_node == undefined {return;}
 	var m = min(array_length(_figures), flexpanel_node_get_num_children(_figure_buttons_list_node))
 	for (var i = 0; i < m; i++) {
+		if !Behaviours.has(_figures[i]) {continue;}
 		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
-		if flexpanel_node_get_struct(node).layerElements[0].instanceId.get_figure() == undefined {
+		var _struct = flexpanel_node_get_struct(node);
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.get_figure() == undefined {
 			flexpanel_node_style_set_display(node, 0);
-			flexpanel_node_get_struct(node).layerElements[0].instanceId.set_figure(_figures[i]);
+			_struct.layerElements[0].instanceId.set_figure(_figures[i]);
 		}
 	}
 }
@@ -272,36 +460,58 @@ create_figure_buttons = function(_figures) {
 
 clear_figure_buttons = function() {
 	var _figure_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, figure_buttons_panel);
+	if _figure_buttons_list_node == undefined {return;}
 	for (var i = flexpanel_node_get_num_children(_figure_buttons_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_figure_buttons_list_node, i);
 		var _struct = flexpanel_node_get_struct(node);
-		_struct.layerElements[0].instanceId.clear();
+		if array_length(_struct.layerElements) > 0 {
+			_struct.layerElements[0].instanceId.clear();
+		}
 		flexpanel_node_style_set_display(node, 1);
 	}
 }
 
 create_deck_buttons = function() {
 	for (var i = 0; i < array_length(decks); i++) {
-		add_deck_button(decks[i].id);
+		if is_struct(decks[i]) {
+			if variable_struct_exists(decks[i], "id") {
+				add_deck_button(decks[i].id);
+			}
+			else {
+				show_debug_message("DeckManager: skipped invalid deck entry at index " + string(i));
+			}
+		}
+		else {
+			show_debug_message("DeckManager: skipped invalid deck entry at index " + string(i));
+		}
 	}
 }
 
 add_deck_button = function(_deck_id) {
-	var _name = get_deck_from_id(_deck_id).name;
+	var _deck = get_deck_from_id(_deck_id);
+	if _deck == undefined {return false;}
+	var _name = _deck.name;
 	var _node = find_first_available_deck_button();
 	if _node != undefined {
 		var _struct = flexpanel_node_get_struct(_node);
-		flexpanel_node_style_set_display(_node, 0);
-		_struct.layerElements[0].instanceId.set_deck(_deck_id, _name);
+		if array_length(_struct.layerElements) > 0 {
+			flexpanel_node_style_set_display(_node, 0);
+			_struct.layerElements[0].instanceId.set_deck(_deck_id, _name);
+			return true;
+		}
 	}
+	show_debug_message("DeckManager: add_deck_button failed, no free deck slot for: " + string(_deck_id));
+	return false;
 }
 
 find_first_available_deck_button = function() {
 	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel);
-	for (i = 0; i < flexpanel_node_get_num_children(_deck_buttons_list_node); i++) {
+	if _deck_buttons_list_node == undefined {return undefined;}
+	for (var i = 0; i < flexpanel_node_get_num_children(_deck_buttons_list_node); i++) {
 		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
 		if flexpanel_node_get_name(node) != "CreateButton" {
-			if flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
+			var _struct = flexpanel_node_get_struct(node);
+			if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.is_available() {
 				return node;
 			}
 		}  
@@ -311,41 +521,56 @@ find_first_available_deck_button = function() {
 
 clear_deck_buttons = function() {
 	var _deck_buttons_list_node = UI_controller.get_element_on_ui(deck_layer, decks_panel);
-	for (i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
+	if _deck_buttons_list_node == undefined {return;}
+	for (var i = flexpanel_node_get_num_children(_deck_buttons_list_node) - 1; i >= 0; i--) {
 		var node = flexpanel_node_get_child(_deck_buttons_list_node, i);
 		if flexpanel_node_get_struct(node).name != "CreateButton" {
-			flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
+			var _struct = flexpanel_node_get_struct(node);
+			if array_length(_struct.layerElements) > 0 {
+				_struct.layerElements[0].instanceId.clear();
+			}
 			flexpanel_node_style_set_display(node, 1);
 		}
 	}
 }
 
 create_card_displays = function(_player_id, _position) {
-	_figures = Game.user_data.load(_player_id).player_cards;
+	var _data = Game.user_data.load(_player_id);
+	if !is_struct(_data) {return;}
+	if !variable_struct_exists(_data, "player_cards") {return;}
+	if !is_array(_data.player_cards) {return;}
+	var _figures = _data.player_cards;
 	for (var i = 0; i < array_length(_figures); i++) {
+		if !Behaviours.has(_figures[i]) {continue;}
 		var _index = find_card_insert_index(Behaviours.get_rarity(_figures[i]), _position);
 		add_card_display(_figures[i], _position, _index);
 	}
 }
 
 add_card_display = function(_figure, _position, _index) {
+	if !Behaviours.has(_figure) {return false;}
 	var _node = find_first_available_card_display(_position);
 	if _node != undefined {
 		var _struct = flexpanel_node_get_struct(_node);
+		var _parent = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]);
+		if _parent == undefined {return false;}
+		if array_length(_struct.layerElements) <= 0 {return false;}
 		flexpanel_node_style_set_display(_node, 0);
-		flexpanel_node_remove_child(UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]), _node)
+		flexpanel_node_remove_child(_parent, _node)
 		_struct.layerElements[0].instanceId.set_figure(_figure);
-		flexpanel_node_insert_child(UI_controller.get_element_on_ui(ingame_layer, 
-	card_display_panel[_position]), _node, _index);
+		flexpanel_node_insert_child(_parent, _node, _index);
+		return true;
 	}
+	return false;
 }
 
 find_card_insert_index = function(_rarity, _position) {
-	var _length = flexpanel_node_get_num_children(UI_controller.get_element_on_ui(ingame_layer, 
-	card_display_panel[_position]));
+	var _parent = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]);
+	if _parent == undefined {return 0;}
+	var _length = flexpanel_node_get_num_children(_parent);
 	for (var i = 0; i < _length; i++) {
-		if flexpanel_node_get_struct(flexpanel_node_get_child(UI_controller.get_element_on_ui(ingame_layer, 
-		card_display_panel[_position]), i)).layerElements[0].instanceId.rarity <= _rarity {
+		var _struct = flexpanel_node_get_struct(flexpanel_node_get_child(_parent, i));
+		if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.rarity <= _rarity {
 			return i
 			}
 	}
@@ -354,10 +579,12 @@ find_card_insert_index = function(_rarity, _position) {
 
 find_first_available_card_display = function(_position) {
 	var _card_displays_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[_position]);
-	for (i = 0; i < flexpanel_node_get_num_children(_card_displays_list_node); i++) {
+	if _card_displays_list_node == undefined {return undefined;}
+	for (var i = 0; i < flexpanel_node_get_num_children(_card_displays_list_node); i++) {
 		var node = flexpanel_node_get_child(_card_displays_list_node, i);
 		if flexpanel_node_get_name(node) != "CreateButton" {
-			if flexpanel_node_get_struct(node).layerElements[0].instanceId.is_available() {
+			var _struct = flexpanel_node_get_struct(node);
+			if array_length(_struct.layerElements) > 0 and _struct.layerElements[0].instanceId.is_available() {
 				return node;
 			}
 		}  
@@ -367,16 +594,26 @@ find_first_available_card_display = function(_position) {
 
 clear_card_displays = function() {
 	var _card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[0]);
-	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
-		var node = flexpanel_node_get_child(_card_display_list_node, i);
-		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
-		flexpanel_node_style_set_display(node, 1);
+	if _card_display_list_node != undefined {
+		for (var i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
+			var node = flexpanel_node_get_child(_card_display_list_node, i);
+			var _struct = flexpanel_node_get_struct(node);
+			if array_length(_struct.layerElements) > 0 {
+				_struct.layerElements[0].instanceId.clear();
+			}
+			flexpanel_node_style_set_display(node, 1);
+		}
 	}
 	_card_display_list_node = UI_controller.get_element_on_ui(ingame_layer, card_display_panel[1]);
-	for (i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
-		var node = flexpanel_node_get_child(_card_display_list_node, i);
-		flexpanel_node_get_struct(node).layerElements[0].instanceId.clear();
-		flexpanel_node_style_set_display(node, 1);
+	if _card_display_list_node != undefined {
+		for (var i = flexpanel_node_get_num_children(_card_display_list_node) - 1; i >= 0; i--) {
+			var node = flexpanel_node_get_child(_card_display_list_node, i);
+			var _struct = flexpanel_node_get_struct(node);
+			if array_length(_struct.layerElements) > 0 {
+				_struct.layerElements[0].instanceId.clear();
+			}
+			flexpanel_node_style_set_display(node, 1);
+		}
 	}
 }
 
@@ -420,8 +657,9 @@ Server.add_reaction(function(msg)
 	if (msg.type == ServerMessageType.Decks) {
 		try {
 			set_decks(msg.data.decks);
-			reset_decks_page();
-		} catch(e) {}
+		} catch(e) {
+			show_debug_message("DeckManager: failed to handle Decks message: " + string(e));
+		}
 		//if array_length(msg.data.decks) != 0 {switch_deck(decks[0].id)}
 	}
 })

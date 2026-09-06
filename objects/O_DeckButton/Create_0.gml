@@ -57,7 +57,7 @@ end_button_draw = function() {
 	else if image_alpha < 1 {image_alpha = lerp(image_alpha, 1, 0.14)}
 }
 
-clear = function() {deck_id = -1; deck_name = undefined}
+clear = function() {deck_id = "-1"; deck_name = undefined}
 
 is_available = function() {
 	if deck_id == "-1" and deck_name == undefined {return true}
