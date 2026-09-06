@@ -50,11 +50,12 @@ generate_new_game_field = function(w, h, cell_size) {
 }
 
 generate_cards = function() {
-	card_x = 560;
-	for (i = 0; i < array_length(Player_figure_list.player_figure_list); i++) {
-		new_card = instance_create_depth(card_x, 820, 0, O_Card_display);
-		new_card.set_sprite(Behaviours.get_figure_card(Player_figure_list.player_figure_list[i]));
-		card_x += (700 / array_length(Player_figure_list.player_figure_list));
+	var card_x = 560;
+	var _cards = Player_figure_list.player_figure_list;
+	for (var i = 0; i < array_length(_cards); i++) {
+		var new_card = instance_create_depth(card_x, 820, 0, O_Card_display);
+		new_card.set_figure(_cards[i]);
+		card_x += (700 / array_length(_cards));
 	}
 }
 get_cell = function(xcord, ycord) {
@@ -70,15 +71,13 @@ generate_new_game_field(field_width, field_height, size);
 O_Figures_counter.update_turn()
 
 check_clear_move_cells = function(xcord, ycord) {
-	for (i = -1; i <= 1; i++) {
-		for (m = -1; m <= 1; m++) {
-			try {
-				cell = get_cell(xcord + i, ycord + m);
+	for (var i = -1; i <= 1; i++) {
+		for (var m = -1; m <= 1; m++) {
+			var cell = get_cell(xcord + i, ycord + m);
+			if cell != undefined {
 				if !cell.is_filled() {
 					cell.marked = true;
 				}
-			}
-			catch(_exception) {
 			}
 		}
 	}

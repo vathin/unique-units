@@ -528,13 +528,22 @@ switch_login_mode = function() {
 switch_login_mode();
 
 get_login_text = function() {
-	return login_text_field.get_text()
+	if variable_instance_exists(login_text_field, "get_text") {
+		return login_text_field.get_text()
+	}
+	return "";
 }
 get_email_text = function() {
-	return email_text_field.get_text()
+	if variable_instance_exists(email_text_field, "get_text") {
+		return email_text_field.get_text()
+	}
+	return "";
 }
 get_password_text = function() {
-	return password_text_field.get_text()
+	if variable_instance_exists(password_text_field, "get_text") {
+		return password_text_field.get_text()
+	}
+	return "";
 }
 
 switch_menu_page = function(_new_page) {
