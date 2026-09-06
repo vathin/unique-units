@@ -24,6 +24,10 @@ disconnected_callback = function() {
 connected_callback = function() {
 	show_debug_message("connected");
 	connected = true;
+	
+	if (os_browser != browser_not_a_browser && variable_global_exists("vk")) {
+		global.vk.Init();
+	}
 }
 connect_failure_callback = function() {
 	show_debug_message("connect failure!")

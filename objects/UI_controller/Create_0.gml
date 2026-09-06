@@ -7,9 +7,95 @@ main_button = undefined;
 cancel_button = undefined;
 end_turn_button = undefined;
 InGame_layer = "GameRoom";
+profile_avatar_sprite = -1;
+profile_avatar_url = "";
+profile_avatar_loaded = false;
+game_view_width = room_width;
+game_view_height = room_height;
+game_view_base_height = 1000;
+resize_frame = 0;
+resize_ready_frame = 10;
+pending_surface_resize = false;
+saved_login_fields_loaded = false;
+last_scissor_gui = {x: 0, y: 0, w: room_width, h: room_height};
+last_scissor_window = {x: 0, y: 0, w: room_width, h: room_height};
+last_scissor_debug_key = "";
+last_scissor_clear_debug_key = "";
+last_scissor_clear_idle_debug_key = "";
+last_scissor_draw74_debug_key = "";
+last_scissor_draw74_skip_debug_key = "";
 
-sync_gui_size = function() {
-	display_set_gui_size(room_width, room_height);
+sync_gui_size = function(_force = false) {
+	if (os_browser != browser_not_a_browser && !_force && resize_frame < resize_ready_frame) {
+		return;
+	}
+	
+	var _window_width = max(1, window_get_width());
+	var _window_height = max(1, window_get_height());
+	var _aspect_width = _window_width;
+	var _aspect_height = _window_height;
+	var _html5_frame_json = "";
+	var _html5_frame_width = 0;
+	var _html5_frame_height = 0;
+	
+	if (os_browser != browser_not_a_browser && extension_exists("extension_VK")) {
+		_html5_frame_json = HTML5_GetFrameSize();
+		var _frame_size = json_parse(_html5_frame_json);
+		if (is_struct(_frame_size) && variable_struct_exists(_frame_size, "width") && variable_struct_exists(_frame_size, "height")) {
+			_html5_frame_width = max(1, _frame_size.width);
+			_html5_frame_height = max(1, _frame_size.height);
+			_aspect_width = _html5_frame_width;
+			_aspect_height = _html5_frame_height;
+		}
+	}
+	
+	var _width = max(1, round(game_view_base_height * _aspect_width / _aspect_height));
+	var _height = game_view_base_height;
+	
+	var _size_changed = (_width != game_view_width || _height != game_view_height);
+	if (_force || _size_changed || pending_surface_resize) {
+		var _surface_resized = false;
+		game_view_width = _width;
+		game_view_height = _height;
+		
+		if (surface_exists(application_surface)) {
+			surface_resize(application_surface, game_view_width, game_view_height);
+			pending_surface_resize = false;
+			_surface_resized = true;
+		}
+		else {
+			pending_surface_resize = true;
+		}
+		
+		display_set_gui_size(game_view_width, game_view_height);
+		if (_force || _size_changed || _surface_resized) {
+			var _surface_width = -1;
+			var _surface_height = -1;
+			if (surface_exists(application_surface)) {
+				_surface_width = surface_get_width(application_surface);
+				_surface_height = surface_get_height(application_surface);
+			}
+			show_debug_message("UI resize new size: " + string(game_view_width) + "x" + string(game_view_height));
+			show_debug_message(
+				"UI resize: window=" + string(_window_width) + "x" + string(_window_height)
+				+ ", html5_frame=" + string(_html5_frame_width) + "x" + string(_html5_frame_height)
+				+ ", aspect_source=" + string(_aspect_width) + "x" + string(_aspect_height)
+				+ ", room=" + string(room_width) + "x" + string(room_height)
+				+ ", gui=" + string(game_view_width) + "x" + string(game_view_height)
+				+ ", display_gui=" + string(display_get_gui_width()) + "x" + string(display_get_gui_height())
+				+ ", surface=" + string(_surface_width) + "x" + string(_surface_height)
+				+ ", surface_exists=" + string(surface_exists(application_surface))
+				+ ", force=" + string(_force)
+				+ ", size_changed=" + string(_size_changed)
+				+ ", pending_surface_resize=" + string(pending_surface_resize)
+				+ ", resize_frame=" + string(resize_frame)
+				+ ", html5_frame_json=" + _html5_frame_json
+			);
+		}
+	}
+	else {
+		display_set_gui_size(game_view_width, game_view_height);
+	}
 }
 
 gui_width = function() {
@@ -120,6 +206,34 @@ set_ui_sprite_alpha = function(_layer, _panel, _alpha) {
 	_panel)).layerElements[0].elementId, _alpha);
 }
 
+get_ui_sprite_element = function(_layer, _panel) {
+	var _node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel);
+	var _struct = flexpanel_node_get_struct(_node);
+	return _struct.layerElements[0].elementId;
+}
+
+set_ui_sprite_on_ui_layer = function(_layer, _panel, _sprite) {
+	layer_sprite_change(get_ui_sprite_element(_layer, _panel), _sprite);
+}
+
+set_profile_avatar_from_url = function(_url) {
+	if (!is_string(_url) || _url == "") {
+		show_debug_message("VK/avatar: empty avatar url");
+		return false;
+	}
+	
+	if (_url == profile_avatar_url && profile_avatar_sprite != -1 && profile_avatar_loaded) {
+		set_ui_sprite_on_ui_layer("MenuHome", "ProfilePicture", profile_avatar_sprite);
+		return true;
+	}
+	
+	profile_avatar_url = _url;
+	profile_avatar_loaded = false;
+	profile_avatar_sprite = sprite_add_ext(_url, 1, 0, 0, true);
+	show_debug_message("VK/avatar: loading avatar sprite from " + _url);
+	return true;
+}
+
 set_text_on_ui_layer = function(_layer_name, _panel_name, _text) {
 	var _layer = layer_get_flexpanel_node(_layer_name);
 	var _text_panel = flexpanel_node_get_child(_layer, _panel_name);
@@ -136,37 +250,176 @@ ui_scissor = function(_layer, _panel) {
 	var _node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel);
 	var _p = flexpanel_node_get_struct(flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _panel));
 	//show_message(_p)
-	var _gui_width = window_get_width();
-	var _gui_height = gui_height()//window_get_height();
+	var _gui_width = gui_width();
+	var _gui_height = gui_height();
 	var _width = resolve_flex_size(_p.width, _gui_width);
 	var _height = resolve_flex_size(_p.height, _gui_height);
 	var _x = _gui_width/2-_width/2;
 	var _y = _gui_height/2-_height/2;
-	if (flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit != 0) {
-		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).value
-		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom).unit
+	var _right_position = flexpanel_node_style_get_position(_node, flexpanel_edge.right);
+	var _top_position = flexpanel_node_style_get_position(_node, flexpanel_edge.top);
+	var _bottom_position = flexpanel_node_style_get_position(_node, flexpanel_edge.bottom);
+
+	if (_bottom_position.unit != 0) {
+		var _offset = _bottom_position.value
+		var _unit = _bottom_position.unit
 		if _unit == 2 {
 			_offset = _offset*_gui_height/100;
 		}
 		_y -= _offset;
 	}
-	if (flexpanel_node_style_get_position(_node, flexpanel_edge.right).unit != 0) {
-		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.right).value
-		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.right).unit
+	if (_right_position.unit != 0) {
+		var _offset = _right_position.value
+		var _unit = _right_position.unit
 		if _unit == 2 {
 			_offset = _offset*_gui_width/100;
 		}
 		_x -= _offset;
 	}
-	if (flexpanel_node_style_get_position(_node, flexpanel_edge.top).unit != 0) {
-		var _offset = flexpanel_node_style_get_position(_node, flexpanel_edge.top).value
-		var _unit = flexpanel_node_style_get_position(_node, flexpanel_edge.top).unit
+	if (_top_position.unit != 0) {
+		var _offset = _top_position.value
+		var _unit = _top_position.unit
 		if _unit == 2 {
 			_offset = _offset*_gui_height/100;
 		}
 		_y -= _offset;
 	}
-	gpu_set_scissor(_x, _y, _width, _height)
+	var _left = max(0, floor(_x));
+	var _top = max(0, floor(_y));
+	var _right = min(_gui_width, ceil(_x + _width));
+	var _bottom = min(_gui_height, ceil(_y + _height));
+	var _scissor_width = max(1, _right - _left);
+	var _scissor_height = max(1, _bottom - _top);
+	last_scissor_gui = {x: _left, y: _top, w: _scissor_width, h: _scissor_height};
+	
+	var _window_width = max(1, window_get_width());
+	var _window_height = max(1, window_get_height());
+	var _scale_x = _window_width / max(1, _gui_width);
+	var _scale_y = _window_height / max(1, _gui_height);
+	var _window_left = max(0, floor(_left * _scale_x));
+	var _window_top = max(0, floor(_top * _scale_y));
+	var _window_right = min(_window_width, ceil((_left + _scissor_width) * _scale_x));
+	var _window_bottom = min(_window_height, ceil((_top + _scissor_height) * _scale_y));
+	var _window_scissor_width = max(1, _window_right - _window_left);
+	var _window_scissor_height = max(1, _window_bottom - _window_top);
+	var _previous_gpu_scissor = gpu_get_scissor();
+	var _surface_width = -1;
+	var _surface_height = -1;
+	if (surface_exists(application_surface)) {
+		_surface_width = surface_get_width(application_surface);
+		_surface_height = surface_get_height(application_surface);
+	}
+	last_scissor_window = {x: _window_left, y: _window_top, w: _window_scissor_width, h: _window_scissor_height};
+	
+	if (_left != floor(_x) || _top != floor(_y) || _right != ceil(_x + _width) || _bottom != ceil(_y + _height)) {
+		show_debug_message(
+			"UI scissor clamped: layer=" + string(_layer)
+			+ ", panel=" + string(_panel)
+			+ ", raw=" + string(_x) + "," + string(_y) + "," + string(_width) + "," + string(_height)
+			+ ", clamped=" + string(_left) + "," + string(_top) + "," + string(_scissor_width) + "," + string(_scissor_height)
+			+ ", gui=" + string(_gui_width) + "x" + string(_gui_height)
+			+ ", window=" + string(window_get_width()) + "x" + string(window_get_height())
+			+ ", pos_units=r" + string(_right_position.unit)
+			+ "/t" + string(_top_position.unit) + "/b" + string(_bottom_position.unit)
+		);
+	}
+	
+	var _debug_key = string(_layer) + ":" + string(_panel) + ":"
+		+ string(_left) + "," + string(_top) + "," + string(_scissor_width) + "," + string(_scissor_height) + ":"
+		+ string(_window_left) + "," + string(_window_top) + "," + string(_window_scissor_width) + "," + string(_window_scissor_height) + ":"
+		+ string(_gui_width) + "x" + string(_gui_height) + ":" + string(_window_width) + "x" + string(_window_height);
+	if (_debug_key != last_scissor_debug_key) {
+		last_scissor_debug_key = _debug_key;
+		show_debug_message(
+			"UI scissor: layer=" + string(_layer)
+			+ ", panel=" + string(_panel)
+			+ ", gui_rect=" + string(_left) + "," + string(_top) + "," + string(_scissor_width) + "," + string(_scissor_height)
+			+ ", gpu_rect=" + string(_window_left) + "," + string(_window_top) + "," + string(_window_scissor_width) + "," + string(_window_scissor_height)
+			+ ", previous_gpu=" + string(_previous_gpu_scissor.x) + "," + string(_previous_gpu_scissor.y) + "," + string(_previous_gpu_scissor.w) + "," + string(_previous_gpu_scissor.h)
+			+ ", gui=" + string(_gui_width) + "x" + string(_gui_height)
+			+ ", window=" + string(_window_width) + "x" + string(_window_height)
+			+ ", surface_exists=" + string(surface_exists(application_surface))
+			+ ", surface=" + string(_surface_width) + "x" + string(_surface_height)
+			+ ", scale=" + string(_scale_x) + "x" + string(_scale_y)
+			+ ", pos_units=r" + string(_right_position.unit)
+			+ "/t" + string(_top_position.unit) + "/b" + string(_bottom_position.unit)
+		);
+	}
+	
+	gpu_set_scissor(_window_left, _window_top, _window_scissor_width, _window_scissor_height)
+}
+
+ui_scissor_for_node = function(_node, _debug_name = "") {
+	if (_node == undefined) {
+		return undefined;
+	}
+	
+	var _layout = flexpanel_node_layout_get_position(_node, false);
+	var _gui_width = gui_width();
+	var _gui_height = gui_height();
+	var _left = max(0, floor(_layout.left));
+	var _top = max(0, floor(_layout.top));
+	var _right = min(_gui_width, ceil(_layout.left + _layout.width));
+	var _bottom = min(_gui_height, ceil(_layout.top + _layout.height));
+	var _scissor_width = max(1, _right - _left);
+	var _scissor_height = max(1, _bottom - _top);
+	
+	last_scissor_gui = {x: _left, y: _top, w: _scissor_width, h: _scissor_height};
+	
+	var _window_width = max(1, window_get_width());
+	var _window_height = max(1, window_get_height());
+	var _scale_x = _window_width / max(1, _gui_width);
+	var _scale_y = _window_height / max(1, _gui_height);
+	var _window_left = max(0, floor(_left * _scale_x));
+	var _window_top = max(0, floor(_top * _scale_y));
+	var _window_right = min(_window_width, ceil((_left + _scissor_width) * _scale_x));
+	var _window_bottom = min(_window_height, ceil((_top + _scissor_height) * _scale_y));
+	var _window_scissor_width = max(1, _window_right - _window_left);
+	var _window_scissor_height = max(1, _window_bottom - _window_top);
+	
+	last_scissor_window = {x: _window_left, y: _window_top, w: _window_scissor_width, h: _window_scissor_height};
+	
+	var _debug_key = "node:" + string(_debug_name) + ":"
+		+ string(_left) + "," + string(_top) + "," + string(_scissor_width) + "," + string(_scissor_height) + ":"
+		+ string(_window_left) + "," + string(_window_top) + "," + string(_window_scissor_width) + "," + string(_window_scissor_height) + ":"
+		+ string(_gui_width) + "x" + string(_gui_height) + ":" + string(_window_width) + "x" + string(_window_height);
+	if (_debug_key != last_scissor_debug_key) {
+		last_scissor_debug_key = _debug_key;
+		show_debug_message(
+			"UI scroll viewport: name=" + string(_debug_name)
+			+ ", layout=" + string(_layout.left) + "," + string(_layout.top) + "," + string(_layout.width) + "," + string(_layout.height)
+			+ ", gui_rect=" + string(_left) + "," + string(_top) + "," + string(_scissor_width) + "," + string(_scissor_height)
+			+ ", gpu_rect=" + string(_window_left) + "," + string(_window_top) + "," + string(_window_scissor_width) + "," + string(_window_scissor_height)
+			+ ", gui=" + string(_gui_width) + "x" + string(_gui_height)
+			+ ", window=" + string(_window_width) + "x" + string(_window_height)
+			+ ", scale=" + string(_scale_x) + "x" + string(_scale_y)
+		);
+	}
+	
+	return last_scissor_gui;
+}
+
+ui_scissor_for_scroll = function(_layer, _controlled_element) {
+	if (_layer == "default" || _controlled_element == "default") {
+		return undefined;
+	}
+	
+	var _layer_node = layer_get_flexpanel_node(_layer);
+	if (_layer_node == undefined) {
+		return undefined;
+	}
+	
+	var _controlled_node = flexpanel_node_get_child(_layer_node, _controlled_element);
+	if (_controlled_node == undefined) {
+		return undefined;
+	}
+	
+	var _viewport_node = flexpanel_node_get_parent(_controlled_node);
+	if (_viewport_node == undefined) {
+		_viewport_node = _controlled_node;
+	}
+	
+	return ui_scissor_for_node(_viewport_node, "scroll:" + string(_layer) + "/" + string(_controlled_element));
 }
 
 main_button = get_element_on_ui(InGame_layer, "MainButton");
@@ -182,6 +435,49 @@ email_text_field = get_button_instance((get_element_on_ui("LoginWindow", "EmailF
 password_text_field = get_button_instance((get_element_on_ui("LoginWindow", "PasswordField")))
 nickname_panel = get_element_on_ui("MainMenu", "Nickname")
 turn_off_button(register_button);
+
+load_saved_login_fields = function() {
+	if (os_type != os_windows) {
+		saved_login_fields_loaded = true;
+		return;
+	}
+	
+	if (!file_exists("login_data.ini")) {
+		saved_login_fields_loaded = true;
+		return;
+	}
+	
+	if (!variable_instance_exists(login_text_field, "set_text") || !variable_instance_exists(email_text_field, "set_text") || !variable_instance_exists(password_text_field, "set_text")) {
+		return;
+	}
+	
+	ini_open("login_data.ini");
+	login_text_field.set_text(ini_read_string("login", "nickname", ""));
+	email_text_field.set_text(ini_read_string("login", "email", ""));
+	password_text_field.set_text(ini_read_string("login", "password", ""));
+	ini_close();
+	saved_login_fields_loaded = true;
+	
+	show_debug_message("Login fields loaded from login_data.ini");
+}
+
+save_login_fields = function() {
+	if (os_type != os_windows) {
+		return;
+	}
+	
+	if (!variable_instance_exists(login_text_field, "get_text") || !variable_instance_exists(email_text_field, "get_text") || !variable_instance_exists(password_text_field, "get_text")) {
+		return;
+	}
+	
+	ini_open("login_data.ini");
+	ini_write_string("login", "nickname", login_text_field.get_text());
+	ini_write_string("login", "email", email_text_field.get_text());
+	ini_write_string("login", "password", password_text_field.get_text());
+	ini_close();
+	
+	show_debug_message("Login fields saved to login_data.ini");
+}
 
 #region Main_menu
 menu_layers = ["MenuHome", "MenuBattlePass", "MenuDeckSettings", "MenuSettings", "MenuShop", "MenuProfile", "MenuDeckSettings"];

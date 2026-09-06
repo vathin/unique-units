@@ -14,10 +14,10 @@ _email = undefined;
 _password = undefined;
 _id = undefined;
 _winner = undefined;
+_avatar_url = "";
 deck = []
 instance_create_depth(0, 0, 0, UI_controller);
 UI_controller.check_layers();
-//global.vk.init()
 
 #macro Game global.game
 Game = undefined;
@@ -94,12 +94,16 @@ log_in_callback = function() {
 	UI_controller.check_layers();
 	UI_controller.set_text_on_ui_layer("MenuHome", "Nickname", _nickname);
 	UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "PlayerNickname", _nickname);
+	if (_avatar_url != "") {
+		UI_controller.set_profile_avatar_from_url(_avatar_url);
+	}
 }
 
 log_in = function(type) {
 	_nickname = UI_controller.get_login_text();
 	_email = UI_controller.get_email_text();
 	_password = UI_controller.get_password_text();
+	UI_controller.save_login_fields();
 	if type == "login_acc" {
 		Server.send(new ServerMessage(ServerMessageType.Login, {email: _email, password: _password}))
 	}
@@ -109,19 +113,154 @@ log_in = function(type) {
 	_password = "";
 }
 
+get_player_id_from_login_data = function(_data) {
+	if (is_struct(_data)) {
+		if (variable_struct_exists(_data, "userid")) {
+			return _data.userid;
+		}
+		
+		if (variable_struct_exists(_data, "playerData") && is_struct(_data.playerData) && variable_struct_exists(_data.playerData, "id")) {
+			return _data.playerData.id;
+		}
+	}
+	
+	return undefined;
+}
+
+get_nickname_from_login_data = function(_data) {
+	var _source = "none";
+	var _name = undefined;
+	var _vk_user = undefined;
+	
+	if (is_struct(_data)) {
+		if (variable_struct_exists(_data, "vk_user") && is_struct(_data.vk_user)) {
+			_vk_user = _data.vk_user;
+			_source = "msg.data.vk_user";
+		}
+		else if (variable_struct_exists(_data, "vk_data") && is_struct(_data.vk_data)) {
+			_vk_user = _data.vk_data;
+			_source = "msg.data.vk_data";
+		}
+		else if (variable_struct_exists(_data, "playerData") && is_struct(_data.playerData)) {
+			if (variable_struct_exists(_data.playerData, "nickname")) {
+				_name = _data.playerData.nickname;
+				_source = "msg.data.playerData.nickname";
+			}
+			else if (variable_struct_exists(_data.playerData, "display") && is_struct(_data.playerData.display) && variable_struct_exists(_data.playerData.display, "nickname")) {
+				_name = _data.playerData.display.nickname;
+				_source = "msg.data.playerData.display.nickname";
+			}
+			else if (variable_struct_exists(_data.playerData, "info") && is_struct(_data.playerData.info) && variable_struct_exists(_data.playerData.info, "nickname")) {
+				_name = _data.playerData.info.nickname;
+				_source = "msg.data.playerData.info.nickname";
+			}
+		}
+	}
+	
+	if (_name == undefined && _vk_user != undefined && variable_struct_exists(_vk_user, "first_name")) {
+		_name = _vk_user.first_name;
+	}
+	
+	if (_name == undefined && variable_global_exists("vk") && variable_struct_exists(global.vk, "vk_user") && is_struct(global.vk.vk_user) && variable_struct_exists(global.vk.vk_user, "first_name")) {
+		_name = global.vk.vk_user.first_name;
+		_source = "global.vk.vk_user";
+	}
+	
+	if (_name == undefined || string(_name) == "undefined" || string(_name) == "") {
+		var _fallback_id = get_player_id_from_login_data(_data);
+		if (_fallback_id == undefined || string(_fallback_id) == "undefined" || string(_fallback_id) == "") {
+			_name = "VK Player";
+			_source = "default fallback";
+		}
+		else {
+			_name = string(_fallback_id);
+			_source = "player id fallback";
+		}
+	}
+	
+	show_debug_message("VK/login: nickname resolved from " + _source + ": " + string(_name));
+	return _name;
+}
+
+get_avatar_url_from_vk_user = function(_vk_user) {
+	if (!is_struct(_vk_user)) {
+		return "";
+	}
+	
+	if (variable_struct_exists(_vk_user, "photo_100") && _vk_user.photo_100 != "") {
+		return _vk_user.photo_100;
+	}
+	
+	if (variable_struct_exists(_vk_user, "photo_200") && _vk_user.photo_200 != "") {
+		return _vk_user.photo_200;
+	}
+	
+	if (variable_struct_exists(_vk_user, "photo_max_orig") && _vk_user.photo_max_orig != "") {
+		return _vk_user.photo_max_orig;
+	}
+	
+	if (variable_struct_exists(_vk_user, "photo_base") && _vk_user.photo_base != "") {
+		return _vk_user.photo_base;
+	}
+	
+	return "";
+}
+
+get_avatar_url_from_login_data = function(_data) {
+	var _source = "none";
+	var _url = "";
+	
+	if (is_struct(_data)) {
+		if (variable_struct_exists(_data, "vk_user")) {
+			_url = get_avatar_url_from_vk_user(_data.vk_user);
+			_source = "msg.data.vk_user";
+		}
+		else if (variable_struct_exists(_data, "vk_data")) {
+			_url = get_avatar_url_from_vk_user(_data.vk_data);
+			_source = "msg.data.vk_data";
+		}
+		else if (variable_struct_exists(_data, "playerData") && is_struct(_data.playerData)) {
+			if (variable_struct_exists(_data.playerData, "display") && is_struct(_data.playerData.display) && variable_struct_exists(_data.playerData.display, "icon") && _data.playerData.display.icon != "") {
+				_url = _data.playerData.display.icon;
+				_source = "msg.data.playerData.display.icon";
+			}
+			else if (variable_struct_exists(_data.playerData, "platform_vk") && is_struct(_data.playerData.platform_vk) && variable_struct_exists(_data.playerData.platform_vk, "PlatfromVk") && is_struct(_data.playerData.platform_vk.PlatfromVk) && variable_struct_exists(_data.playerData.platform_vk.PlatfromVk, "user_info")) {
+				_url = get_avatar_url_from_vk_user(_data.playerData.platform_vk.PlatfromVk.user_info);
+				_source = "msg.data.playerData.platform_vk.PlatfromVk.user_info";
+			}
+		}
+	}
+	
+	if (_url == "" && variable_global_exists("vk") && variable_struct_exists(global.vk, "vk_user")) {
+		_url = get_avatar_url_from_vk_user(global.vk.vk_user);
+		_source = "global.vk.vk_user";
+	}
+	
+	show_debug_message("VK/avatar: avatar url resolved from " + _source + ": " + _url);
+	return _url;
+}
+
 Server.add_reaction(function(msg)
 {
 	switch msg.type{
 		case ServerMessageType.LoginVK:
-			_id = msg.data.userid;
-			_nickname = msg.data.vk_user.first_name
+			show_debug_message("VK login: server response accepted: " + json_stringify(msg.data));
+			_id = get_player_id_from_login_data(msg.data);
+			_nickname = get_nickname_from_login_data(msg.data);
+			_avatar_url = get_avatar_url_from_login_data(msg.data);
 			log_in_callback();
 			break;
 		case ServerMessageType.LoginAccept:
-			_id = msg.data.playerData.id;
+			show_debug_message("VK/login: server login accepted: " + json_stringify(msg.data));
+			_id = get_player_id_from_login_data(msg.data);
+			if (_nickname == undefined || string(_nickname) == "undefined" || string(_nickname) == "") {
+				_nickname = get_nickname_from_login_data(msg.data);
+			}
+			_avatar_url = get_avatar_url_from_login_data(msg.data);
 			log_in_callback()
 			break;
 		case ServerMessageType.LoginRefuse:
+			show_debug_message("VK/login: server response refused: " + json_stringify(msg.data));
 			reason = msg.data.description;
 			UI_controller.set_text_on_ui_layer("LoginWindow", "ReasonText", reason);
 			break;

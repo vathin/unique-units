@@ -21,6 +21,7 @@
         {"$GMExtensionFunction":"","%Name":"VK_GetPlayerInfo","argCount":0,"args":[],"documentation":"","externalName":"GetPlayerInfo","help":"on_success, on_init","hidden":false,"kind":5,"name":"VK_GetPlayerInfo","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
         {"$GMExtensionFunction":"","%Name":"VK_GetPlayerInfoResult","argCount":0,"args":[],"documentation":"","externalName":"GetPlayerInfoResult","help":"","hidden":false,"kind":5,"name":"VK_GetPlayerInfoResult","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
         {"$GMExtensionFunction":"","%Name":"VK_GetVkData","argCount":0,"args":[],"documentation":"","externalName":"GetVkData","help":"","hidden":false,"kind":5,"name":"VK_GetVkData","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
+        {"$GMExtensionFunction":"","%Name":"HTML5_GetFrameSize","argCount":0,"args":[],"documentation":"","externalName":"HTML5_GetFrameSize","help":"","hidden":false,"kind":5,"name":"HTML5_GetFrameSize","resourceType":"GMExtensionFunction","resourceVersion":"2.0","returnType":1,},
       ],"init":"","kind":5,"name":"","origname":"","ProxyFiles":[],"resourceType":"GMExtensionFile","resourceVersion":"2.0","uncompress":false,"usesRunnerInterface":false,},
   ],
   "gradleinject":null,

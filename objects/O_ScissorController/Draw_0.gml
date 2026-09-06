@@ -1,1 +1,1 @@
-UI_controller.ui_scissor(layer_name, panel_name);
+// Scissors are now owned by ScrollBar instances.

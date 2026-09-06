@@ -24,6 +24,9 @@ if(horizontal){
 
 drag = 0;
 dragging = false;
+viewport_gui = {x: 0, y: 0, w: 0, h: 0};
+viewport_has_scissor = false;
+viewport_debug_key = "";
 
 Scroll = function(_size){
     percentage = clamp(percentage+_size,0,1)

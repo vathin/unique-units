@@ -392,7 +392,7 @@ default_card_struct = { gapColumn : 0, gapRow : 0, justifyContent : "center", fl
 
 default_figure_button_struct = { height : 125, gapColumn : 0, gapRow : 0, justifyContent : "center", flexDirection : 0,
 	layerElements : [ ], marginLeft : 0, marginRight : 0, marginTop : 0,
-	marginBottom : 0, clipContent : 1, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 138,
+	marginBottom : 0, clipContent : 0, paddingLeft : 0, paddingRight : 0, paddingTop : 0, width : 138,
 	paddingBottom : 0, alignItems : "center", name : "Card1" }
 
 default_card_display_struct = {height : "100%", gapColumn : 0, gapRow : 0, justifyContent : "center", flexDirection : 0,

@@ -26,6 +26,7 @@ function VKInit(on_success, on_error = () => {}) {
         .catch((error) => {
             // Ошибка
             console.log(error);
+            on_error(error);
         });
     });
 }
@@ -42,6 +43,7 @@ function GetPlayerInfo(on_success, on_error = () => {}) {
         // Ошибка
         console.log("error");
         console.log(error);
+        on_error(error);
     });
 }
 function GetPlayerInfoResult() {
@@ -49,6 +51,62 @@ function GetPlayerInfoResult() {
 }
 function GetVkData() {
     return JSON.stringify(playerData);
+}
+
+function HTML5_GetFrameSize() {
+    const doc = document.documentElement || {};
+    const body = document.body || {};
+    const viewport = window.visualViewport || {};
+    const canvas = document.querySelector("canvas");
+    const canvasRect = canvas ? canvas.getBoundingClientRect() : {};
+    const parent = canvas ? canvas.parentElement : null;
+    const parentRect = parent ? parent.getBoundingClientRect() : {};
+
+    const innerWidth = Math.floor(window.innerWidth || 0);
+    const innerHeight = Math.floor(window.innerHeight || 0);
+    const viewportWidth = Math.floor(viewport.width || 0);
+    const viewportHeight = Math.floor(viewport.height || 0);
+    const docWidth = Math.floor(doc.clientWidth || 0);
+    const docHeight = Math.floor(doc.clientHeight || 0);
+    const bodyWidth = Math.floor(body.clientWidth || 0);
+    const bodyHeight = Math.floor(body.clientHeight || 0);
+    const canvasClientWidth = Math.floor(canvas ? canvas.clientWidth || 0 : 0);
+    const canvasClientHeight = Math.floor(canvas ? canvas.clientHeight || 0 : 0);
+    const canvasRectWidth = Math.floor(canvasRect.width || 0);
+    const canvasRectHeight = Math.floor(canvasRect.height || 0);
+    const parentClientWidth = Math.floor(parent ? parent.clientWidth || 0 : 0);
+    const parentClientHeight = Math.floor(parent ? parent.clientHeight || 0 : 0);
+    const parentRectWidth = Math.floor(parentRect.width || 0);
+    const parentRectHeight = Math.floor(parentRect.height || 0);
+
+    let width = parentRectWidth || parentClientWidth || viewportWidth || innerWidth || docWidth || bodyWidth || canvasRectWidth || canvasClientWidth;
+    let height = parentRectHeight || parentClientHeight || viewportHeight || innerHeight || docHeight || bodyHeight || canvasRectHeight || canvasClientHeight;
+    width = Math.max(1, Math.floor(width || 0));
+    height = Math.max(1, Math.floor(height || 0));
+
+    return JSON.stringify({
+        width: width,
+        height: height,
+        innerWidth: Math.max(1, innerWidth),
+        innerHeight: Math.max(1, innerHeight),
+        viewportWidth: viewportWidth,
+        viewportHeight: viewportHeight,
+        viewportScale: viewport.scale || 1,
+        docWidth: docWidth,
+        docHeight: docHeight,
+        bodyWidth: bodyWidth,
+        bodyHeight: bodyHeight,
+        canvasWidth: canvas ? canvas.width || 0 : 0,
+        canvasHeight: canvas ? canvas.height || 0 : 0,
+        canvasClientWidth: canvasClientWidth,
+        canvasClientHeight: canvasClientHeight,
+        canvasRectWidth: canvasRectWidth,
+        canvasRectHeight: canvasRectHeight,
+        parentClientWidth: parentClientWidth,
+        parentClientHeight: parentClientHeight,
+        parentRectWidth: parentRectWidth,
+        parentRectHeight: parentRectHeight
+    });
 }
 
 function loadScript(url, callback) {
