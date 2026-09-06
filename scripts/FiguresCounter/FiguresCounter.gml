@@ -33,6 +33,20 @@ function FiguresCounter() constructor {
 		figures_id_counter ++;
 		return string(figures_id_counter-1);
 	}
+	
+	get_display_player = function() {
+		if Game.online_match {
+			return O_Server._id;
+		}
+		return global.turn_owner;
+	}
+	
+	get_display_opponent = function() {
+		if Game.online_match {
+			return Game.opponent;
+		}
+		return Game.game_loop_controller.get_opponent(global.turn_owner);
+	}
 
 	update_captured_figures_array = function() {
 		if array_length(figures_to_capture) > 0 {
@@ -63,15 +77,17 @@ function FiguresCounter() constructor {
 	}
 	
 	update_display_figures = function() {
-		display_player_figures = array_length(Game.user_data.load(O_Server._id).player_figures);
-		display_opponent_figures = array_length(Game.user_data.load(Game.opponent).player_figures);
-		display_player_max_figures = Game.user_data.load(O_Server._id).player_deck_size;
-		display_opponent_max_figures = Game.user_data.load(Game.opponent).player_deck_size;
+		var _display_player = get_display_player();
+		var _display_opponent = get_display_opponent();
+		display_player_figures = array_length(Game.user_data.load(_display_player).player_figures);
+		display_opponent_figures = array_length(Game.user_data.load(_display_opponent).player_figures);
+		display_player_max_figures = Game.user_data.load(_display_player).player_deck_size;
+		display_opponent_max_figures = Game.user_data.load(_display_opponent).player_deck_size;
 	}
 
 	update_ui_counter = function() {
-		UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "PlayerFiguresText", get_field_figures(O_Server._id));
-		UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentFiguresText", get_field_figures(Game.opponent));
+		UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "PlayerFiguresText", get_field_figures(get_display_player()));
+		UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentFiguresText", get_field_figures(get_display_opponent()));
 	}
 	
 	display_available_figures = function() {

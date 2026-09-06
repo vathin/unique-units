@@ -23,7 +23,7 @@ function Figure() constructor{
 	}
 	
 	update_stats = function() {
-		if owner == O_Server._id {
+		if Game.local_player != undefined && owner == Game.local_player.player_id {
 			image = 0;
 		}
 		else {

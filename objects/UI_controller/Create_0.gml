@@ -24,6 +24,7 @@ last_scissor_clear_debug_key = "";
 last_scissor_clear_idle_debug_key = "";
 last_scissor_draw74_debug_key = "";
 last_scissor_draw74_skip_debug_key = "";
+local_game_text_applied = false;
 
 sync_gui_size = function(_force = false) {
 	if (os_browser != browser_not_a_browser && !_force && resize_frame < resize_ready_frame) {
@@ -240,6 +241,16 @@ set_text_on_ui_layer = function(_layer_name, _panel_name, _text) {
 	var _text_struct = flexpanel_node_get_struct(_text_panel);
 	var _textID = _text_struct.layerElements[0].elementId;
 	layer_text_text(_textID, _text);
+}
+
+set_text_on_child_panel = function(_layer_name, _parent_panel_name, _text_panel_name, _text) {
+	var _layer = layer_get_flexpanel_node(_layer_name);
+	var _parent_panel = flexpanel_node_get_child(_layer, _parent_panel_name);
+	var _text_panel = flexpanel_node_get_child(_parent_panel, _text_panel_name);
+	var _text_struct = flexpanel_node_get_struct(_text_panel);
+	if array_length(_text_struct.layerElements) > 0 {
+		layer_text_text(_text_struct.layerElements[0].elementId, _text);
+	}
 }
 
 set_ui_text_alpha = function(_layer, _panel, _alpha) {

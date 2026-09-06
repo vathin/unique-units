@@ -84,7 +84,21 @@ function GameClass() constructor{
 		else {
 			Player1 = new Player(1, "local");
 			Player2 = new Player(2, "local");
+			local_player = Player1;
+			global.turn_owner = Player1.player_id;
 			user_data.reset();
+			if variable_global_exists("local_match_deck") {
+				if global.local_match_deck != undefined {
+					var _selected_figures = global.local_match_deck.player_figures;
+					if is_array(_selected_figures) && array_length(_selected_figures) > 0 {
+						user_data.save(Player1.player_id, {
+							player_cards: global.local_match_deck.player_cards,
+							player_figures: array_shuffle(_selected_figures),
+							player_deck_size: array_length(_selected_figures)
+						});
+					}
+				}
+			}
 		}
 		game_loop_controller = new GameLoopController();
 		field = new Field();
@@ -95,8 +109,10 @@ function GameClass() constructor{
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
 		in_match = 1;
-		O_DeckManager.clear_card_displays();
-		if global.turn_owner == O_Server._id {send_deck(0)}
+		if instance_exists(O_DeckManager) {
+			O_DeckManager.clear_card_displays();
+		}
+		if online_match and global.turn_owner == O_Server._id {send_deck(0)}
 	}
 	
 	end_game = function() {

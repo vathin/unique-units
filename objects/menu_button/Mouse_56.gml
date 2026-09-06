@@ -13,6 +13,9 @@ if UI_controller.gui_mouse_in_bbox(bbox_left, bbox_top, bbox_right, bbox_bottom)
 				O_Server.start_fast_search();
 			}
 		break;
+		case "start_local":
+			Start_match();
+		break;
 		case "invite_cancel":
 			O_Server.cancel_invite();
 		break;
