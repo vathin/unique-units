@@ -52,15 +52,21 @@ sync_gui_size = function(_force = false) {
 	
 	var _width = max(1, round(game_view_base_height * _aspect_width / _aspect_height));
 	var _height = game_view_base_height;
+	var _surface_target_width = max(1, round(_aspect_width));
+	var _surface_target_height = max(1, round(_aspect_height));
 	
 	var _size_changed = (_width != game_view_width || _height != game_view_height);
-	if (_force || _size_changed || pending_surface_resize) {
+	var _surface_size_changed = true;
+	if (surface_exists(application_surface)) {
+		_surface_size_changed = (surface_get_width(application_surface) != _surface_target_width || surface_get_height(application_surface) != _surface_target_height);
+	}
+	if (_force || _size_changed || _surface_size_changed || pending_surface_resize) {
 		var _surface_resized = false;
 		game_view_width = _width;
 		game_view_height = _height;
 		
 		if (surface_exists(application_surface)) {
-			surface_resize(application_surface, game_view_width, game_view_height);
+			surface_resize(application_surface, _surface_target_width, _surface_target_height);
 			pending_surface_resize = false;
 			_surface_resized = true;
 		}
@@ -83,11 +89,13 @@ sync_gui_size = function(_force = false) {
 				+ ", aspect_source=" + string(_aspect_width) + "x" + string(_aspect_height)
 				+ ", room=" + string(room_width) + "x" + string(room_height)
 				+ ", gui=" + string(game_view_width) + "x" + string(game_view_height)
+				+ ", surface_target=" + string(_surface_target_width) + "x" + string(_surface_target_height)
 				+ ", display_gui=" + string(display_get_gui_width()) + "x" + string(display_get_gui_height())
 				+ ", surface=" + string(_surface_width) + "x" + string(_surface_height)
 				+ ", surface_exists=" + string(surface_exists(application_surface))
 				+ ", force=" + string(_force)
 				+ ", size_changed=" + string(_size_changed)
+				+ ", surface_size_changed=" + string(_surface_size_changed)
 				+ ", pending_surface_resize=" + string(pending_surface_resize)
 				+ ", resize_frame=" + string(resize_frame)
 				+ ", html5_frame_json=" + _html5_frame_json
