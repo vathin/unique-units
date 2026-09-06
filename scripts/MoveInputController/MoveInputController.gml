@@ -4,11 +4,8 @@ function MoveInputController() constructor{
 	draw_previous_cell = 0;
 	Game.game_loop_controller.state = STATE_LIST.figure_move;
 	move_from = Game.field.get_cell(global.selected_cell.xcord, global.selected_cell.ycord)
-	if Behaviours.get_move_ability(move_from.filled_figure.behaviour) == ArcherMoveAbility {
-		move_ability = new ArcherMoveAbility(move_from.xcord, move_from.ycord, undefined, undefined, 0);
-		move_ability.check_all_cells();
-	}
-	else {Game.field.check_clear_move_cells(move_from.xcord, move_from.ycord)}
+	var _move_cells_data = Game.game_loop_controller.get_move_target_cells_data(move_from);
+	Game.field.mark_cells(_move_cells_data.cells);
 	
 	draw_cell = function() {
 		var _draw_x = Game.field.get_cell_xy(previous_cell)[0];
@@ -17,9 +14,8 @@ function MoveInputController() constructor{
 		if Game.game_loop_controller.have_action() {array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
 	}
 	
-	previous_cell = Game.field.check_movement_array(move_from.filled_figure.figure_id)
-	if previous_cell != undefined and previous_cell.is_marked() {
-		previous_cell.marked = 0;
+	previous_cell = _move_cells_data.blocked_previous_cell;
+	if previous_cell != undefined {
 		draw_previous_cell = 1;
 		array_push(Game.do_every_step_list, draw_cell)
 	}

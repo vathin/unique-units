@@ -17,16 +17,14 @@ function FigureActionController() constructor{
 
 	figure_ability = Behaviours.get_ablility(global.selected_cell.filled_figure.behaviour);
 	if figure_ability != undefined {
-		test_ability = new figure_ability(global.selected_cell.filled_figure, global.selected_cell);
-		test_ability.check_ability_targets(1, 1);
-		if !Game.field.is_any_cell_marked() {figure_have_ability = 0}
-		Game.field.clear_all_marks()
+		if array_length(Game.game_loop_controller.get_ability_target_cells(global.selected_cell)) <= 0 {
+			figure_have_ability = 0;
+		}
 	}
 
 
-	if Behaviours.get_move_ability(global.selected_cell.filled_figure.behaviour) == ArcherMoveAbility {
-		ability = new ArcherMoveAbility(global.selected_cell.xcord, global.selected_cell.ycord, undefined, undefined, 0)
-		if !ability.check_clear_cells(undefined, undefined) {figure_can_move = 0}
+	if array_length(Game.game_loop_controller.get_move_target_cells(global.selected_cell)) <= 0 {
+		figure_can_move = 0;
 	}
 	//O_BoardDraw.unblock_end_button();
 	

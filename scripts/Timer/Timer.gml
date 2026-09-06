@@ -26,7 +26,7 @@ function Timer() constructor{
 					use_time_bank(global.turn_owner);
 				}
 				else {
-					if Game.game_loop_controller.can_cancel {O_GameLoopController.cancel_action()}
+					if Game.game_loop_controller.can_cancel {Game.game_loop_controller.cancel_action()}
 					//if instance_exists(O_SummonInputController) {O_SummonInputController.time_end()}
 					player_out_of_time = global.turn_owner;
 					Game.game_loop_controller.end_move();

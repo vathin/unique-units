@@ -25,7 +25,10 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 		if cell_for_move != undefined {
 			cell_for_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		}
-		cell_for_move = global.cell_click_callback;
+		cell_for_move = b;
+		if cell_for_move == undefined {
+			cell_for_move = global.cell_click_callback;
+		}
 		cell_for_move.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		O_BoardDraw.unblock_end_button();
 	}

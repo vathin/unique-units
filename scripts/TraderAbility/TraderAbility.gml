@@ -160,7 +160,7 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	
 	
 	export = function() {
-		ex_buttons = []
+		var ex_buttons_array = []
 		for (i = 0; i < 3; i++) {
 			ex_buttons_array[i] = buttons[i]
 		}

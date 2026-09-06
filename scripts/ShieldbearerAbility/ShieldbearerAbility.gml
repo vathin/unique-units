@@ -30,7 +30,10 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	
 	set_target = function(new_target, new_cell) {
 		if target_figure == undefined {
-			target_cell = global.cell_click_callback;
+			target_cell = new_cell;
+			if target_cell == undefined {
+				target_cell = global.cell_click_callback;
+			}
 			target_figure = target_cell.filled_figure
 			check_ability_targets();
 		}
@@ -40,7 +43,10 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 			}
 			selected = 1;
 			O_BoardDraw.unblock_end_button();
-			fill_cell = global.cell_click_callback;
+			fill_cell = new_cell;
+			if fill_cell == undefined {
+				fill_cell = global.cell_click_callback;
+			}
 			fill_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		}
 	}

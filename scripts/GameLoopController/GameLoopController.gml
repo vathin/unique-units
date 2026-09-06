@@ -17,12 +17,12 @@ function GameLoopController() constructor{
 	cards_1y = room_height/1.25 - 70;
 	cards_2y = room_height*0.2 + 8;
 	cards_offset = 10
-	
+
 	turn_timer = new Timer();
 	turn_timer.start_count(Settings.turn_time);
-	
+
 	figures_counter = new FiguresCounter();
-	
+
 	enum STATE_LIST {
 		wait,
 		summon,
@@ -38,15 +38,15 @@ function GameLoopController() constructor{
 			state = STATE_LIST.enemy_turn;
 		}
 	}
-	
+
 	get_game_state = function() {
 		return state
 	}
-	
+
 	set_game_state = function(_new_state) {
 		state = _new_state
 	}
-	
+
 	set_can_cancel = function(_value) {
 		can_cancel = _value;
 	}
@@ -54,13 +54,13 @@ function GameLoopController() constructor{
 	startInput = function() {
 		state = STATE_LIST.wait;
 	}
-	
-	
+
+
 	get_player = function(_player) {
 		if _player == Game.Player1.player_id {return Game.Player1}
 		else return Game.Player2
 	}
-	
+
 	get_cards_array = function(_player) {
 		if _player == Game.Player1.player_id {
 			return player1_cards
@@ -68,6 +68,361 @@ function GameLoopController() constructor{
 		else {
 			return player2_cards
 		}
+	}
+
+	get_next_summon_behaviour = function(_player) {
+		var _load_data = Game.user_data.load(_player);
+		if !is_struct(_load_data) or !variable_struct_exists(_load_data, "player_figures") {
+			return undefined;
+		}
+		var _figures = _load_data.player_figures;
+		if !is_array(_figures) or array_length(_figures) <= 0 {
+			return undefined;
+		}
+		return _figures[array_length(_figures) - 1];
+	}
+
+	get_summon_target_cells = function(_player) {
+		return Game.field.get_controlled_summon_cells(_player);
+	}
+
+	get_move_target_cells = function(_from_cell) {
+		return get_move_target_cells_data(_from_cell).cells;
+	}
+
+	get_move_target_cells_data = function(_from_cell) {
+		if _from_cell == undefined or !_from_cell.is_filled() {
+			return {cells: [], blocked_previous_cell: undefined};
+		}
+		var _figure = _from_cell.filled_figure;
+		var _move_ability = Behaviours.get_move_ability(_figure.behaviour);
+		var _cells = [];
+		if _move_ability == ArcherMoveAbility {
+			var _previous_marks = Game.field.export_marks();
+			var _ability = new ArcherMoveAbility(_from_cell.xcord, _from_cell.ycord, undefined, undefined, 0);
+			_ability.check_all_cells();
+			_cells = Game.field.get_marked_cells();
+			Game.field.import_marks(_previous_marks);
+		}
+		else {
+			_cells = Game.field.get_clear_move_cells(_from_cell.xcord, _from_cell.ycord);
+		}
+		var _previous_cell = Game.field.check_movement_array(_figure.figure_id);
+		var _previous_index = array_get_index(_cells, _previous_cell);
+		var _blocked_previous_cell = undefined;
+		if _previous_index != -1 {
+			_blocked_previous_cell = _previous_cell;
+			array_delete(_cells, _previous_index, 1);
+		}
+		return {cells: _cells, blocked_previous_cell: _blocked_previous_cell};
+	}
+
+	get_adjacent_filled_cells = function(_xcord, _ycord, _excluded_cell = undefined) {
+		var _cells = [];
+		for (var i = -1; i <= 1; i++) {
+			for (var m = -1; m <= 1; m++) {
+				var _cell = Game.field.get_cell(_xcord + i, _ycord + m);
+				if _cell != undefined and _cell != _excluded_cell and _cell.is_filled() and !_cell.filled_figure.state.is_conquesting {
+					array_push(_cells, _cell);
+				}
+			}
+		}
+		return _cells;
+	}
+
+	get_adjacent_ability_target_cells = function(_from_cell) {
+		return get_adjacent_filled_cells(_from_cell.xcord, _from_cell.ycord, _from_cell);
+	}
+
+	get_spearman_ability_target_cells = function(_from_cell) {
+		var _cells = [];
+		var _dirs = [[1, 0], [-1, 0], [0, 1], [0, -1]];
+		for (var i = 0; i < array_length(_dirs); i++) {
+			var _middle = Game.field.get_cell(_from_cell.xcord + _dirs[i][0], _from_cell.ycord + _dirs[i][1]);
+			var _target = Game.field.get_cell(_from_cell.xcord + _dirs[i][0] * 2, _from_cell.ycord + _dirs[i][1] * 2);
+			if _middle != undefined and _target != undefined and !_middle.is_filled() and !_target.is_filled() {
+				array_push(_cells, _target);
+			}
+		}
+		var _previous_cell = Game.field.check_movement_array(_from_cell.filled_figure.figure_id);
+		var _previous_index = array_get_index(_cells, _previous_cell);
+		if _previous_index != -1 {
+			array_delete(_cells, _previous_index, 1);
+		}
+		return _cells;
+	}
+
+	get_trader_ability_choices = function(_player) {
+		var _choices = [];
+		var _load_data = Game.user_data.load(_player);
+		if !is_struct(_load_data) or !variable_struct_exists(_load_data, "player_figures") or !is_array(_load_data.player_figures) {
+			return _choices;
+		}
+		var _figures = _load_data.player_figures;
+		if array_length(_figures) < 3 {
+			return _choices;
+		}
+		for (var i = 0; i < 3; i++) {
+			array_push(_choices, _figures[array_length(_figures) - 1 - i]);
+		}
+		return _choices;
+	}
+
+	get_ability_target_cells = function(_from_cell) {
+		if _from_cell == undefined or !_from_cell.is_filled() {
+			return [];
+		}
+		var _ability = Behaviours.get_ablility(_from_cell.filled_figure.behaviour);
+		if _ability == undefined {
+			return [];
+		}
+		if _ability == WarriorAbility {
+			return get_adjacent_ability_target_cells(_from_cell);
+		}
+		if _ability == SpearmanAbility {
+			return get_spearman_ability_target_cells(_from_cell);
+		}
+		if _ability == ShieldbearerAbility {
+			return get_adjacent_ability_target_cells(_from_cell);
+		}
+		if _ability == TraderAbility {
+			if array_length(get_trader_ability_choices(_from_cell.filled_figure.owner)) < 3 {
+				return [];
+			}
+			return get_summon_target_cells(_from_cell.filled_figure.owner);
+		}
+		var _previous_marks = Game.field.export_marks();
+		var _test_ability = new _ability(_from_cell.filled_figure, _from_cell);
+		_test_ability.check_ability_targets(1, 1);
+		var _cells = Game.field.get_marked_cells();
+		Game.field.import_marks(_previous_marks);
+		return _cells;
+	}
+
+	get_summon_action_descriptors = function(_player) {
+		var _actions = [];
+		var _behaviour = get_next_summon_behaviour(_player);
+		if _behaviour == undefined {
+			return _actions;
+		}
+		var _cells = get_summon_target_cells(_player);
+		for (var i = 0; i < array_length(_cells); i++) {
+			array_push(_actions, {
+				kind: "summon",
+				player: _player,
+				behaviour: _behaviour,
+				target_x: _cells[i].xcord,
+				target_y: _cells[i].ycord
+			});
+		}
+		return _actions;
+	}
+
+	get_move_action_descriptors = function(_player) {
+		var _actions = [];
+		var _from_cells = Game.field.get_filled_cells(_player);
+		for (var i = 0; i < array_length(_from_cells); i++) {
+			var _from_cell = _from_cells[i];
+			if !_from_cell.filled_figure.state.is_active {
+				continue;
+			}
+			var _move_ability = Behaviours.get_move_ability(_from_cell.filled_figure.behaviour);
+			var _target_cells = get_move_target_cells(_from_cell);
+			for (var m = 0; m < array_length(_target_cells); m++) {
+				array_push(_actions, {
+					kind: "move",
+					player: _player,
+					action_constructor: _move_ability,
+					from_x: _from_cell.xcord,
+					from_y: _from_cell.ycord,
+					target_x: _target_cells[m].xcord,
+					target_y: _target_cells[m].ycord
+				});
+				if _move_ability == WarriorMoveAndAbility {
+					var _ability_targets = get_adjacent_filled_cells(_target_cells[m].xcord, _target_cells[m].ycord, _from_cell);
+					for (var a = 0; a < array_length(_ability_targets); a++) {
+						array_push(_actions, {
+							kind: "move_ability_warrior",
+							player: _player,
+							from_x: _from_cell.xcord,
+							from_y: _from_cell.ycord,
+							target_x: _target_cells[m].xcord,
+							target_y: _target_cells[m].ycord,
+							ability_target_x: _ability_targets[a].xcord,
+							ability_target_y: _ability_targets[a].ycord
+						});
+					}
+				}
+			}
+		}
+		return _actions;
+	}
+
+	get_ability_action_descriptors = function(_player) {
+		var _actions = [];
+		var _from_cells = Game.field.get_filled_cells(_player);
+		for (var i = 0; i < array_length(_from_cells); i++) {
+			var _from_cell = _from_cells[i];
+			if !_from_cell.filled_figure.state.is_active {
+				continue;
+			}
+			var _ability = Behaviours.get_ablility(_from_cell.filled_figure.behaviour);
+			if _ability == undefined {
+				continue;
+			}
+			if _ability == TraderAbility {
+				var _choices = get_trader_ability_choices(_player);
+				var _target_cells = get_ability_target_cells(_from_cell);
+				for (var c = 0; c < array_length(_choices); c++) {
+					for (var t = 0; t < array_length(_target_cells); t++) {
+						array_push(_actions, {
+							kind: "ability_trader",
+							player: _player,
+							from_x: _from_cell.xcord,
+							from_y: _from_cell.ycord,
+							chosen_button: c,
+							behaviour: _choices[c],
+							target_x: _target_cells[t].xcord,
+							target_y: _target_cells[t].ycord
+						});
+					}
+				}
+				continue;
+			}
+			if _ability == ShieldbearerAbility {
+				var _target_cells = get_ability_target_cells(_from_cell);
+				var _fill_cells = Game.field.get_clear_move_cells(_from_cell.xcord, _from_cell.ycord);
+				for (var t = 0; t < array_length(_target_cells); t++) {
+					for (var f = 0; f < array_length(_fill_cells); f++) {
+						array_push(_actions, {
+							kind: "ability_shieldbearer",
+							player: _player,
+							from_x: _from_cell.xcord,
+							from_y: _from_cell.ycord,
+							target_x: _target_cells[t].xcord,
+							target_y: _target_cells[t].ycord,
+							fill_x: _fill_cells[f].xcord,
+							fill_y: _fill_cells[f].ycord
+						});
+					}
+				}
+				continue;
+			}
+			var _target_cells = get_ability_target_cells(_from_cell);
+			for (var m = 0; m < array_length(_target_cells); m++) {
+				array_push(_actions, {
+					kind: "ability",
+					player: _player,
+					action_constructor: _ability,
+					from_x: _from_cell.xcord,
+					from_y: _from_cell.ycord,
+					target_x: _target_cells[m].xcord,
+					target_y: _target_cells[m].ycord
+				});
+			}
+		}
+		return _actions;
+	}
+
+	get_legal_action_descriptors = function(_player) {
+		var _actions = get_summon_action_descriptors(_player);
+		var _move_actions = get_move_action_descriptors(_player);
+		for (var i = 0; i < array_length(_move_actions); i++) {
+			array_push(_actions, _move_actions[i]);
+		}
+		var _ability_actions = get_ability_action_descriptors(_player);
+		for (var i = 0; i < array_length(_ability_actions); i++) {
+			array_push(_actions, _ability_actions[i]);
+		}
+		return _actions;
+	}
+
+	get_random_action_descriptor = function(_player) {
+		var _actions = get_legal_action_descriptors(_player);
+		if array_length(_actions) <= 0 {
+			return undefined;
+		}
+		return _actions[irandom(array_length(_actions) - 1)];
+	}
+
+	perform_random_action = function(_player) {
+		var _descriptor = get_random_action_descriptor(_player);
+		if _descriptor == undefined {
+			return false;
+		}
+		return perform_action_descriptor(_descriptor);
+	}
+
+	create_action_from_descriptor = function(_descriptor) {
+		if _descriptor.kind == "summon" {
+			var _behaviour = _descriptor.behaviour;
+			var _load_data = Game.user_data.load(_descriptor.player);
+			if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) and array_length(_load_data.player_figures) > 0 {
+				_behaviour = array_pop(_load_data.player_figures);
+				Game.user_data.save(_descriptor.player, _load_data);
+			}
+			return new SummonAction(_descriptor.target_x, _descriptor.target_y, Behaviours.get_sprite(_behaviour), _behaviour);
+		}
+		if _descriptor.kind == "move" {
+			var _action_constructor = _descriptor.action_constructor;
+			return new _action_constructor(_descriptor.from_x, _descriptor.from_y, _descriptor.target_x, _descriptor.target_y, undefined);
+		}
+		if _descriptor.kind == "move_ability_warrior" {
+			var _target_cell = Game.field.get_cell(_descriptor.ability_target_x, _descriptor.ability_target_y);
+			var _action = new WarriorMoveAndAbility(_descriptor.from_x, _descriptor.from_y, _descriptor.target_x, _descriptor.target_y, undefined);
+			_action.using_ability = true;
+			_action.target_cell = _target_cell;
+			return _action;
+		}
+		if _descriptor.kind == "ability" {
+			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
+			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
+			var _action_constructor = _descriptor.action_constructor;
+			var _action = new _action_constructor(_from_cell.filled_figure, _from_cell);
+			_action.set_target(_target_cell.filled_figure, _target_cell);
+			return _action;
+		}
+		if _descriptor.kind == "ability_shieldbearer" {
+			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
+			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
+			var _fill_cell = Game.field.get_cell(_descriptor.fill_x, _descriptor.fill_y);
+			var _action = new ShieldbearerAbility(_from_cell.filled_figure, _from_cell);
+			_action.target_cell = _target_cell;
+			_action.target_figure = _target_cell.filled_figure;
+			_action.fill_cell = _fill_cell;
+			_action.selected = true;
+			return _action;
+		}
+		if _descriptor.kind == "ability_trader" {
+			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
+			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
+			var _action = new TraderAbility(_from_cell.filled_figure, _from_cell);
+			var _load_data = Game.user_data.load(_descriptor.player);
+			_action.buttons = [];
+			if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) {
+				if array_length(_load_data.player_figures) < 3 {
+					return undefined;
+				}
+				for (var i = 0; i < 3; i++) {
+					_action.buttons[i] = array_pop(_load_data.player_figures);
+				}
+				Game.user_data.save(_descriptor.player, _load_data);
+			}
+			_action.chosen_button = _descriptor.chosen_button;
+			_action.target_cell = _target_cell;
+			return _action;
+		}
+		return undefined;
+	}
+
+	perform_action_descriptor = function(_descriptor) {
+		var _action = create_action_from_descriptor(_descriptor);
+		if _action == undefined {
+			return false;
+		}
+		set_action(_action);
+		end_move();
+		return true;
 	}
 
 	end_move = function() {
@@ -83,7 +438,7 @@ function GameLoopController() constructor{
 		}
 		execute_action();
 		turn_timer.reset();
-		
+
 		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
 		Game.field.check_conquested_cells();
@@ -142,7 +497,7 @@ function GameLoopController() constructor{
 		global.cell_click_callback.filled_figure_status.set_status("will_be_summoned", 1)
 		if global.selected_cell == undefined {
 			global.cell_click_callback.marked = 0;
-			
+
 			global.selected_cell = global.cell_click_callback;
 			Game.summon_controller.start_summon(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 		}
@@ -158,7 +513,7 @@ function GameLoopController() constructor{
 			clear_all();
 			figures_counter.update_turn();
 	}
-	
+
 	mark_active_figures = function() {
 		cells = Game.field.get_filled_cells(global.turn_owner)
 		for (i = 0; i < array_length(cells); i++) {
@@ -170,7 +525,7 @@ function GameLoopController() constructor{
 	quit_from_action = function() {
 		clean_controllers();
 		O_BoardDraw.clear();
-		Game.field.clear_all_marks(); 
+		Game.field.clear_all_marks();
 		global.using_ability = 1;
 		global.cell_click_callback = global.selected_cell;
 		Game.figure_action_controller = new FigureActionController()
@@ -198,8 +553,8 @@ function GameLoopController() constructor{
 		}
 	}
 	cell_is_playable = function(cell) {
-		return (cell.is_filled() and 
-				cell.filled_figure.owner == global.turn_owner and 
+		return (cell.is_filled() and
+				cell.filled_figure.owner == global.turn_owner and
 				cell.filled_figure.state.is_active);
 	}
 	select_movable_figure = function(cell) {
@@ -230,25 +585,25 @@ function GameLoopController() constructor{
 			if player1_captured >= 4 {return Game.Player1.player_id}
 			if player2_captured >= 4 {return Game.Player2.player_id}
 		}
-		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and 
+		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and
 		figures_counter.get_field_figures(Game.Player1.player_id) == 0 {return Game.Player2.player_id}
-		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and 
+		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and
 		figures_counter.get_field_figures(Game.Player2.player_id) == 0 {return Game.Player1.player_id}
 		if turn_timer.player_out_of_time != undefined {
 			if global.turn_owner == Game.Player1.player_id {return Game.Player1.player_id}
 			else {return Game.Player2.player_id}
 		}
 		out_of_figures = 0
-		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and 
+		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and
 		Game.field.get_active_player_field_figures(Game.Player1.player_id) == 0 {out_of_figures++}
-		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and 
+		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and
 		Game.field.get_active_player_field_figures(Game.Player2.player_id) == 0 {out_of_figures++}
 		if out_of_figures == 2 {
 			if player1_captured > player2_captured {return Game.Player1.player_id}
 			if player2_captured > player1_captured {return Game.Player2.player_id}
 			if player1_captured == player2_captured {return ""}
 		}
-	
+
 		return undefined
 	}
 
@@ -300,11 +655,11 @@ function GameLoopController() constructor{
 			action.import(import_struct);
 			break;
 		case "move_ability":
-			action = new import_struct.ex_action(import_struct.ex_from_x, import_struct.ex_from_y, 
+			action = new import_struct.ex_action(import_struct.ex_from_x, import_struct.ex_from_y,
 			import_struct.ex_to_x, import_struct.ex_to_y, undefined);
 			action.import(import_struct);
 			break;
-		case "summon": 
+		case "summon":
 			action = new import_struct.ex_action(import_struct.ex_target_x, import_struct.ex_target_y, undefined);
 			action.import(import_struct);
 			break;

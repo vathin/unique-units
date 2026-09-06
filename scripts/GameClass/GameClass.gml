@@ -60,7 +60,7 @@ function GameClass() constructor{
 		}
 		field_state = game_loop_controller.export(_export_data);
 		field_state.import_field = false;
-		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: undefined, state: field_state, turnowner: O_Server._id}))
+		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: undefined, state: field_state, turnOwner: O_Server._id}))
 	}
 	
 	init = function() {
