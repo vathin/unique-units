@@ -53,12 +53,12 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	draw = function() {
 		if to_x != undefined {
 			draw_sprite_ext(figure_sprite, figure_color, Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[0],
-			Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			Game.field.get_cell_xy(Game.field.get_cell(to_x, to_y))[1], Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 		}
 		if draw_previous_cell and previous_move_cell != undefined{
 			var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
 			var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
-			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
+			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.7);
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {

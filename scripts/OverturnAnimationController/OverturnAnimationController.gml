@@ -8,14 +8,14 @@ function OverturnAnimationController(): FigureAnimationController() constructor{
 	
 	animate = function(){
 		if animation_frame > animation_length / 2 {
-			figure_xscale += Settings.figure_scale / (animation_length/2);
+			figure_xscale += Game.field.get_figure_scale() / (animation_length/2);
 			draw_spr_2 = 1;
 			if animation_frame > animation_length*3/4 {
 				figure_alpha += 0.04
 			}
 		}
 		else {
-			figure_xscale -= Settings.figure_scale / (animation_length/2);
+			figure_xscale -= Game.field.get_figure_scale() / (animation_length/2);
 			if animation_frame > animation_length/4 {
 				figure_alpha -= 0.04
 			}

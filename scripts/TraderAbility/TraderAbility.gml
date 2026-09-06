@@ -1,8 +1,8 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
-	figure_button_x = room_width/2 - 130;
-	figure_button_y = room_height/1.25 + 45;
+	figure_button_x = display_get_gui_width()/2 - 130*(display_get_gui_height()/max(1, room_height));
+	figure_button_y = display_get_gui_height()/1.25 + 45*(display_get_gui_height()/max(1, room_height));
 	figure_button_x_offset = 82;
 	using_figure = _using_figure;
 	using_cell = _using_cell;
@@ -22,7 +22,10 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			buttons[i] = array_pop(load_data.player_figures);
 		}
 		
-		figure_button_x = room_width/2 - figure_button_x_offset
+		var _gui_scale = display_get_gui_height()/max(1, room_height);
+		figure_button_x_offset = 82*_gui_scale;
+		figure_button_x = display_get_gui_width()/2 - figure_button_x_offset;
+		figure_button_y = display_get_gui_height()/1.25 + 45*_gui_scale;
 		
 		Game.user_data.save(using_figure.owner, load_data);
 	}
@@ -34,11 +37,12 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	}
 	
 	TEST_draw_buttons = function() {
+		var _gui_scale = display_get_gui_height()/max(1, room_height);
 		if buttons != [] {
 			for (i = 0; i < 3; i ++) {
 				var _draw_alpha = 1/(1+(chosen_button == i));
 				draw_sprite_ext(Behaviours.get_sprite(buttons[i]), using_figure.image, figure_button_x + figure_button_x_offset*i+5, figure_button_y+5, 
-				Settings.figure_scale*1.3, Settings.figure_scale*1.3, 0, c_white, _draw_alpha);
+				Settings.figure_scale*1.3*_gui_scale, Settings.figure_scale*1.3*_gui_scale, 0, c_white, _draw_alpha);
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
@@ -48,16 +52,19 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 	TEST_buttons_check = function() {
 		if mouse_check_button_pressed(mb_left) {
 			 {
-				if mouse_y > figure_button_y - 25 and mouse_y < figure_button_y + 45 {
-					if mouse_x > figure_button_x - 40 and mouse_x < figure_button_x + 50 {
+				var _mouse_x = device_mouse_x_to_gui(0);
+				var _mouse_y = device_mouse_y_to_gui(0);
+				var _gui_scale = display_get_gui_height()/max(1, room_height);
+				if _mouse_y > figure_button_y - 25*_gui_scale and _mouse_y < figure_button_y + 45*_gui_scale {
+					if _mouse_x > figure_button_x - 40*_gui_scale and _mouse_x < figure_button_x + 50*_gui_scale {
 						chosen_button = 0;
 					} 
-					if mouse_x > figure_button_x - 40 + figure_button_x_offset and
-					mouse_x < figure_button_x + 50 + figure_button_x_offset {
+					if _mouse_x > figure_button_x - 40*_gui_scale + figure_button_x_offset and
+					_mouse_x < figure_button_x + 50*_gui_scale + figure_button_x_offset {
 						chosen_button = 1;
 					} 
-					if mouse_x > figure_button_x - 40 + 2*figure_button_x_offset and 
-					mouse_x < figure_button_x + 50 + 2*figure_button_x_offset{
+					if _mouse_x > figure_button_x - 40*_gui_scale + 2*figure_button_x_offset and 
+					_mouse_x < figure_button_x + 50*_gui_scale + 2*figure_button_x_offset{
 						chosen_button = 2;
 					} 
 				}
@@ -114,10 +121,10 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		if target_cell != undefined{
 			if chosen_button != undefined {
 				draw_sprite_ext(Behaviours.get_sprite(buttons[chosen_button]), using_figure.image, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
-				Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+				Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 			}
 			draw_sprite_ext(S_Back_chosen, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.75);
+			Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.75);
 		}
 	}
 	

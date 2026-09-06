@@ -8,7 +8,7 @@ function GameLoopController() constructor{
 	can_cancel = false;
 	displaying_card = false;
 	change_turn_owner = 1;
-	export_data = [];
+	export_data = undefined;
 	action_export_data = [];
 	ready_to_send = 1;
 	player1_cards = [];
@@ -71,6 +71,7 @@ function GameLoopController() constructor{
 	}
 
 	end_move = function() {
+		export_data = undefined;
 		if ready_to_send and Game.online_match and have_action(){
 			if O_Server._id == global.turn_owner{
 				action_export_data = [action.export()]
@@ -97,7 +98,7 @@ function GameLoopController() constructor{
 				state = STATE_LIST.enemy_turn;
 			}
 		}
-		if export_data != undefined {
+		if Game.online_match and export_data != undefined {
 			if ready_to_send {
 				Game.send_turn(export_data[0], export_data[1])
 			}

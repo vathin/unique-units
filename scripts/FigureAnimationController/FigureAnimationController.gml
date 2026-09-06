@@ -15,7 +15,13 @@ function FigureAnimationController() constructor{
 	figure_y = 0;
 	percent = 0;
 
-	start_animation = function(_x_from, _y_from, _x_to, _y_to, _animation_length, _figure_scale = Settings.figure_scale) {
+	start_animation = function(_x_from, _y_from, _x_to, _y_to, _animation_length, _figure_scale = undefined) {
+		if _figure_scale == undefined {
+			_figure_scale = Settings.figure_scale;
+			if variable_global_exists("game") && global.game != undefined && variable_struct_exists(global.game, "field") && global.game.field != undefined {
+				_figure_scale = global.game.field.get_figure_scale();
+			}
+		}
 		x_from = _x_from;
 		y_from = _y_from;
 		x_to = _x_to;

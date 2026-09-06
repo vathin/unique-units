@@ -1,16 +1,18 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function Field() constructor{
-	window_width = window_get_width();
-	window_height = window_get_height();
+	gui_base_width = room_width;
+	gui_base_height = room_height;
+	gui_width = display_get_gui_width();
+	gui_height = display_get_gui_height();
 	field_height = 6;
 	field_width = 6;
 	scale = 0.7;
-	size = 80*scale;
+	size = 80*scale*(gui_height/max(1, gui_base_height));
 	map_sprite = Maps_list.get_map_sprite(global.map);
 	map_scale = size*field_width/2126; //0,1467545
-	start_x = window_width/2 - size*2.5//(room_width/2) - size*2.5;
-	start_y = window_height/2 - size*3//(room_height/2) - size*3;
+	start_x = gui_width/2 - size*2.5;
+	start_y = gui_height/2 - size*3;
 	field_x_size = size*field_width;
 	field_y_size = size*field_width;
 	selected_cell = undefined;
@@ -48,6 +50,8 @@ function Field() constructor{
 		new_figure = new Figure()
 		new_figure.set_behaviour(_behaviour);
 		new_figure.owner = _owner;
+		new_figure.draw_xscale = get_figure_scale();
+		new_figure.draw_yscale = get_figure_scale();
 		Game.field.get_cell(_xcord, _ycord).fill(new_figure);
 		if _is_figure_new {
 			new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
@@ -82,8 +86,16 @@ function Field() constructor{
 	}
 	
 	update_cords = function() {
-		start_x = (room_width/2) - size*2.5;
-		start_y = (room_height/2) - size*3;
+		var _old_gui_width = gui_width;
+		var _old_gui_height = gui_height;
+		gui_width = display_get_gui_width();
+		gui_height = display_get_gui_height();
+		size = 80*scale*(gui_height/max(1, gui_base_height));
+		map_scale = size*field_width/2126;
+		field_x_size = size*field_width;
+		field_y_size = size*field_height;
+		start_x = gui_width/2 - size*2.5;
+		start_y = gui_height/2 - size*3;
 		field_cord = {
 			top: start_y,
 			bottom: start_y + size*field_height,
@@ -92,10 +104,25 @@ function Field() constructor{
 			x_center: start_x + size*field_width/2,
 			y_center: start_y + size*field_height/2
 		}
+		if _old_gui_width != gui_width or _old_gui_height != gui_height {
+			player1_captured.sort(false);
+			player2_captured.sort(false);
+			player1_dropped.sort(false);
+			player2_dropped.sort(false);
+		}
+	}
+	
+	get_gui_scale = function() {
+		return gui_height/max(1, gui_base_height);
+	}
+	
+	get_figure_scale = function() {
+		return Settings.figure_scale*get_gui_scale();
 	}
 	
 	TEST_draw_cells = function() {
-		draw_sprite_ext(map_sprite, 0, window_width/2, window_height/2-size/2, map_scale, map_scale, 180*(Game.role == "guest"), c_white, 1);
+		update_cords();
+		draw_sprite_ext(map_sprite, 0, gui_width/2, gui_height/2-size/2, map_scale, map_scale, 180*(Game.role == "guest"), c_white, 1);
 		up_figures = [];
 		if Game.game_loop_controller.have_action() {
 			Game.game_loop_controller.action.draw();
@@ -111,11 +138,16 @@ function Field() constructor{
 						array_push(up_figures, draw_figure);
 					}
 					else {
+						var _cell_xy = get_cell_xy(draw_cell);
+						draw_figure.draw_x = _cell_xy[0];
+						draw_figure.draw_y = _cell_xy[1];
+						draw_figure.draw_xscale = get_figure_scale();
+						draw_figure.draw_yscale = get_figure_scale();
 						draw_sprite_ext(Behaviours.get_sprite(draw_figure.behaviour), draw_figure.image, draw_figure.draw_x, draw_figure.draw_y, 
 						draw_figure.draw_xscale, draw_figure.draw_yscale, 0, c_white, draw_figure.draw_alpha);
 						if draw_figure.state.is_conquesting {
 							var _draw_alpha = 1
-							if mouse_check_button(mb_left) and get_cell_from_coordinates(mouse_x, mouse_y) == draw_cell {
+							if mouse_check_button(mb_left) and check_click() == draw_cell {
 								O_BoardDraw.set_button_overlay(Behaviours.get_sprite(draw_figure.behaviour),
 								(draw_figure.owner == Game.opponent));
 								_draw_alpha = 0.3
@@ -128,11 +160,11 @@ function Field() constructor{
 				}
 				if (draw_cell.is_marked() and draw_cell.draw_mark == 1) {
 					draw_sprite_ext(global.mark, 0, get_cell_xy(draw_cell)[0], get_cell_xy(draw_cell)[1], 
-					0.6, 0.6, 0, c_white, 1)
+					0.6*get_gui_scale(), 0.6*get_gui_scale(), 0, c_white, 1)
 				}
 				var _statuses = draw_cell.filled_figure_status.get_active_draw_statuses();
 				var _st_amount = array_length(_statuses);
-				var _scale = scale*0.8;
+				var _scale = scale*0.8*get_gui_scale();
 				if _st_amount > 1 {_scale*= 0.7}
 				var _draw_num = 0;
 				for (var i = 0; i < _st_amount; i++) {
@@ -214,7 +246,7 @@ function Field() constructor{
 	
 	}
 	check_click = function() {
-		return get_cell_from_coordinates(mouse_x, mouse_y)
+		return get_cell_from_coordinates(device_mouse_x_to_gui(0), device_mouse_y_to_gui(0))
 	}
 	
 	get_cell = function(_xcord, _ycord) {
@@ -248,22 +280,11 @@ function Field() constructor{
 			for (var m = 0; m < field_width; m++) {
 				cell = get_cell(i, m);
 				if !cell.is_filled() {
-					//if player == Game.Player1.player_id {
-					if Game.role == "host"{
-						if cell.ycord > 2{
-							is_on_player_side = 1
-						}
-						else {
-							is_on_player_side = 0
-						}
+					if player == Game.Player1.player_id {
+						is_on_player_side = (cell.ycord > 2);
 					}
 					else {
-						if cell.ycord <= 2{
-							is_on_player_side = 1
-						}
-						else {
-							is_on_player_side = 0
-						}
+						is_on_player_side = (cell.ycord <= 2);
 					}
 					if is_on_player_side or cell.is_under_control(player){
 						cell.marked = 1

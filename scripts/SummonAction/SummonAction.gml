@@ -22,7 +22,7 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour) : Action
 			var _enemy_side = (Game.local_player != undefined && global.turn_owner != Game.local_player.player_id);
 			draw_sprite_ext(figure_sprite, _enemy_side, Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[0],
 			Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))[1], 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 			cords = Game.field.get_cell_xy(Game.field.get_cell(target_x, target_y))
 		}
 	}

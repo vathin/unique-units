@@ -20,10 +20,10 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	draw = function() {
 		if selected {
 			draw_sprite_ext(Behaviours.get_sprite(target_figure.behaviour), target_figure.image, Game.field.get_cell_xy(fill_cell)[0], Game.field.get_cell_xy(fill_cell)[1], 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 		}
 		if target_figure != undefined {
-			draw_sprite_ext(S_Back_Action_Target, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], Settings.figure_scale, Settings.figure_scale, 0, c_white, 1);
+			draw_sprite_ext(S_Back_Action_Target, 0, Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 1);
 			
 		}
 	}

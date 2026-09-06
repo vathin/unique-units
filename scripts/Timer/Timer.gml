@@ -36,6 +36,7 @@ function Timer() constructor{
 	}
 	
 	TEST_draw_timer = function() {
+		draw_x = display_get_gui_width()/2;
 		draw_set_font(F_turn_timer);
 		if !using_time_bank {
 			seconds = all_time div Settings.FPS - current_frame div Settings.FPS;

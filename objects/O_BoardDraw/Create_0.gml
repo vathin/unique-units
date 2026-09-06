@@ -1,8 +1,8 @@
 in_game = 1
 selected_cell = undefined
 game_state = undefined
-width = window_get_width();
-height = window_get_height();
+width = display_get_gui_width();
+height = display_get_gui_height();
 drop_cord = [width/2 - 255, height/2-40];
 capture_cord = [width/2 + 210, height/2-40];
 turn_owner_cord = [width/1.85, height/7.5];
@@ -10,6 +10,15 @@ end_button = false;
 button_overlay_sprite = undefined;
 button_overlay_subimg = 0;
 button_overlay_scale = 1;
+
+update_layout = function() {
+	width = display_get_gui_width();
+	height = display_get_gui_height();
+	var _scale = height/max(1, room_height);
+	drop_cord = [width/2 - 255*_scale, height/2 - 40*_scale];
+	capture_cord = [width/2 + 210*_scale, height/2 - 40*_scale];
+	turn_owner_cord = [width/1.85, height/7.5];
+}
 
 figure_click = function(_figure) {
 		if _figure.state.is_active {

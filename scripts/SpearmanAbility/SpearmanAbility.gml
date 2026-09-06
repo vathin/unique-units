@@ -34,12 +34,12 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 		if global.cell_click_callback != using_cell{
 			draw_sprite_ext(figure_sprite, using_cell.filled_figure.image, Game.field.get_cell_xy(cell_for_move)[0], 
 			Game.field.get_cell_xy(cell_for_move)[1], 
-			Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.5);
+			Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 		}
 		if draw_previous_cell and previous_move_cell != undefined{
 			var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
 			var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
-			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
+			draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.7);
 		}
 		
 	}
@@ -82,7 +82,7 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 				draw_cell = function() {
 					var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
 					var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
-					draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Settings.figure_scale, Settings.figure_scale, 0, c_white, 0.7);
+					draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.7);
 					if Game.game_loop_controller.have_action() {array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
 				}
 				if !Game.game_loop_controller.have_action() 
