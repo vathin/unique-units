@@ -206,7 +206,7 @@ get_avatar_url_from_vk_user = function(_vk_user) {
 	return "";
 }
 
-get_avatar_url_from_login_data = function(_data) {
+get_avatar_url_from_login_data = function(_data, _allow_current_vk = true) {
 	var _source = "none";
 	var _url = "";
 	
@@ -219,19 +219,34 @@ get_avatar_url_from_login_data = function(_data) {
 			_url = get_avatar_url_from_vk_user(_data.vk_data);
 			_source = "msg.data.vk_data";
 		}
-		else if (variable_struct_exists(_data, "playerData") && is_struct(_data.playerData)) {
-			if (variable_struct_exists(_data.playerData, "display") && is_struct(_data.playerData.display) && variable_struct_exists(_data.playerData.display, "icon") && _data.playerData.display.icon != "") {
-				_url = _data.playerData.display.icon;
-				_source = "msg.data.playerData.display.icon";
+		else {
+			var _player_data = _data;
+			if (variable_struct_exists(_data, "playerData") && is_struct(_data.playerData)) {
+				_player_data = _data.playerData;
 			}
-			else if (variable_struct_exists(_data.playerData, "platform_vk") && is_struct(_data.playerData.platform_vk) && variable_struct_exists(_data.playerData.platform_vk, "PlatfromVk") && is_struct(_data.playerData.platform_vk.PlatfromVk) && variable_struct_exists(_data.playerData.platform_vk.PlatfromVk, "user_info")) {
-				_url = get_avatar_url_from_vk_user(_data.playerData.platform_vk.PlatfromVk.user_info);
-				_source = "msg.data.playerData.platform_vk.PlatfromVk.user_info";
+			if (variable_struct_exists(_player_data, "display") && is_struct(_player_data.display) && variable_struct_exists(_player_data.display, "icon") && _player_data.display.icon != "") {
+				_url = _player_data.display.icon;
+				_source = "player display.icon";
+			}
+			else if (variable_struct_exists(_player_data, "platform_vk") && is_struct(_player_data.platform_vk) && variable_struct_exists(_player_data.platform_vk, "PlatfromVk") && is_struct(_player_data.platform_vk.PlatfromVk) && variable_struct_exists(_player_data.platform_vk.PlatfromVk, "user_info")) {
+				_url = get_avatar_url_from_vk_user(_player_data.platform_vk.PlatfromVk.user_info);
+				_source = "player platform_vk user_info";
+			}
+			else if (variable_struct_exists(_player_data, "info") && is_struct(_player_data.info)) {
+				var _info = _player_data.info;
+				if (variable_struct_exists(_info, "display") && is_struct(_info.display) && variable_struct_exists(_info.display, "icon") && _info.display.icon != "") {
+					_url = _info.display.icon;
+					_source = "player info.display.icon";
+				}
+				else if (variable_struct_exists(_info, "platform_vk") && is_struct(_info.platform_vk) && variable_struct_exists(_info.platform_vk, "PlatfromVk") && is_struct(_info.platform_vk.PlatfromVk) && variable_struct_exists(_info.platform_vk.PlatfromVk, "user_info")) {
+					_url = get_avatar_url_from_vk_user(_info.platform_vk.PlatfromVk.user_info);
+					_source = "player info platform_vk user_info";
+				}
 			}
 		}
 	}
 	
-	if (_url == "" && variable_global_exists("vk") && variable_struct_exists(global.vk, "vk_user")) {
+	if (_url == "" && _allow_current_vk && variable_global_exists("vk") && variable_struct_exists(global.vk, "vk_user")) {
 		_url = get_avatar_url_from_vk_user(global.vk.vk_user);
 		_source = "global.vk.vk_user";
 	}
@@ -315,8 +330,25 @@ Server.add_reaction(function(msg)
 			break;
 		case ServerMessageType.PlayerInfo:
 			if msg.data.player.id != _id {
-				var _name = msg.data.player.info.nickname;
-				UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", _name);
+				var _player = msg.data.player;
+				show_debug_message("Online opponent PlayerInfo: " + json_stringify(_player));
+				var _name = "";
+				if (variable_struct_exists(_player, "info") && is_struct(_player.info) && variable_struct_exists(_player.info, "nickname")) {
+					_name = _player.info.nickname;
+				}
+				else if (variable_struct_exists(_player, "display") && is_struct(_player.display) && variable_struct_exists(_player.display, "nickname")) {
+					_name = _player.display.nickname;
+				}
+				else if (variable_struct_exists(_player, "nickname")) {
+					_name = _player.nickname;
+				}
+				if (_name != undefined && string(_name) != "" && string(_name) != "undefined") {
+					UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", _name);
+				}
+				var _opponent_avatar_url = get_avatar_url_from_login_data(_player, false);
+				if (_opponent_avatar_url != "") {
+					UI_controller.set_opponent_avatar_from_url(_opponent_avatar_url);
+				}
 			}
 			break;
 	}

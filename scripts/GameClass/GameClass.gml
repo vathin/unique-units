@@ -122,6 +122,9 @@ function GameClass() constructor{
 			Player1 = new Player(1, _player1_type);
 			Player2 = new Player(2, _player2_type);
 			local_player = Player1;
+			if (_player2_type == "bot") {
+				UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", "Bot");
+			}
 			if _player1_type != "local" {
 				local_player = undefined;
 			}

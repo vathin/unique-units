@@ -11,6 +11,10 @@ profile_avatar_sprite = -1;
 profile_avatar_url = "";
 profile_avatar_loaded = false;
 profile_avatar_source_sprite = -1;
+opponent_avatar_sprite = -1;
+opponent_avatar_url = "";
+opponent_avatar_loaded = false;
+opponent_avatar_source_sprite = -1;
 game_view_width = room_width;
 game_view_height = room_height;
 game_view_base_height = 1000;
@@ -33,7 +37,7 @@ sync_gui_size = function(_force = false) {
 	if (os_browser != browser_not_a_browser && !_force && resize_frame < resize_ready_frame) {
 		return;
 	}
-	
+
 	var _window_width = max(1, window_get_width());
 	var _window_height = max(1, window_get_height());
 	var _aspect_width = _window_width;
@@ -42,7 +46,7 @@ sync_gui_size = function(_force = false) {
 	var _html5_frame_width = 0;
 	var _html5_frame_height = 0;
 	var _html5_size_source = "window";
-	
+
 	if (os_browser != browser_not_a_browser && extension_exists("extension_VK")) {
 		_html5_frame_json = HTML5_GetFrameSize();
 		var _frame_size = json_parse(_html5_frame_json);
@@ -239,6 +243,22 @@ set_ui_sprite_on_ui_layer = function(_layer, _panel, _sprite) {
 	layer_sprite_change(get_ui_sprite_element(_layer, _panel), _sprite);
 }
 
+set_ui_sprite_on_child_panel = function(_layer, _parent_panel, _panel, _sprite) {
+	var _parent_node = flexpanel_node_get_child(layer_get_flexpanel_node(_layer), _parent_panel);
+	var _node = flexpanel_node_get_child(_parent_node, _panel);
+	var _struct = flexpanel_node_get_struct(_node);
+	layer_sprite_change(_struct.layerElements[0].elementId, _sprite);
+}
+
+set_profile_avatar_sprite = function(_sprite) {
+	set_ui_sprite_on_ui_layer("MenuHome", "ProfilePicture", _sprite);
+	set_ui_sprite_on_child_panel(InGame_layer, "PlayerProfile", "PlayerProfilePicture", _sprite);
+}
+
+set_opponent_avatar_sprite = function(_sprite) {
+	set_ui_sprite_on_child_panel(InGame_layer, "OpponentProfile", "OpponentProfilePicture", _sprite);
+}
+
 create_round_profile_avatar = function(_source_sprite) {
 	if (_source_sprite == -1) {
 		return -1;
@@ -279,7 +299,7 @@ set_profile_avatar_from_url = function(_url) {
 	}
 	
 	if (_url == profile_avatar_url && profile_avatar_sprite != -1 && profile_avatar_loaded) {
-		set_ui_sprite_on_ui_layer("MenuHome", "ProfilePicture", profile_avatar_sprite);
+		set_profile_avatar_sprite(profile_avatar_sprite);
 		return true;
 	}
 	
@@ -292,6 +312,29 @@ set_profile_avatar_from_url = function(_url) {
 	profile_avatar_source_sprite = sprite_add_ext(_url, 1, 0, 0, true);
 	profile_avatar_sprite = profile_avatar_source_sprite;
 	show_debug_message("VK/avatar: loading avatar sprite from " + _url);
+	return true;
+}
+
+set_opponent_avatar_from_url = function(_url) {
+	if (!is_string(_url) || _url == "") {
+		show_debug_message("Opponent avatar: empty avatar url");
+		return false;
+	}
+
+	if (_url == opponent_avatar_url && opponent_avatar_sprite != -1 && opponent_avatar_loaded) {
+		set_opponent_avatar_sprite(opponent_avatar_sprite);
+		return true;
+	}
+
+	opponent_avatar_url = _url;
+	opponent_avatar_loaded = false;
+	if (opponent_avatar_sprite != -1) {
+		sprite_delete(opponent_avatar_sprite);
+		opponent_avatar_sprite = -1;
+	}
+	opponent_avatar_source_sprite = sprite_add_ext(_url, 1, 0, 0, true);
+	opponent_avatar_sprite = opponent_avatar_source_sprite;
+	show_debug_message("Opponent avatar: loading avatar sprite from " + _url);
 	return true;
 }
 
