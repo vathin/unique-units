@@ -7,14 +7,13 @@ else {
 	sync_gui_size();
 }
 
-if (!saved_login_fields_loaded && resize_frame >= resize_ready_frame) {
-	load_saved_login_fields();
+if (keyboard_check_pressed(vk_escape) && (room == R_Test || room == R_Game)) {
+	if (variable_global_exists("game") && global.game != undefined && global.game.in_match) {
+		global.game.end_game();
+	}
+	room_goto(R_Main_menu);
 }
 
-if (room != R_Main_menu) {
-	local_game_text_applied = false;
-}
-else if (!local_game_text_applied && resize_frame > 0) {
-	set_text_on_child_panel("MenuHome", "FastSearch", "Text", "ОДИНОЧНАЯ ИГРА");
-	local_game_text_applied = true;
+if (!saved_login_fields_loaded && resize_frame >= resize_ready_frame) {
+	load_saved_login_fields();
 }

@@ -1,5 +1,6 @@
 
-function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureAbilityAction() constructor{
+function SpearmanAbility(using_figure=undefined, using_cell=undefined, _skip_ui=false) : FigureAbilityAction() constructor{
+	skip_ui = _skip_ui;
 	self.using_figure = using_figure;
 	self.using_cell = using_cell;
 	if using_figure != undefined {
@@ -22,15 +23,17 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 	}
 	
 	set_target = function(a, b) {
-		if cell_for_move != undefined {
+		if !skip_ui and cell_for_move != undefined {
 			cell_for_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 		}
 		cell_for_move = b;
 		if cell_for_move == undefined {
 			cell_for_move = global.cell_click_callback;
 		}
-		cell_for_move.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
-		O_BoardDraw.unblock_end_button();
+		if !skip_ui {
+			cell_for_move.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			O_BoardDraw.unblock_end_button();
+		}
 	}
 	
 	draw = function() {
@@ -86,9 +89,14 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 					var _draw_x = Game.field.get_cell_xy(previous_move_cell)[0];
 					var _draw_y = Game.field.get_cell_xy(previous_move_cell)[1];
 					draw_sprite_ext(S_cycle_rule, 0, _draw_x, _draw_y, Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.7);
-					if Game.game_loop_controller.have_action() {array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
+					if Game.game_loop_controller.have_action() {
+						var _draw_index = array_get_index(Game.do_every_step_list, draw_cell);
+						if _draw_index != -1 {
+							array_delete(Game.do_every_step_list, _draw_index, 1);
+						}
+					}
 				}
-				if !Game.game_loop_controller.have_action() 
+				if !skip_ui and !Game.game_loop_controller.have_action()
 				and Game.game_loop_controller.state == STATE_LIST.figure_ability{array_push(Game.do_every_step_list, draw_cell)}
 			}
 		}
@@ -96,6 +104,10 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined) : FigureA
 	
 	
 	back = function() {
+		if skip_ui {
+			cell_for_move = undefined;
+			return;
+		}
 		if global.cell_click_callback != global.selected_cell {
 			global.cell_click_callback.set_draw_marks(1);
 			global.cell_click_callback.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));

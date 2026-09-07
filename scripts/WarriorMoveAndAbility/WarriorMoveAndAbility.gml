@@ -1,6 +1,6 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined) : FigureAbilityAction() constructor{
+function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined, _skip_ui=false) : FigureAbilityAction() constructor{
 	from_x = _from_x;
 	from_y = _from_y;
 	to_x = _to_x;
@@ -10,17 +10,19 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	target_cell = undefined;
 	using_figure = using_cell.filled_figure;
 	using_ability = false;
-	if (!Game.online_match || using_figure.owner == O_Server._id) {
+	if !_skip_ui and Game.game_loop_controller.is_human_turn() {
 		Game.figure_action_controller = new FigureActionController();
 		Game.figure_action_controller.move_and_ability = 1;
 		Game.figure_action_controller.figure_can_move = 0;
 	}
-	Game.move_input_controller = undefined
-	Game.game_loop_controller.state = STATE_LIST.figure_action
-	Game.field.check_clear_move_cells(_from_x, _from_y);
-	Game.field.get_cell(_from_x, _from_y).set_draw_marks(0);
-	Game.field.get_cell(_to_x, _to_y).set_draw_marks(0);
-	O_BoardDraw.unblock_end_button();
+	if !_skip_ui {
+		Game.move_input_controller = undefined
+		Game.game_loop_controller.state = STATE_LIST.figure_action
+		Game.field.check_clear_move_cells(_from_x, _from_y);
+		Game.field.get_cell(_from_x, _from_y).set_draw_marks(0);
+		Game.field.get_cell(_to_x, _to_y).set_draw_marks(0);
+		O_BoardDraw.unblock_end_button();
+	}
 	previous_move_cell = undefined;
 	draw_previous_cell = 0;
 
@@ -35,7 +37,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		
 		to_move.fill(using_figure, 1);
 		from_move.clear();
-		if using_ability {
+		if using_ability and target_cell != undefined and target_cell.is_filled() and target_cell.filled_figure.owner != using_figure.owner {
 			hit_animation = new HitAnimationController();
 			hit_animation.start_animation(Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1],
 			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.hit_animation_length);
@@ -81,6 +83,11 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	}
 	
 	set_new_target_coordinates = function(_new_x, _new_y) {
+		if _skip_ui {
+			to_x = _new_x;
+			to_y = _new_y;
+			return;
+		}
 		if to_x != undefined {
 			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
 			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
@@ -97,6 +104,10 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	}
 	
 	set_target = function(_target_figure, _target_cell) {
+		if _skip_ui {
+			target_cell = _target_cell;
+			return;
+		}
 		if target_cell != undefined {
 			target_cell.set_draw_marks(1)
 			target_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_dropped))
@@ -114,7 +125,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 			for (m = -1; m <= 1; m++) {
 				cell = Game.field.get_cell(to_x + i, to_y + m);
 				if cell != undefined {
-					if cell.is_filled() and cell != using_cell and !cell.filled_figure.state.is_conquesting{
+					if cell.is_filled() and cell != using_cell and cell.filled_figure.owner != using_figure.owner and !cell.filled_figure.state.is_conquesting{
 						if check {cell.marked = 1}
 						found_cells = 1;
 					}
@@ -125,7 +136,7 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 		return(found_cells)
 	}
 	
-	if (!Game.online_match || using_figure.owner == O_Server._id) {
+	if !_skip_ui and Game.figure_action_controller != undefined {
 		if !check_ability_targets(0, 0) {
 			Game.figure_action_controller.figure_have_ability = 0
 		}
@@ -136,6 +147,13 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	
 	
 	back = function() {
+		if _skip_ui {
+			to_x = undefined;
+			to_y = undefined;
+			target_cell = undefined;
+			using_ability = false;
+			return;
+		}
 		if using_ability {
 			if target_cell!= undefined{
 				target_cell.set_draw_marks(1);

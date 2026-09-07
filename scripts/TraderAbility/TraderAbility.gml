@@ -1,16 +1,21 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
+function TraderAbility(_using_figure=undefined, _using_cell=undefined, _skip_ui=false) : FigureAbilityAction() constructor{
+	skip_ui = _skip_ui;
 	figure_button_x = display_get_gui_width()/2 - 130*(display_get_gui_height()/max(1, room_height));
 	figure_button_y = display_get_gui_height()/1.25 + 45*(display_get_gui_height()/max(1, room_height));
 	figure_button_x_offset = 82;
 	using_figure = _using_figure;
 	using_cell = _using_cell;
 	chosen_button = undefined;
-	O_BoardDraw.block_end_button();
+	if !skip_ui {
+		O_BoardDraw.block_end_button();
+	}
 	sprite_draw = undefined;
 	target_cell = undefined;
-	global.mark = S_Summon_mark;
+	if !skip_ui {
+		global.mark = S_Summon_mark;
+	}
 	buttons = [];
 	
 	
@@ -46,14 +51,19 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
-		{array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
+		{
+			var _index = array_get_index(Game.do_every_step_list, self);
+			if _index != -1 {
+				array_delete(Game.do_every_step_list, _index, 1);
+			}
+		}
 	}
 	
 	TEST_buttons_check = function() {
 		if mouse_check_button_pressed(mb_left) {
 			 {
-				var _mouse_x = device_mouse_x_to_gui(0);
-				var _mouse_y = device_mouse_y_to_gui(0);
+				var _mouse_x = UI_controller.gui_mouse_x();
+				var _mouse_y = UI_controller.gui_mouse_y();
 				var _gui_scale = display_get_gui_height()/max(1, room_height);
 				if _mouse_y > figure_button_y - 25*_gui_scale and _mouse_y < figure_button_y + 45*_gui_scale {
 					if _mouse_x > figure_button_x - 40*_gui_scale and _mouse_x < figure_button_x + 50*_gui_scale {
@@ -72,10 +82,15 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			}
 		}
 		if Game.game_loop_controller.state != STATE_LIST.figure_ability 
-		{array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, self), 1)}
+		{
+			var _index = array_get_index(Game.do_every_step_list, self);
+			if _index != -1 {
+				array_delete(Game.do_every_step_list, _index, 1);
+			}
+		}
 	}
 	
-	if Game.game_loop_controller.state == STATE_LIST.figure_ability {
+	if !skip_ui and Game.game_loop_controller.state == STATE_LIST.figure_ability {
 		start();
 		Game.field.clear_all_marks();
 	}
@@ -98,9 +113,15 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 			}
 			array_delete(buttons, 0, 1);
 		}
-		if Game.game_loop_controller.state == STATE_LIST.figure_ability {
-			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_draw_buttons), 1);
-			array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, TEST_buttons_check), 1);
+		if !skip_ui and Game.game_loop_controller.state == STATE_LIST.figure_ability {
+			var _draw_index = array_get_index(Game.do_every_step_list, TEST_draw_buttons);
+			if _draw_index != -1 {
+				array_delete(Game.do_every_step_list, _draw_index, 1);
+			}
+			var _check_index = array_get_index(Game.do_every_step_list, TEST_buttons_check);
+			if _check_index != -1 {
+				array_delete(Game.do_every_step_list, _check_index, 1);
+			}
 		}
 	}
 
@@ -128,22 +149,29 @@ function TraderAbility(_using_figure=undefined, _using_cell=undefined) : FigureA
 		}
 	}
 	
-	global.cell_action = function(cell) {
-		if (cell.marked) {
-			global.cell_click_callback.set_draw_marks(1);
-			global.cell_click_callback.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
-			global.cell_click_callback = cell;
-			cell.set_draw_marks(0);
-			cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
-			if !Game.game_loop_controller.have_action() {
-				Game.ability_input_controller.start_ability();
+	if !skip_ui {
+		global.cell_action = function(cell) {
+			if (cell.marked) {
+				global.cell_click_callback.set_draw_marks(1);
+				global.cell_click_callback.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
+				global.cell_click_callback = cell;
+				cell.set_draw_marks(0);
+				cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_summoned));
+				if !Game.game_loop_controller.have_action() {
+					Game.ability_input_controller.start_ability();
+				}
+				Game.game_loop_controller.action.target_cell = cell;
+				O_BoardDraw.unblock_end_button()
 			}
-			Game.game_loop_controller.action.target_cell = cell;
-			O_BoardDraw.unblock_end_button()
 		}
 	}
 	
 	back = function() {
+		if skip_ui {
+			chosen_button = undefined;
+			target_cell = undefined;
+			return;
+		}
 		if chosen_button != undefined or target_cell != undefined{
 			chosen_button = undefined;
 			sprite_draw = undefined;

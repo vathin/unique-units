@@ -1,4 +1,4 @@
-function Start_match(){
+function Start_match(_mode = "local_vs_local"){
 	global.cell_click_callback = undefined;
 	global.selected_cell = undefined;
 	global.able_to_summon = false;
@@ -8,7 +8,8 @@ function Start_match(){
 	global.turn_owner = 1;
 	global.map = "map1";
 	global.local_match_deck = undefined;
-	
+	global.local_match_mode = _mode;
+
 	if instance_exists(O_DeckManager) {
 		var _selected_deck = O_DeckManager.get_selected_deck();
 		if _selected_deck != undefined {
@@ -22,20 +23,21 @@ function Start_match(){
 			}
 		}
 	}
-	
+
 	if (!variable_global_exists("game") || global.game == undefined) {
 		global.game = new GameClass();
 	}
 	else {
 		global.game.end_game();
 	}
-	
+
 	global.game.online_match = false;
 	global.game.server_id = "";
 	global.game.opponent = "";
 	global.game.role = "host";
-	
+	global.game.set_local_match_mode(_mode);
+
 	room_goto(R_Test);
-	
+
 
 }

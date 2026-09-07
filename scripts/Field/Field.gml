@@ -47,16 +47,22 @@ function Field() constructor{
 	}
 
 	create_figure = function(_behaviour, _xcord, _ycord, _is_figure_new, _owner = global.turn_owner) {
+		var _cell = Game.field.get_cell(_xcord, _ycord);
+		if _cell == undefined {
+			show_debug_message("Field.create_figure failed: invalid cell x=" + string(_xcord) + ", y=" + string(_ycord) + ", behaviour=" + string(_behaviour));
+			return undefined;
+		}
 		new_figure = new Figure()
 		new_figure.set_behaviour(_behaviour);
 		new_figure.owner = _owner;
 		new_figure.draw_xscale = get_figure_scale();
 		new_figure.draw_yscale = get_figure_scale();
-		Game.field.get_cell(_xcord, _ycord).fill(new_figure);
+		_cell.fill(new_figure);
 		if _is_figure_new {
 			new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
 			//Game.game_loop_controller.figures_counter.change_field_figures_amount(_owner, 1);
 		}
+		return new_figure;
 	}
 
 	find_figure_from_id = function(_id) {
@@ -246,7 +252,7 @@ function Field() constructor{
 
 	}
 	check_click = function() {
-		return get_cell_from_coordinates(device_mouse_x_to_gui(0), device_mouse_y_to_gui(0))
+		return get_cell_from_coordinates(UI_controller.gui_mouse_x(), UI_controller.gui_mouse_y())
 	}
 
 	get_cell = function(_xcord, _ycord) {
@@ -372,11 +378,11 @@ function Field() constructor{
 
 	export_marks = function() {
 		var _marks = [];
+		for (var m = 0; m < field_width; m++) {
+			_marks[m] = [];
+		}
 		for (var i = 0; i < field_height; i++) {
 			for (var m = 0; m < field_width; m++) {
-				if !is_array(_marks[m]) {
-					_marks[m] = [];
-				}
 				var _cell = get_cell(m, i);
 				_marks[m][i] = {
 					marked: _cell.marked,
@@ -388,11 +394,16 @@ function Field() constructor{
 	}
 
 	import_marks = function(_marks) {
+		if !is_array(_marks) {
+			return;
+		}
 		for (var i = 0; i < field_height; i++) {
 			for (var m = 0; m < field_width; m++) {
 				var _cell = get_cell(m, i);
-				_cell.marked = _marks[m][i].marked;
-				_cell.draw_mark = _marks[m][i].draw_mark;
+				if array_length(_marks) > m and is_array(_marks[m]) and array_length(_marks[m]) > i {
+					_cell.marked = _marks[m][i].marked;
+					_cell.draw_mark = _marks[m][i].draw_mark;
+				}
 			}
 		}
 	}
@@ -451,6 +462,26 @@ function Field() constructor{
 				return player2_captured;
 			}
 		}
+	}
+
+	has_active_animations = function() {
+		for (var i = 0; i < field_height; i++) {
+			for (var m = 0; m < field_width; m++) {
+				var _cell = get_cell(m, i);
+				if _cell.is_filled() and _cell.filled_figure.have_animation() {
+					return true;
+				}
+			}
+		}
+		var _places = [player1_dropped, player2_dropped, player1_captured, player2_captured];
+		for (var p = 0; p < array_length(_places); p++) {
+			for (var f = 0; f < array_length(_places[p].figures); f++) {
+				if _places[p].figures[f].have_animation() {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	check_status = function() {

@@ -1,7 +1,10 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function GetFieldFigure() constructor{
-	O_BoardDraw.block_end_button();
+function GetFieldFigure(_skip_ui=false) constructor{
+	skip_ui = _skip_ui;
+	if !skip_ui {
+		O_BoardDraw.block_end_button();
+	}
 	Game.field.can_cancel = 0;
 	target = undefined;
 	
@@ -17,7 +20,9 @@ function GetFieldFigure() constructor{
 	
 	set_target = function(new_target) {
 		target = new_target;
-		O_BoardDraw.unblock_end_button();
+		if !skip_ui {
+			O_BoardDraw.unblock_end_button();
+		}
 	}
 	
 	draw = function() {}
@@ -28,6 +33,7 @@ function GetFieldFigure() constructor{
 			ex_type: "get_field_figure",
 			ex_target: [target.xcord, target.ycord]
 		}
+		return export_data
 	}
 	
 	import = function(_import_data) {

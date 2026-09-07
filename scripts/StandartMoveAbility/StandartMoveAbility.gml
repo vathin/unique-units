@@ -1,17 +1,22 @@
 // Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
-function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined) : FigureAbilityAction() constructor{
+function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=undefined, _skip_ui=false) : FigureAbilityAction() constructor{
+	skip_ui = _skip_ui;
 	from_x = _from_x;
 	from_y = _from_y;
 	to_x = _to_x;
 	to_y = _to_y;
 	figure_sprite = Behaviours.get_sprite(Game.field.get_cell(from_x, from_y).filled_figure.behaviour);
 	figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image
-	Game.field.get_cell(_to_x, _to_y).set_draw_marks(0)
+	if !skip_ui {
+		Game.field.get_cell(_to_x, _to_y).set_draw_marks(0)
+	}
 	from_move = Game.field.get_cell(_from_x, _from_y);
 	to_move = Game.field.get_cell(_to_x, _to_y);
 	draw_previous_cell = false;
-	O_BoardDraw.unblock_end_button();
+	if !skip_ui {
+		O_BoardDraw.unblock_end_button();
+	}
 	previous_move_cell = undefined;
 	
 	
@@ -39,6 +44,12 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 	}
 	
 	set_new_target_coordinates = function(_new_x, _new_y) {
+		if skip_ui {
+			to_x = _new_x;
+			to_y = _new_y;
+			to_move = Game.field.get_cell(_new_x, _new_y);
+			return;
+		}
 		if draw_previous_cell and previous_move_cell != undefined{
 			previous_move_cell.marked = 0;
 		}
@@ -55,6 +66,12 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 	}
 	
 	back = function() {
+		if skip_ui {
+			to_x = undefined;
+			to_y = undefined;
+			to_move = undefined;
+			return;
+		}
 		if to_x != undefined {
 			to_move.set_draw_marks(1);
 			to_move.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));

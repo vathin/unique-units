@@ -21,6 +21,9 @@ update_layout = function() {
 }
 
 figure_click = function(_figure) {
+		if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+			return;
+		}
 		if _figure.state.is_active {
 			game_state = Game.game_loop_controller.get_game_state()
 			if game_state == STATE_LIST.wait {
@@ -49,8 +52,20 @@ figure_click = function(_figure) {
 			}
 		}
 	}
-	
+
 cancel = function() {
+	if Game.game_loop_controller.is_turn_transition_active() {
+		return;
+	}
+	if !Game.game_loop_controller.is_local_turn() {
+		Game.game_loop_controller.set_game_state(STATE_LIST.enemy_turn);
+		Game.game_loop_controller.set_can_cancel(0);
+		Game.field.clear_all_marks();
+		return;
+	}
+	if !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
 	if (game_state == STATE_LIST.summon and global.cell_click_callback != undefined) or
 	Game.game_loop_controller.can_cancel {
 		if Game.game_loop_controller.have_action(){Game.game_loop_controller.action.back()}
@@ -61,7 +76,10 @@ cancel = function() {
 }
 
 main_button_click = function() {
-	if game_state == STATE_LIST.wait and 
+	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
+	if game_state == STATE_LIST.wait and
 		Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
 		Game.summon_controller = new SummonInputController();
 	}
@@ -69,23 +87,32 @@ main_button_click = function() {
 }
 
 end_button_click = function() {
+	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
 	if end_button{
 		Game.game_loop_controller.end_move()
 	}
 }
 
 move_button_click = function() {
+	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
 	if Game.figure_action_controller != undefined {
 		Game.figure_action_controller.move_figure();
 	}
 }
 
 ability_button_click = function() {
+	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
 	if Game.figure_action_controller != undefined {
 		Game.figure_action_controller.use_ability();
 	}
 }
-	
+
 block_end_button = function() {
 	end_button = false
 }
@@ -95,16 +122,16 @@ unblock_end_button = function() {
 }
 
 drop_draw = function() {
-	draw_text_transformed(drop_cord[0] + 25, drop_cord[1] + 40, 
+	draw_text_transformed(drop_cord[0] + 25, drop_cord[1] + 40,
 	array_length(Game.field.player1_dropped.figures), 0.65, 0.6, 0);
 	draw_text_transformed(drop_cord[0] + 25, drop_cord[1] - 43,
 	array_length(Game.field.player2_dropped.figures), 0.65, 0.6, 0);
 }
 
 capture_draw = function() {
-	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] + 40, 
+	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] + 40,
 	Game.game_loop_controller.player1_captured, 0.65, 0.6, 0);
-	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] - 43, 
+	draw_text_transformed(capture_cord[0] + 25, capture_cord[1] - 43,
 	Game.game_loop_controller.player2_captured, 0.65, 0.6, 0);
 }
 
@@ -119,7 +146,7 @@ figure_counters_draw = function() {
 }
 
 turn_owner_draw = function() {
-	draw_text_transformed(turn_owner_cord[0], turn_owner_cord[1], 
+	draw_text_transformed(turn_owner_cord[0], turn_owner_cord[1],
 	("Ход игрока " + string(1+1*(global.turn_owner == Game.Player2.player_id))), 0.65, 0.65, 0);
 }
 

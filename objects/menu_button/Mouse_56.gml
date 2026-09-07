@@ -14,7 +14,16 @@ if UI_controller.gui_mouse_in_bbox(bbox_left, bbox_top, bbox_right, bbox_bottom)
 			}
 		break;
 		case "start_local":
-			Start_match();
+			Start_match("local_vs_local");
+		break;
+		case "start_local_vs_local":
+			Start_match("local_vs_local");
+		break;
+		case "start_local_vs_bot":
+			Start_match("local_vs_bot");
+		break;
+		case "start_bot_vs_bot":
+			Start_match("bot_vs_bot");
 		break;
 		case "invite_cancel":
 			O_Server.cancel_invite();

@@ -6,7 +6,8 @@ enum ArcherMoveAbility_Cell {
 	available
 }
 
-function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) constructor{
+function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite, _skip_ui=false) constructor{
+	skip_ui = _skip_ui;
 	from_x = _from_x;
 	from_y = _from_y;
 	figure_sprite = S_Archer;
@@ -19,13 +20,13 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		figure_color = Game.field.get_cell(from_x, from_y).filled_figure.image;
 		using_figure = Game.field.get_cell(_from_x, _from_y).filled_figure;
 	}
-	if Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
+	if !skip_ui and Game.move_input_controller != undefined {O_BoardDraw.unblock_end_button()}
 	_found_id = []
 	previous_move_cell = undefined;
 	draw_previous_cell = false;
 	
 	init = function() {
-		if to_x != undefined {
+		if !skip_ui and to_x != undefined {
 			Game.field.get_cell(to_x, to_y).set_draw_marks(0);
 		}
 		clear();
@@ -62,6 +63,11 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 		}
 	}
 	set_new_target_coordinates = function(new_x, new_y) {
+		if skip_ui {
+			self.to_x = new_x;
+			self.to_y = new_y;
+			return;
+		}
 		if to_x != undefined {
 			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
 			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
@@ -259,6 +265,11 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite) const
 	
 	
 	back = function() {
+		if skip_ui {
+			to_x = undefined;
+			to_y = undefined;
+			return;
+		}
 		if to_x != undefined {
 			Game.field.get_cell(to_x, to_y).set_draw_marks(1);
 			Game.field.get_cell(to_x, to_y).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));

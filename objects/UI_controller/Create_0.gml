@@ -10,9 +10,12 @@ InGame_layer = "GameRoom";
 profile_avatar_sprite = -1;
 profile_avatar_url = "";
 profile_avatar_loaded = false;
+profile_avatar_source_sprite = -1;
 game_view_width = room_width;
 game_view_height = room_height;
 game_view_base_height = 1000;
+html5_window_width = 0;
+html5_window_height = 0;
 resize_frame = 0;
 resize_ready_frame = 10;
 pending_surface_resize = false;
@@ -38,6 +41,7 @@ sync_gui_size = function(_force = false) {
 	var _html5_frame_json = "";
 	var _html5_frame_width = 0;
 	var _html5_frame_height = 0;
+	var _html5_size_source = "window";
 	
 	if (os_browser != browser_not_a_browser && extension_exists("extension_VK")) {
 		_html5_frame_json = HTML5_GetFrameSize();
@@ -47,13 +51,21 @@ sync_gui_size = function(_force = false) {
 			_html5_frame_height = max(1, _frame_size.height);
 			_aspect_width = _html5_frame_width;
 			_aspect_height = _html5_frame_height;
+			_html5_size_source = "html5_frame";
 		}
 	}
 	
 	var _width = max(1, round(game_view_base_height * _aspect_width / _aspect_height));
 	var _height = game_view_base_height;
-	var _surface_target_width = max(1, round(_aspect_width));
-	var _surface_target_height = max(1, round(_aspect_height));
+	var _surface_target_width = _window_width;
+	var _surface_target_height = _window_height;
+	if (os_browser != browser_not_a_browser && _html5_frame_width > 0 && _html5_frame_height > 0
+	&& (_html5_frame_width != html5_window_width || _html5_frame_height != html5_window_height)) {
+		window_set_rectangle(0, 0, _html5_frame_width, _html5_frame_height);
+		html5_window_width = _html5_frame_width;
+		html5_window_height = _html5_frame_height;
+		show_debug_message("HTML5 window rectangle set: " + string(html5_window_width) + "x" + string(html5_window_height));
+	}
 	
 	var _size_changed = (_width != game_view_width || _height != game_view_height);
 	var _surface_size_changed = true;
@@ -86,10 +98,12 @@ sync_gui_size = function(_force = false) {
 			show_debug_message(
 				"UI resize: window=" + string(_window_width) + "x" + string(_window_height)
 				+ ", html5_frame=" + string(_html5_frame_width) + "x" + string(_html5_frame_height)
+				+ ", html5_source=" + _html5_size_source
 				+ ", aspect_source=" + string(_aspect_width) + "x" + string(_aspect_height)
 				+ ", room=" + string(room_width) + "x" + string(room_height)
 				+ ", gui=" + string(game_view_width) + "x" + string(game_view_height)
 				+ ", surface_target=" + string(_surface_target_width) + "x" + string(_surface_target_height)
+				+ ", surface_target_source=window"
 				+ ", display_gui=" + string(display_get_gui_width()) + "x" + string(display_get_gui_height())
 				+ ", surface=" + string(_surface_width) + "x" + string(_surface_height)
 				+ ", surface_exists=" + string(surface_exists(application_surface))
@@ -225,6 +239,39 @@ set_ui_sprite_on_ui_layer = function(_layer, _panel, _sprite) {
 	layer_sprite_change(get_ui_sprite_element(_layer, _panel), _sprite);
 }
 
+create_round_profile_avatar = function(_source_sprite) {
+	if (_source_sprite == -1) {
+		return -1;
+	}
+	var _source_width = sprite_get_width(_source_sprite);
+	var _source_height = sprite_get_height(_source_sprite);
+	var _size = min(_source_width, _source_height);
+	if (_size <= 0) {
+		return -1;
+	}
+
+	sprite_set_offset(_source_sprite, _source_width / 2, _source_height / 2);
+	var _surface = surface_create(_size, _size);
+	if (!surface_exists(_surface)) {
+		return -1;
+	}
+	surface_set_target(_surface);
+	draw_clear_alpha(c_black, 0);
+	draw_set_color(c_white);
+	draw_circle(_size / 2, _size / 2, _size / 2, false);
+
+	// Keep avatar pixels only where the opaque circle was drawn.
+	gpu_set_blendmode_ext(bm_dest_alpha, bm_zero);
+	var _scale = max(_size / _source_width, _size / _source_height);
+	draw_sprite_ext(_source_sprite, 0, _size / 2, _size / 2, _scale, _scale, 0, c_white, 1);
+	gpu_set_blendmode(bm_normal);
+	surface_reset_target();
+
+	var _round_sprite = sprite_create_from_surface(_surface, 0, 0, _size, _size, false, false, _size / 2, _size / 2);
+	surface_free(_surface);
+	return _round_sprite;
+}
+
 set_profile_avatar_from_url = function(_url) {
 	if (!is_string(_url) || _url == "") {
 		show_debug_message("VK/avatar: empty avatar url");
@@ -238,7 +285,12 @@ set_profile_avatar_from_url = function(_url) {
 	
 	profile_avatar_url = _url;
 	profile_avatar_loaded = false;
-	profile_avatar_sprite = sprite_add_ext(_url, 1, 0, 0, true);
+	if (profile_avatar_sprite != -1) {
+		sprite_delete(profile_avatar_sprite);
+		profile_avatar_sprite = -1;
+	}
+	profile_avatar_source_sprite = sprite_add_ext(_url, 1, 0, 0, true);
+	profile_avatar_sprite = profile_avatar_source_sprite;
 	show_debug_message("VK/avatar: loading avatar sprite from " + _url);
 	return true;
 }

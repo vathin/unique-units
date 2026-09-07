@@ -4,7 +4,7 @@ function FindArcherTrajectory(_x_from, _y_from, _x_to, _y_to){
 	x_to = _x_to;
 	y_to = _y_to
 	{
-	var _ability = new ArcherMoveAbility(_x_from, _y_from, _x_to, _y_to, undefined);
+	var _ability = new ArcherMoveAbility(_x_from, _y_from, _x_to, _y_to, undefined, true);
 	Game.field.clear_all_marks();
 	_ability.check_all_cells();
 	}

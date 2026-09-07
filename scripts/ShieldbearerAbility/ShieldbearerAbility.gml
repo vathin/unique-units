@@ -1,5 +1,6 @@
 
-function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : FigureAbilityAction() constructor{
+function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined, _skip_ui=false) : FigureAbilityAction() constructor{
+	skip_ui = _skip_ui;
 	using_figure = _using_figure;
 	using_cell = _using_cell;
 	target_figure = undefined;
@@ -35,24 +36,32 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 				target_cell = global.cell_click_callback;
 			}
 			target_figure = target_cell.filled_figure
-			check_ability_targets();
+			if !skip_ui {
+				check_ability_targets();
+			}
 		}
 		else {
-			if fill_cell != undefined {
+			if !skip_ui and fill_cell != undefined {
 				fill_cell.remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
 			}
 			selected = 1;
-			O_BoardDraw.unblock_end_button();
+			if !skip_ui {
+				O_BoardDraw.unblock_end_button();
+			}
 			fill_cell = new_cell;
 			if fill_cell == undefined {
 				fill_cell = global.cell_click_callback;
 			}
-			fill_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			if !skip_ui {
+				fill_cell.add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+			}
 		}
 	}
 	
 	check_ability_targets = function() {
-		O_BoardDraw.block_end_button();
+		if !skip_ui {
+			O_BoardDraw.block_end_button();
+		}
 		if target_figure == undefined {
 			for (i = -1; i <= 1; i++) {
 				for (m = -1; m <= 1; m++) {
@@ -72,6 +81,13 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined) : F
 	}
 	
 	back = function() {
+		if skip_ui {
+			target_figure = undefined;
+			target_cell = undefined;
+			fill_cell = undefined;
+			selected = false;
+			return;
+		}
 		if target_figure != undefined {
 			if fill_cell != undefined {
 				fill_cell.set_draw_marks(1);

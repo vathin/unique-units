@@ -1,0 +1,13 @@
+{
+  "$GMScript":"v1",
+  "%Name":"BotController",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"BotController",
+  "parent":{
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
+  },
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

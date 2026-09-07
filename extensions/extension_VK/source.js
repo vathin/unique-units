@@ -61,6 +61,8 @@ function HTML5_GetFrameSize() {
     const canvasRect = canvas ? canvas.getBoundingClientRect() : {};
     const parent = canvas ? canvas.parentElement : null;
     const parentRect = parent ? parent.getBoundingClientRect() : {};
+    const frame = window.frameElement;
+    const frameRect = frame ? frame.getBoundingClientRect() : {};
 
     const innerWidth = Math.floor(window.innerWidth || 0);
     const innerHeight = Math.floor(window.innerHeight || 0);
@@ -78,9 +80,11 @@ function HTML5_GetFrameSize() {
     const parentClientHeight = Math.floor(parent ? parent.clientHeight || 0 : 0);
     const parentRectWidth = Math.floor(parentRect.width || 0);
     const parentRectHeight = Math.floor(parentRect.height || 0);
+    const frameRectWidth = Math.floor(frameRect.width || 0);
+    const frameRectHeight = Math.floor(frameRect.height || 0);
 
-    let width = parentRectWidth || parentClientWidth || viewportWidth || innerWidth || docWidth || bodyWidth || canvasRectWidth || canvasClientWidth;
-    let height = parentRectHeight || parentClientHeight || viewportHeight || innerHeight || docHeight || bodyHeight || canvasRectHeight || canvasClientHeight;
+    let width = frameRectWidth || parentRectWidth || parentClientWidth || viewportWidth || innerWidth || docWidth || bodyWidth || canvasRectWidth || canvasClientWidth;
+    let height = frameRectHeight || parentRectHeight || parentClientHeight || viewportHeight || innerHeight || docHeight || bodyHeight || canvasRectHeight || canvasClientHeight;
     width = Math.max(1, Math.floor(width || 0));
     height = Math.max(1, Math.floor(height || 0));
 
@@ -105,7 +109,9 @@ function HTML5_GetFrameSize() {
         parentClientWidth: parentClientWidth,
         parentClientHeight: parentClientHeight,
         parentRectWidth: parentRectWidth,
-        parentRectHeight: parentRectHeight
+        parentRectHeight: parentRectHeight,
+        frameRectWidth: frameRectWidth,
+        frameRectHeight: frameRectHeight
     });
 }
 
