@@ -383,14 +383,16 @@ function GameLoopController() constructor{
 		return perform_action_descriptor(_descriptor);
 	}
 
-	create_action_from_descriptor = function(_descriptor) {
-		var _skip_ui = !is_human_turn();
+	create_action_from_descriptor = function(_descriptor, _simulation = false) {
+		var _skip_ui = _simulation or !is_human_turn();
 		if _descriptor.kind == "summon" {
 			var _behaviour = _descriptor.behaviour;
-			var _load_data = Game.user_data.load(_descriptor.player);
-			if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) and array_length(_load_data.player_figures) > 0 {
-				_behaviour = array_pop(_load_data.player_figures);
-				Game.user_data.save(_descriptor.player, _load_data);
+			if !_simulation {
+				var _load_data = Game.user_data.load(_descriptor.player);
+				if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) and array_length(_load_data.player_figures) > 0 {
+					_behaviour = array_pop(_load_data.player_figures);
+					Game.user_data.save(_descriptor.player, _load_data);
+				}
 			}
 			return new SummonAction(_descriptor.target_x, _descriptor.target_y, Behaviours.get_sprite(_behaviour), _behaviour, _skip_ui);
 		}
@@ -436,22 +438,180 @@ function GameLoopController() constructor{
 			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
 			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
 			var _action = new TraderAbility(_from_cell.filled_figure, _from_cell, _skip_ui);
-			var _load_data = Game.user_data.load(_descriptor.player);
 			_action.buttons = [];
+			var _load_data = Game.user_data.load(_descriptor.player);
 			if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) {
 				if array_length(_load_data.player_figures) < 3 {
 					return undefined;
 				}
-				for (var i = 0; i < 3; i++) {
-					_action.buttons[i] = array_pop(_load_data.player_figures);
+				if _simulation {
+					_action.buttons = get_trader_ability_choices(_descriptor.player);
 				}
-				Game.user_data.save(_descriptor.player, _load_data);
+				else {
+					for (var i = 0; i < 3; i++) {
+						_action.buttons[i] = array_pop(_load_data.player_figures);
+					}
+					Game.user_data.save(_descriptor.player, _load_data);
+				}
 			}
 			_action.chosen_button = _descriptor.chosen_button;
 			_action.target_cell = _target_cell;
 			return _action;
 		}
 		return undefined;
+	}
+
+	get_bot_metrics = function(_player) {
+		var _opponent = get_opponent(_player);
+		var _own_figures = 0;
+		var _enemy_figures = 0;
+		var _own_progress = 0;
+		var _enemy_progress = 0;
+		var _own_zone_figures = 0;
+		var _enemy_zone_figures = 0;
+		var _targets = Maps_list.get_cells_for_conquest();
+		var _own_target_index = 0;
+		if (_player == Game.Player1.player_id) {
+			_own_target_index = 1;
+		}
+		var _enemy_target_index = 1 - _own_target_index;
+		for (var _grid_y = 0; _grid_y < Game.field.field_height; _grid_y++) {
+			for (var _grid_x = 0; _grid_x < Game.field.field_width; _grid_x++) {
+				var _cell = Game.field.get_cell(_grid_x, _grid_y);
+				if !_cell.is_filled() or !_cell.filled_figure.state.is_active {
+					continue;
+				}
+				var _is_own = _cell.filled_figure.owner == _player;
+				var _progress = _grid_y;
+				if (_is_own && _player == Game.Player1.player_id) or (!_is_own && _opponent == Game.Player1.player_id) {
+					_progress = Game.field.field_height - 1 - _grid_y;
+				}
+				if _is_own {
+					_own_figures++;
+					_own_progress += _progress;
+				}
+				else {
+					_enemy_figures++;
+					_enemy_progress += _progress;
+				}
+				for (var i = 0; i < array_length(_targets[_own_target_index]); i++) {
+					if (_grid_x == _targets[_own_target_index][i][0] && _grid_y == _targets[_own_target_index][i][1] && _is_own) {
+						_own_zone_figures++;
+					}
+				}
+				for (var i = 0; i < array_length(_targets[_enemy_target_index]); i++) {
+					if (_grid_x == _targets[_enemy_target_index][i][0] && _grid_y == _targets[_enemy_target_index][i][1] && !_is_own) {
+						_enemy_zone_figures++;
+					}
+				}
+			}
+		}
+		var _own_captured = player1_captured;
+		var _enemy_captured = player2_captured;
+		if (_player == Game.Player2.player_id) {
+			_own_captured = player2_captured;
+			_enemy_captured = player1_captured;
+		}
+		return {
+			own_figures: _own_figures,
+			enemy_figures: _enemy_figures,
+			own_progress: _own_progress,
+			enemy_progress: _enemy_progress,
+			own_zone_figures: _own_zone_figures,
+			enemy_zone_figures: _enemy_zone_figures,
+			own_captured: _own_captured,
+			enemy_captured: _enemy_captured
+		};
+	}
+
+	get_bot_figure_value = function(_behaviour) {
+		switch string(_behaviour) {
+			case "warrior": return 5;
+			case "archer": return 4;
+			case "shieldbearer": return 4;
+			case "spearman": return 3;
+			case "trader": return 3;
+		}
+		return 2;
+	}
+
+	export_logic_state = function() {
+		return {
+			field: Game.field.export(),
+			movement_array: json_parse(json_stringify(Game.field.movement_array)),
+			player1_captured: player1_captured,
+			player2_captured: player2_captured,
+			figures_counter: figures_counter.export(),
+			player1_able_to_summon: Game.Player1.able_to_summon,
+			player2_able_to_summon: Game.Player2.able_to_summon
+		};
+	}
+
+	import_logic_state = function(_state) {
+		Game.field.import(_state.field);
+		Game.field.movement_array = _state.movement_array;
+		player1_captured = _state.player1_captured;
+		player2_captured = _state.player2_captured;
+		figures_counter.player1_field_figures = _state.figures_counter.ex_player1_field_figures;
+		figures_counter.player2_field_figures = _state.figures_counter.ex_player2_field_figures;
+		figures_counter.figures_id_counter = _state.figures_counter.ex_figures_id_counter;
+		figures_counter.figures_to_capture = [];
+		Game.Player1.able_to_summon = _state.player1_able_to_summon;
+		Game.Player2.able_to_summon = _state.player2_able_to_summon;
+	}
+
+	simulate_action_descriptor = function(_descriptor) {
+		var _state = export_logic_state();
+		var _was_simulating = Game.is_simulating;
+		Game.is_simulating = true;
+		var _action = create_action_from_descriptor(_descriptor, true);
+		var _metrics = undefined;
+		if (_action != undefined) {
+			_action.execute();
+			Game.field.check_conquested_cells();
+			Game.field.check_every_figure();
+			figures_counter.update_captured_figures_array();
+			Game.field.check_dropped_figures();
+			_metrics = get_bot_metrics(_descriptor.player);
+		}
+		Game.is_simulating = _was_simulating;
+		import_logic_state(_state);
+		return _metrics;
+	}
+
+	score_action_descriptor = function(_descriptor) {
+		var _before = get_bot_metrics(_descriptor.player);
+		var _after = simulate_action_descriptor(_descriptor);
+		if (_after == undefined) {
+			return -100000;
+		}
+		var _score = 0;
+		_score += (_before.enemy_figures - _after.enemy_figures) * 120;
+		_score -= (_before.own_figures - _after.own_figures) * 150;
+		_score += (_after.own_captured - _before.own_captured) * 140;
+		_score -= (_after.enemy_captured - _before.enemy_captured) * 160;
+		_score += (_after.own_progress - _before.own_progress) * 8;
+		_score -= (_after.enemy_progress - _before.enemy_progress) * 8;
+		_score += (_after.own_zone_figures - _before.own_zone_figures) * 100;
+		_score -= (_after.enemy_zone_figures - _before.enemy_zone_figures) * 100;
+		if (_descriptor.kind == "summon") {
+			_score += get_bot_figure_value(_descriptor.behaviour) * 8;
+		}
+		else if (_descriptor.kind == "ability_trader") {
+			_score += get_bot_figure_value(_descriptor.behaviour) * 15;
+		}
+		if (variable_struct_exists(_descriptor, "from_y") && variable_struct_exists(_descriptor, "target_y")) {
+			var _direction = 1;
+			if (_descriptor.player == Game.Player1.player_id) {
+				_direction = -1;
+			}
+			var _advance = (_descriptor.target_y - _descriptor.from_y) * _direction;
+			_score += _advance * 10;
+			if (_advance <= 0 && _before.enemy_figures == _after.enemy_figures) {
+				_score -= 25;
+			}
+		}
+		return _score;
 	}
 
 	perform_action_descriptor = function(_descriptor) {

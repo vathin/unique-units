@@ -30,25 +30,31 @@ function WarriorMoveAndAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=un
 	execute = function() {
 		to_move = Game.field.get_cell(to_x, to_y);
 		from_move = Game.field.get_cell(from_x, from_y)
-		figure_animation = new MoveAnimationController();
-		figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
-		Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
-		using_figure.add_animation(figure_animation);
+		if !Game.is_simulating {
+			figure_animation = new MoveAnimationController();
+			figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
+			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
+			using_figure.add_animation(figure_animation);
+		}
 		
 		to_move.fill(using_figure, 1);
 		from_move.clear();
 		if using_ability and target_cell != undefined and target_cell.is_filled() and target_cell.filled_figure.owner != using_figure.owner {
-			hit_animation = new HitAnimationController();
-			hit_animation.start_animation(Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1],
-			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.hit_animation_length);
-			using_figure.add_animation(hit_animation)
+			if !Game.is_simulating {
+				hit_animation = new HitAnimationController();
+				hit_animation.start_animation(Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1],
+				Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.hit_animation_length);
+				using_figure.add_animation(hit_animation)
+			}
 			using_figure.drop();
 			
-			target_animation = new StandAnimationController();
-			target_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1], 
-			Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
-			Settings.move_animation_length+Settings.hit_animation_length);
-			target_cell.filled_figure.add_animation(target_animation);
+			if !Game.is_simulating {
+				target_animation = new StandAnimationController();
+				target_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
+				Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
+				Settings.move_animation_length+Settings.hit_animation_length);
+				target_cell.filled_figure.add_animation(target_animation);
+			}
 			target_cell.filled_figure.drop();
 		}
 		else {

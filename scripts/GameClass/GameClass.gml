@@ -16,6 +16,7 @@ function GameClass() constructor{
 	local_player = undefined;
 	local_match_mode = "local_vs_local";
 	bot_controller = undefined;
+	is_simulating = false;
 
 	set_local_match_mode = function(_mode) {
 		local_match_mode = _mode;

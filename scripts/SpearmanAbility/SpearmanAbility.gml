@@ -16,10 +16,12 @@ function SpearmanAbility(using_figure=undefined, using_cell=undefined, _skip_ui=
 		Game.field.add_movement(using_cell, cell_for_move, using_cell.filled_figure.figure_id)
 		cell_for_move.fill(using_cell.filled_figure, 1);
 		using_cell.clear();
-		figure_animation = new MoveAnimationController();
-		figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
-		Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length*1.8);
-		using_figure.add_animation(figure_animation);
+		if !Game.is_simulating {
+			figure_animation = new MoveAnimationController();
+			figure_animation.start_animation(Game.field.get_cell_xy(using_cell)[0], Game.field.get_cell_xy(using_cell)[1],
+			Game.field.get_cell_xy(cell_for_move)[0], Game.field.get_cell_xy(cell_for_move)[1], Settings.move_animation_length*1.8);
+			using_figure.add_animation(figure_animation);
+		}
 	}
 	
 	set_target = function(a, b) {

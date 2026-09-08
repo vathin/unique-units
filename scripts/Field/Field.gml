@@ -330,9 +330,11 @@ function Field() constructor{
 		var _cells = get_conquested_cells(0);
 		for (var i = 0; i < array_length(_cells); i++) {
 			var _figure = _cells[i].filled_figure;
-			var figure_animation = new OverturnAnimationController();
-			figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
-			_figure.add_animation(figure_animation)
+			if !Game.is_simulating {
+				var figure_animation = new OverturnAnimationController();
+				figure_animation.start_animation(_figure.draw_x, _figure.draw_y, _figure.draw_x, _figure.draw_y, 30);
+				_figure.add_animation(figure_animation)
+			}
 			_figure.conquest();
 			if _figure.owner == Game.Player1.player_id {
 				Game.game_loop_controller.add_captured_figure(Game.Player2.player_id);

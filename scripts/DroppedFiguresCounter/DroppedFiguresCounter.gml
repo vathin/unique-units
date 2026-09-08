@@ -10,7 +10,7 @@ function DroppedFiguresCounter(_owner, _position = 1) constructor{
 
 	add_figure = function(_new_figure, _animation) {
 		array_push(figures, _new_figure);
-		sort(_animation);
+		sort(_animation and !Game.is_simulating);
 		
 	}
 	

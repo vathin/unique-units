@@ -12,10 +12,12 @@ function ShieldbearerAbility(_using_figure=undefined, _using_cell=undefined, _sk
 		Game.field.add_movement(target_cell, fill_cell, target_cell.filled_figure.figure_id, 1)
 		fill_cell.fill(target_figure);
 		target_cell.clear();
-		figure_animation = new MoveAnimationController();
-		figure_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
-		Game.field.get_cell_xy(fill_cell)[0], Game.field.get_cell_xy(fill_cell)[1], Settings.move_animation_length*1.2);
-		target_figure.add_animation(figure_animation);
+		if !Game.is_simulating {
+			figure_animation = new MoveAnimationController();
+			figure_animation.start_animation(Game.field.get_cell_xy(target_cell)[0], Game.field.get_cell_xy(target_cell)[1],
+			Game.field.get_cell_xy(fill_cell)[0], Game.field.get_cell_xy(fill_cell)[1], Settings.move_animation_length*1.2);
+			target_figure.add_animation(figure_animation);
+		}
 	}
 	
 	draw = function() {

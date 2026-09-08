@@ -39,13 +39,15 @@ function ArcherMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite, _skip
 		Game.field.add_movement(using_cell, cell_for_move, using_cell.filled_figure.figure_id);
 		cell_for_move.fill(using_figure, 1);
 		var _trajectory = FindArcherTrajectory(from_x, from_y, to_x, to_y);
-		for (var i = 0; i < array_length(_trajectory)-1; i++) {
-			figure_animation = new MoveAnimationController();
-			var _from = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i][0], _trajectory[i][1]));
-			var _to = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i+1][0], _trajectory[i+1][1]))
-			figure_animation.start_animation(_from[0], _from[1], _to[0], _to[1], 
-			Settings.move_animation_length*array_length(_trajectory)/array_length(_trajectory));
-			using_figure.add_animation(figure_animation);
+		if !Game.is_simulating {
+			for (var i = 0; i < array_length(_trajectory)-1; i++) {
+				figure_animation = new MoveAnimationController();
+				var _from = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i][0], _trajectory[i][1]));
+				var _to = Game.field.get_cell_xy(Game.field.get_cell(_trajectory[i+1][0], _trajectory[i+1][1]))
+				figure_animation.start_animation(_from[0], _from[1], _to[0], _to[1],
+				Settings.move_animation_length*array_length(_trajectory)/array_length(_trajectory));
+				using_figure.add_animation(figure_animation);
+			}
 		}
 		using_cell.clear();
 		_found_id = [];

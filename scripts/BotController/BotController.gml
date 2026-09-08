@@ -44,9 +44,17 @@ function BotController() constructor {
 		var _actions = Game.game_loop_controller.get_legal_action_descriptors(global.turn_owner);
 		show_debug_message("BotController: player=" + string(global.turn_owner) + ", legal_actions=" + string(array_length(_actions)));
 		if array_length(_actions) > 0 {
-			var _action = _actions[irandom(array_length(_actions) - 1)];
-			show_debug_message("BotController: selected action kind=" + string(_action.kind));
-			Game.game_loop_controller.perform_action_descriptor(_action);
+			var _best_action = undefined;
+			var _best_score = -1000000;
+			for (var i = 0; i < array_length(_actions); i++) {
+				var _score = Game.game_loop_controller.score_action_descriptor(_actions[i]);
+				if (_score > _best_score) {
+					_best_score = _score;
+					_best_action = _actions[i];
+				}
+			}
+			show_debug_message("BotController: selected action kind=" + string(_best_action.kind) + ", score=" + string(_best_score));
+			Game.game_loop_controller.perform_action_descriptor(_best_action);
 		}
 		else {
 			Game.game_loop_controller.end_move();

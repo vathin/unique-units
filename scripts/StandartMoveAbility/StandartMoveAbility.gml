@@ -25,10 +25,12 @@ function StandartMoveAbility(_from_x, _from_y, _to_x, _to_y, _figure_sprite=unde
 		Game.field.add_movement(from_move, to_move, using_figure.figure_id)
 		from_move.clear();
 		to_move.fill(using_figure, true);
-		figure_animation = new MoveAnimationController();
-		figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
-		Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
-		using_figure.add_animation(figure_animation);
+		if !Game.is_simulating {
+			figure_animation = new MoveAnimationController();
+			figure_animation.start_animation(Game.field.get_cell_xy(from_move)[0], Game.field.get_cell_xy(from_move)[1],
+			Game.field.get_cell_xy(to_move)[0], Game.field.get_cell_xy(to_move)[1], Settings.move_animation_length);
+			using_figure.add_animation(figure_animation);
+		}
 	}
 	
 	draw = function() {

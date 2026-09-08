@@ -84,8 +84,10 @@ function Figure() constructor{
 	conquest = function() {
 		state.is_active = 0;
 		state.is_conquesting = 1;
-		place = Game.field.get_place("capture", owner);
-		place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
+		if !Game.is_simulating {
+			place = Game.field.get_place("capture", owner);
+			place.get_new_figure(Game.game_loop_controller.get_opponent(owner));
+		}
 	}
 
 	click_while_conquesting = function() {
