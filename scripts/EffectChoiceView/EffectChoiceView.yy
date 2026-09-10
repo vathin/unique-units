@@ -1,0 +1,1 @@
+{"$GMScript":"v1","%Name":"EffectChoiceView","isCompatibility":false,"isDnD":false,"name":"EffectChoiceView","parent":{"name":"Controllers","path":"folders/Scripts/Game/Controllers.yy",},"resourceType":"GMScript","resourceVersion":"2.0",}

@@ -9,6 +9,7 @@ function GameLoopController() constructor{
 	displaying_card = false;
 	change_turn_owner = 1;
 	turn_transition_pending = false;
+	turn_transition_post_processed = false;
 	export_data = undefined;
 	action_export_data = [];
 	ready_to_send = 1;
@@ -231,18 +232,30 @@ function GameLoopController() constructor{
 
 	get_summon_action_descriptors = function(_player) {
 		var _actions = [];
-		var _behaviour = get_next_summon_behaviour(_player);
-		if _behaviour == undefined {
+		if Game.game_state == undefined || Game.game_rules == undefined {
 			return _actions;
 		}
-		var _cells = get_summon_target_cells(_player);
+		var _player_key = string(_player);
+		if !variable_struct_exists(Game.game_state.data.players, _player_key) {
+			return _actions;
+		}
+		var _state_player = Game.game_state.data.players[$ _player_key];
+		if !_state_player.able_to_summon || !is_array(_state_player.deck) || array_length(_state_player.deck) <= 0 {
+			return _actions;
+		}
+		var _specs = Game.game_rules.get_inputs(Game.game_state, _player, "summon", {});
+		if array_length(_specs) <= 0 || !is_array(_specs[0].allowed_cells) {
+			return _actions;
+		}
+		var _behaviour = _state_player.deck[array_length(_state_player.deck) - 1];
+		var _cells = _specs[0].allowed_cells;
 		for (var i = 0; i < array_length(_cells); i++) {
 			array_push(_actions, {
 				kind: "summon",
 				player: _player,
 				behaviour: _behaviour,
-				target_x: _cells[i].xcord,
-				target_y: _cells[i].ycord
+				target_x: _cells[i][0],
+				target_y: _cells[i][1]
 			});
 		}
 		return _actions;
@@ -354,17 +367,66 @@ function GameLoopController() constructor{
 		return _actions;
 	}
 
-	get_legal_action_descriptors = function(_player) {
-		var _actions = get_summon_action_descriptors(_player);
-		var _move_actions = get_move_action_descriptors(_player);
-		for (var i = 0; i < array_length(_move_actions); i++) {
-			array_push(_actions, _move_actions[i]);
+	/// Builds executable intents from the same input specs the human UI renders.
+	/// The queue is bounded because every input is a finite cell/choice set.
+	get_effect_action_descriptors = function(_player) {
+		var _actions = [];
+		if Game.game_state == undefined || Game.game_rules == undefined {
+			return _actions;
 		}
-		var _ability_actions = get_ability_action_descriptors(_player);
-		for (var i = 0; i < array_length(_ability_actions); i++) {
-			array_push(_actions, _ability_actions[i]);
+		var _effect_ids = ["summon", "move", "archer_move", "warrior_move", "warrior_ability", "spearman_ability", "shieldbearer_ability", "trader_ability"];
+		for (var _effect_index = 0; _effect_index < array_length(_effect_ids); _effect_index++) {
+			var _effect_id = _effect_ids[_effect_index];
+			var _pending_inputs = [{}];
+			var _iterations = 0;
+			while array_length(_pending_inputs) > 0 && _iterations < 4096 {
+				_iterations++;
+				var _inputs = _pending_inputs[0];
+				array_delete(_pending_inputs, 0, 1);
+				var _specs = Game.game_rules.get_inputs(Game.game_state, _player, _effect_id, _inputs);
+				var _next_spec = undefined;
+				for (var _spec_index = 0; _spec_index < array_length(_specs); _spec_index++) {
+					if !variable_struct_exists(_inputs, _specs[_spec_index].id) {
+						_next_spec = _specs[_spec_index];
+						break;
+					}
+				}
+				if _next_spec == undefined {
+					var _check = Game.game_rules.execute(Game.game_state, _player, {effect_id: _effect_id, inputs: _inputs});
+					if _check.ok {
+						array_push(_actions, {kind: "effect", effect_id: _effect_id, player: _player, inputs: deep_copy(_inputs)});
+						if _effect_id == "warrior_move" && variable_struct_exists(_inputs, "target_cell") {
+							var _warrior_move_effect = Game.game_rules.get_effect("warrior_move");
+							var _strike_cells = _warrior_move_effect.get_strike_cells(Game.game_state, _player, _inputs.target_cell);
+							for (var _strike_index = 0; _strike_index < array_length(_strike_cells); _strike_index++) {
+								var _strike_inputs = deep_copy(_inputs);
+								_strike_inputs.strike_target = deep_copy(_strike_cells[_strike_index]);
+								array_push(_actions, {kind: "effect", effect_id: _effect_id, player: _player, inputs: _strike_inputs});
+							}
+						}
+					}
+				}
+				else if _next_spec.type == "cell" && is_array(_next_spec.allowed_cells) {
+					for (var _cell_index = 0; _cell_index < array_length(_next_spec.allowed_cells); _cell_index++) {
+						var _next_inputs = deep_copy(_inputs);
+						_next_inputs[$ _next_spec.id] = deep_copy(_next_spec.allowed_cells[_cell_index]);
+						array_push(_pending_inputs, _next_inputs);
+					}
+				}
+				else if _next_spec.type == "choice" && is_array(_next_spec.options) {
+					for (var _choice_index = 0; _choice_index < array_length(_next_spec.options); _choice_index++) {
+						var _choice_inputs = deep_copy(_inputs);
+						_choice_inputs[$ _next_spec.id] = _next_spec.options[_choice_index].id;
+						array_push(_pending_inputs, _choice_inputs);
+					}
+				}
+			}
 		}
 		return _actions;
+	}
+
+	get_legal_action_descriptors = function(_player) {
+		return get_effect_action_descriptors(_player);
 	}
 
 	get_random_action_descriptor = function(_player) {
@@ -385,6 +447,9 @@ function GameLoopController() constructor{
 
 	create_action_from_descriptor = function(_descriptor, _simulation = false) {
 		var _skip_ui = _simulation or !is_human_turn();
+		if _descriptor.kind == "effect" {
+			return new EffectAction(_descriptor.effect_id, _descriptor.player, _descriptor.inputs);
+		}
 		if _descriptor.kind == "summon" {
 			var _behaviour = _descriptor.behaviour;
 			if !_simulation {
@@ -535,6 +600,114 @@ function GameLoopController() constructor{
 		return 2;
 	}
 
+	get_bot_state_metrics = function(_state, _player) {
+		var _opponent = get_opponent(_player);
+		var _own_figures = 0;
+		var _enemy_figures = 0;
+		var _own_progress = 0;
+		var _enemy_progress = 0;
+		var _own_zone_figures = 0;
+		var _enemy_zone_figures = 0;
+		var _targets = Maps_list.get_cells_for_conquest();
+		var _own_target_index = _player == Game.Player1.player_id ? 1 : 0;
+		var _enemy_target_index = 1 - _own_target_index;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				var _figure = _state.get_figure(_x, _y);
+				if _figure != undefined && _figure.status == "active" {
+					var _is_own = _figure.owner_id == _player;
+					var _progress = _y;
+					if (_is_own && _player == Game.Player1.player_id) || (!_is_own && _opponent == Game.Player1.player_id) {
+						_progress = _state.data.height - 1 - _y;
+					}
+					if _is_own {
+						_own_figures++;
+						_own_progress += _progress;
+					}
+					else {
+						_enemy_figures++;
+						_enemy_progress += _progress;
+					}
+					for (var _own_zone_index = 0; _own_zone_index < array_length(_targets[_own_target_index]); _own_zone_index++) {
+						if _is_own && _x == _targets[_own_target_index][_own_zone_index][0] && _y == _targets[_own_target_index][_own_zone_index][1] {
+							_own_zone_figures++;
+						}
+					}
+					for (var _enemy_zone_index = 0; _enemy_zone_index < array_length(_targets[_enemy_target_index]); _enemy_zone_index++) {
+						if !_is_own && _x == _targets[_enemy_target_index][_enemy_zone_index][0] && _y == _targets[_enemy_target_index][_enemy_zone_index][1] {
+							_enemy_zone_figures++;
+						}
+					}
+				}
+			}
+		}
+		var _player_key = string(_player);
+		var _opponent_key = string(_opponent);
+		var _own_captured = variable_struct_exists(_state.data.captured, _player_key) ? _state.data.captured[$ _player_key] : 0;
+		var _enemy_captured = variable_struct_exists(_state.data.captured, _opponent_key) ? _state.data.captured[$ _opponent_key] : 0;
+		var _own_dropped = variable_struct_exists(_state.data.dropped, _player_key) ? _state.data.dropped[$ _player_key] : 0;
+		var _enemy_dropped = variable_struct_exists(_state.data.dropped, _opponent_key) ? _state.data.dropped[$ _opponent_key] : 0;
+		return {
+			own_figures: _own_figures,
+			enemy_figures: _enemy_figures,
+			own_progress: _own_progress,
+			enemy_progress: _enemy_progress,
+			own_zone_figures: _own_zone_figures,
+			enemy_zone_figures: _enemy_zone_figures,
+			own_captured: _own_captured,
+			enemy_captured: _enemy_captured,
+			own_dropped: _own_dropped,
+			enemy_dropped: _enemy_dropped
+		};
+	}
+
+	score_effect_action_descriptor = function(_descriptor) {
+		var _result = Game.game_rules.execute(Game.game_state, _descriptor.player, {effect_id: _descriptor.effect_id, inputs: _descriptor.inputs});
+		if !_result.ok {
+			return -100000;
+		}
+		var _before = get_bot_state_metrics(Game.game_state, _descriptor.player);
+		var _after = get_bot_state_metrics(_result.next_state, _descriptor.player);
+		var _score = 0;
+		_score += (_before.enemy_figures - _after.enemy_figures) * 120;
+		_score -= (_before.own_figures - _after.own_figures) * 150;
+		_score += (_after.own_captured - _before.own_captured) * 140;
+		_score -= (_after.enemy_captured - _before.enemy_captured) * 160;
+		_score += (_after.enemy_dropped - _before.enemy_dropped) * 120;
+		_score -= (_after.own_dropped - _before.own_dropped) * 150;
+		_score += (_after.own_progress - _before.own_progress) * 8;
+		_score -= (_after.enemy_progress - _before.enemy_progress) * 8;
+		_score += (_after.own_zone_figures - _before.own_zone_figures) * 100;
+		_score -= (_after.enemy_zone_figures - _before.enemy_zone_figures) * 100;
+		var _target = variable_struct_exists(_descriptor.inputs, "destination_cell") ? _descriptor.inputs.destination_cell : (variable_struct_exists(_descriptor.inputs, "target_cell") ? _descriptor.inputs.target_cell : undefined);
+		if is_array(_target) && array_length(_target) == 2 {
+			var _goal_index = _descriptor.player == Game.Player1.player_id ? 1 : 0;
+			var _goal_cells = Maps_list.get_cells_for_conquest()[_goal_index];
+			for (var _goal_index_in_array = 0; _goal_index_in_array < array_length(_goal_cells); _goal_index_in_array++) {
+				if _target[0] == _goal_cells[_goal_index_in_array][0] && _target[1] == _goal_cells[_goal_index_in_array][1] {
+					_score += 450;
+					break;
+				}
+			}
+		}
+		if _descriptor.effect_id == "summon" {
+			var _player = Game.game_state.data.players[$ string(_descriptor.player)];
+			if is_array(_player.deck) && array_length(_player.deck) > 0 {
+				_score += get_bot_figure_value(_player.deck[array_length(_player.deck) - 1]) * 8;
+			}
+		}
+		else if _descriptor.effect_id == "trader_ability" {
+			var _event = _result.events[0];
+			if _event != undefined && variable_struct_exists(_event, "figure_id") {
+				var _figure = _result.next_state.get_figure(_target[0], _target[1]);
+				if _figure != undefined {
+					_score += get_bot_figure_value(_figure.behaviour) * 15;
+				}
+			}
+		}
+		return _score;
+	}
+
 	export_logic_state = function() {
 		return {
 			field: Game.field.export(),
@@ -580,6 +753,9 @@ function GameLoopController() constructor{
 	}
 
 	score_action_descriptor = function(_descriptor) {
+		if _descriptor.kind == "effect" {
+			return score_effect_action_descriptor(_descriptor);
+		}
 		var _before = get_bot_metrics(_descriptor.player);
 		var _after = simulate_action_descriptor(_descriptor);
 		if (_after == undefined) {
@@ -599,6 +775,16 @@ function GameLoopController() constructor{
 		}
 		else if (_descriptor.kind == "ability_trader") {
 			_score += get_bot_figure_value(_descriptor.behaviour) * 15;
+		}
+		if variable_struct_exists(_descriptor, "target_x") && variable_struct_exists(_descriptor, "target_y") {
+			var _goal_index = _descriptor.player == Game.Player1.player_id ? 1 : 0;
+			var _goal_cells = Maps_list.get_cells_for_conquest()[_goal_index];
+			for (var _goal_index_in_array = 0; _goal_index_in_array < array_length(_goal_cells); _goal_index_in_array++) {
+				if _descriptor.target_x == _goal_cells[_goal_index_in_array][0] && _descriptor.target_y == _goal_cells[_goal_index_in_array][1] {
+					_score += 450;
+					break;
+				}
+			}
 		}
 		if (variable_struct_exists(_descriptor, "from_y") && variable_struct_exists(_descriptor, "target_y")) {
 			var _direction = 1;
@@ -642,27 +828,19 @@ function GameLoopController() constructor{
 				export_data = undefined;
 			}
 		}
-		execute_action();
+		var _had_action = have_action();
+		var _action_result = execute_action();
+		if _had_action && (_action_result == undefined || !_action_result.ok) {
+			export_data = undefined;
+			show_debug_message("GameLoopController.end_move: action was rejected; turn remains with player=" + string(global.turn_owner));
+			O_BoardDraw.unblock_end_button();
+			return;
+		}
 		turn_timer.stop_count();
 		turn_timer.active = 0;
 
-		global.turn_owner = get_opponent(global.turn_owner);
 		clear_all();
-		Game.field.check_conquested_cells();
-		Game.field.check_every_figure();
-		Game.field.check_dropped_figures();
-		figures_counter.update_turn();
-		if Game.online_match {
-			if global.turn_owner == O_Server._id {
-				state = STATE_LIST.wait;
-			}
-			else {
-				state = STATE_LIST.enemy_turn;
-			}
-		}
-		if state == STATE_LIST.enemy_turn {
-			Game.field.clear_all_marks();
-		}
+		turn_transition_post_processed = false;
 		turn_transition_pending = true;
 		state = STATE_LIST.animation;
 		set_can_cancel(0);
@@ -670,18 +848,36 @@ function GameLoopController() constructor{
 		UI_controller.clear_ingame_layer(1)
 	}
 
+	// The presenter keeps the old Field alive while its batches animate.  Only
+	// after it has installed the resulting state may the turn transition inspect it.
+	complete_turn_state_transition = function() {
+		global.turn_owner = get_opponent(global.turn_owner);
+		Game.field.check_conquested_cells();
+		Game.field.check_every_figure();
+		Game.field.check_dropped_figures();
+		figures_counter.update_turn();
+	}
+
 	finish_turn_transition = function() {
-		if !turn_transition_pending or Game.field.has_active_animations() {
+		if !turn_transition_pending {
 			return;
 		}
+		if !turn_transition_post_processed {
+			if Game.field.has_active_animations()
+			or (Game.game_state_presenter != undefined and Game.game_state_presenter.is_busy()) {
+				return;
+			}
+			complete_turn_state_transition();
+			turn_transition_post_processed = true;
+		}
+		if Game.field.has_active_animations()
+		or (Game.game_state_presenter != undefined and Game.game_state_presenter.is_busy()) {
+			return;
+		}
+		Game.sync_game_state_from_legacy();
 		turn_transition_pending = false;
 		turn_timer.start_count(Settings.turn_time);
-		if have_action() {
-			startInput();
-		}
-		else {
-			clear_all();
-		}
+		clear_all();
 		if Game.online_match and export_data != undefined and ready_to_send {
 			Game.send_turn(export_data[0], export_data[1]);
 		}
@@ -692,12 +888,34 @@ function GameLoopController() constructor{
 					Server.send(new ServerMessage(ServerMessageType.GameplayFinish, {winner: check_win_conditions()}));
 				}
 			}
-			else {
-				show_message(check_win_conditions());
+		else {
+				show_debug_message("Match finished: winner=" + get_player_display_name(check_win_conditions()));
 				room_goto(R_Main_menu);
 			}
 		}
 		ready_to_send = 1;
+	}
+
+	get_player_display_name = function(_player_id) {
+		if (_player_id == "" || _player_id == undefined) {
+			return "draw";
+		}
+		if (Game.online_match) {
+			if (_player_id == O_Server._id && O_Server._nickname != undefined && string(O_Server._nickname) != "") {
+				return string(O_Server._nickname);
+			}
+			if (_player_id == Game.opponent && O_Server.opponent_nickname != undefined && string(O_Server.opponent_nickname) != "") {
+				return string(O_Server.opponent_nickname);
+			}
+		}
+		var _player = get_player(_player_id);
+		if (_player != undefined && _player.player_type == "bot") {
+			return "Bot";
+		}
+		if (_player_id == Game.Player1.player_id && O_Server._nickname != undefined && string(O_Server._nickname) != "") {
+			return string(O_Server._nickname);
+		}
+		return "Player " + string(_player_id);
 	}
 
 	step = function() {
@@ -751,6 +969,20 @@ function GameLoopController() constructor{
 	}
 
 	choose_cell_for_summon = function() {
+		if have_action() {
+			if action.type == "effect" && action.effect_id == "summon" {
+				global.selected_cell.filled_figure_status.set_status("will_be_summoned", 0);
+				global.selected_cell.marked = 1;
+				global.selected_cell = global.cell_click_callback;
+				global.cell_click_callback.marked = 0;
+				global.cell_click_callback.filled_figure_status.set_status("will_be_summoned", 1);
+				action.set_new_target_coordinates(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
+			}
+			return;
+		}
+		if Game.summon_controller == undefined {
+			return;
+		}
 		global.cell_click_callback.filled_figure_status.set_status("will_be_summoned", 1)
 		if global.selected_cell == undefined {
 			global.cell_click_callback.marked = 0;
@@ -800,8 +1032,9 @@ function GameLoopController() constructor{
 	execute_action = function() {
 		if have_action() {
 			//Game.game_data.save_action(action.export())
-			action.execute();
+			return action.execute();
 		}
+		return {ok: true, animation_batches: []};
 	}
 
 	clean_controllers = function() {
@@ -940,6 +1173,10 @@ function GameLoopController() constructor{
 			break;
 		case "get_field_figure":
 			action = new import_struct.ex_action(true);
+			action.import(import_struct);
+			break;
+		case "effect":
+			action = new EffectAction(import_struct.ex_effect_id, import_struct.ex_actor_id, import_struct.ex_inputs);
 			action.import(import_struct);
 			break;
 		}

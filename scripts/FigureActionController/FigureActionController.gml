@@ -5,28 +5,56 @@ function FigureActionController() constructor{
 	figure_have_ability = 1;
 	figure_can_move = 1
 	Game.game_loop_controller.state = STATE_LIST.figure_action
-	if !Behaviours.have_ability(global.selected_cell.filled_figure.behaviour) {
-		figure_have_ability = 0;
-		//move_button.x = 840;
-		//move_button.y = 1169;
-		//move_button.image_xscale = 1.25;
-		//move_button.image_yscale = 1.25;
-		}
-	//O_SummonButton.go_away();
 	move_and_ability = false;
 
-	figure_ability = Behaviours.get_ablility(global.selected_cell.filled_figure.behaviour);
-	if figure_ability != undefined {
-		if array_length(Game.game_loop_controller.get_ability_target_cells(global.selected_cell)) <= 0 {
-			figure_have_ability = 0;
-		}
+	get_move_effect_id = function(_behaviour) {
+		if _behaviour == "warrior" return "warrior_move";
+		if _behaviour == "archer" return "archer_move";
+		return "move";
 	}
 
+	get_ability_effect_id = function(_behaviour) {
+		switch _behaviour {
+			case "warrior": return "warrior_ability";
+			case "spearman": return "spearman_ability";
+			case "shieldbearer": return "shieldbearer_ability";
+			case "trader": return "trader_ability";
+		}
+		return undefined;
+	}
 
-	if array_length(Game.game_loop_controller.get_move_target_cells(global.selected_cell)) <= 0 {
+	get_next_input_options = function(_effect_id, _inputs) {
+		if _effect_id == undefined || Game.game_rules == undefined {
+			return 0;
+		}
+		var _specs = Game.game_rules.get_inputs(Game.game_state, global.turn_owner, _effect_id, _inputs);
+		for (var _spec_index = 0; _spec_index < array_length(_specs); _spec_index++) {
+			var _spec = _specs[_spec_index];
+			if variable_struct_exists(_inputs, _spec.id) {
+				continue;
+			}
+			if _spec.type == "cell" && is_array(_spec.allowed_cells) {
+				return array_length(_spec.allowed_cells);
+			}
+			if _spec.type == "choice" && is_array(_spec.options) {
+				return array_length(_spec.options);
+			}
+		}
+		return 0;
+	}
+
+	Game.sync_game_state_from_legacy();
+	var _selected_figure = global.selected_cell.filled_figure;
+	var _source_inputs = {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+	var _move_effect_id = get_move_effect_id(_selected_figure.behaviour);
+	var _move_inputs = _move_effect_id == "move" ? {from_cell: [global.selected_cell.xcord, global.selected_cell.ycord]} : _source_inputs;
+	if get_next_input_options(_move_effect_id, _move_inputs) <= 0 {
 		figure_can_move = 0;
 	}
-	//O_BoardDraw.unblock_end_button();
+	var _ability_effect_id = get_ability_effect_id(_selected_figure.behaviour);
+	if _ability_effect_id == undefined || get_next_input_options(_ability_effect_id, _source_inputs) <= 0 {
+		figure_have_ability = 0;
+	}
 	
 	destroy_self = function() {
 		Game.figure_action_controller = undefined
@@ -34,13 +62,24 @@ function FigureActionController() constructor{
 	
 	move_figure = function() {	
 		if figure_can_move{
-			Game.move_input_controller = new MoveInputController();
+			var _effect_id = get_move_effect_id(global.selected_cell.filled_figure.behaviour);
+			var _inputs = {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+			if _effect_id == "move" {
+				_inputs = {from_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+			}
+			Game.ability_input_controller = new EffectInputController(_effect_id, global.turn_owner, _inputs);
 			destroy_self();
 		}
 	}
 
 	use_ability = function() {
 		if figure_have_ability{
+			var _effect_id = get_ability_effect_id(global.selected_cell.filled_figure.behaviour);
+			if _effect_id != undefined {
+				Game.ability_input_controller = new EffectInputController(_effect_id, global.turn_owner, {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]});
+				destroy_self();
+				return;
+			}
 			if !move_and_ability {
 				Game.ability_input_controller = new AbilityInputController();
 			}

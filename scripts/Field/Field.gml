@@ -604,8 +604,10 @@ function Field() constructor{
 
 	check_movement_array = function(_figure_id) {
 		for (i = array_length(movement_array)-1; i >= 0; i--) {
-			if movement_array[i].figure_id == _figure_id and movement_array[i].is_ability and array_length(movement_array) - i < 3{
-				return get_cell(movement_array[i].from[0], movement_array[i].from[1])
+			var _move = movement_array[i];
+			var _is_ability = variable_struct_exists(_move, "is_ability") && _move.is_ability;
+			if _move.figure_id == _figure_id and _is_ability and array_length(movement_array) - i < 3{
+				return get_cell(_move.from[0], _move.from[1])
 			}
 		}
 		return undefined

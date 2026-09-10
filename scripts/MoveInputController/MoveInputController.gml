@@ -33,13 +33,20 @@ function MoveInputController() constructor{
 	set_new_cell_action();
 
 	start_move = function(to_x, to_y) {
-		action_set = new move_ability(move_from.xcord,move_from.ycord, 
-		to_x, to_y, undefined);
-		action_set.draw_previous_cell = draw_previous_cell;
-		action_set.previous_move_cell = previous_cell
+		if move_ability == StandartMoveAbility {
+			action_set = new EffectAction("move", global.turn_owner, {from_cell: [move_from.xcord, move_from.ycord], target_cell: [to_x, to_y]});
+		}
+		else {
+			action_set = new move_ability(move_from.xcord,move_from.ycord, to_x, to_y, undefined);
+		}
+		if move_ability != StandartMoveAbility {
+			action_set.draw_previous_cell = draw_previous_cell;
+			action_set.previous_move_cell = previous_cell;
+		}
 		Game.game_loop_controller.set_action(action_set);
 		set_new_cell_action();
 		Game.field.get_cell(to_x, to_y).add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_moved));
+		O_BoardDraw.unblock_end_button();
 		Game.move_input_controller = undefined;
 	}
 

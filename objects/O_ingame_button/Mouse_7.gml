@@ -1,13 +1,13 @@
-if room == R_Test {
-	switch (type) {
-		case "MainButton":
-			O_BoardDraw.main_button_click();
-			break;
-		case "MoveButton":
-			O_BoardDraw.move_button_click();
-			break;
-		case "AbilityButton":
-			O_BoardDraw.ability_button_click();
-			break;
-	}
+switch (type) {
+	case "MainButton":
+		O_BoardDraw.main_button_click();
+		break;
+	case "MoveButton":
+		show_debug_message("Game UI: move button clicked");
+		O_BoardDraw.move_button_click();
+		break;
+	case "AbilityButton":
+		show_debug_message("Game UI: ability button clicked");
+		O_BoardDraw.ability_button_click();
+		break;
 }

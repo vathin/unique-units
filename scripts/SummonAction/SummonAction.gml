@@ -13,20 +13,24 @@ function SummonAction(_target_x, _target_y, _figure_sprite, _behaviour, _skip_ui
 	//O_SummonButton.change_sprite(S_Back, O_SummonButton.standart_scale);
 	//O_SummonButton.back = 1;
 
-	execute = function() {
+	execute_logic = function() {
 		if target_x == undefined or target_y == undefined {
 			show_debug_message("SummonAction.execute skipped: target is undefined, figure=" + string(summon_figure));
-			return;
+			return {ok: false, animation_batches: []};
 		}
 		if Game.field.get_cell(target_x, target_y) == undefined {
 			show_debug_message("SummonAction.execute skipped: invalid target x=" + string(target_x) + ", y=" + string(target_y) + ", figure=" + string(summon_figure));
-			return;
+			return {ok: false, animation_batches: []};
 		}
-		Game.field.create_figure(summon_figure, target_x, target_y, 1)
-		//new_figure = new Figure()
-		//new_figure.set_behaviour(summon_figure)
-		//Game.field.get_cell(target_x, target_y).fill(new_figure)
-		//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, 1)
+		var _deck_data = Game.user_data.load(global.turn_owner);
+		if !is_struct(_deck_data) or !is_array(_deck_data.player_figures) or array_length(_deck_data.player_figures) <= 0 {
+			return {ok: false, animation_batches: []};
+		}
+		var _actual_figure = array_pop(_deck_data.player_figures);
+		Game.user_data.save(global.turn_owner, _deck_data);
+		summon_figure = _actual_figure;
+		Game.field.create_figure(summon_figure, target_x, target_y, 1);
+		return {ok: true, animation_batches: [[{type: "summon", at: [target_x, target_y], behaviour: summon_figure}]]};
 	}
 	draw = function() {
 		if target_x != undefined {

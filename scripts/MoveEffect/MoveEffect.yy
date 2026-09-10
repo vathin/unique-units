@@ -1,0 +1,1 @@
+{"$GMScript":"v1","%Name":"MoveEffect","isCompatibility":false,"isDnD":false,"name":"MoveEffect","parent":{"name":"Game","path":"folders/Scripts/Game.yy",},"resourceType":"GMScript","resourceVersion":"2.0",}

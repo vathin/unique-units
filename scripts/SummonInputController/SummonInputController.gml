@@ -3,12 +3,30 @@
 function SummonInputController() constructor{
 	Game.game_loop_controller.state = STATE_LIST.summon
 	Game.field.clear_all_marks();
+	Game.field.selected_cell = undefined;
+	global.selected_cell = undefined;
 	Game.game_loop_controller.set_can_cancel(0);
 	load_data = Game.user_data.load(global.turn_owner);
-	figure_to_summon = array_pop(load_data.player_figures)
-	Game.user_data.save(global.turn_owner, load_data)
+	if !is_struct(load_data) or !is_array(load_data.player_figures) or array_length(load_data.player_figures) <= 0 {
+		Game.summon_controller = undefined;
+		return;
+	}
+	figure_to_summon = load_data.player_figures[array_length(load_data.player_figures) - 1];
 	global.mark = S_Summon_mark;
-	Game.field.check_controlled_summon_cells(global.turn_owner);
+	// The UI must render exactly the same cells SummonEffect validates.
+	Game.sync_game_state_from_legacy();
+	var _summon_specs = Game.game_rules.get_inputs(Game.game_state, global.turn_owner, "summon", {});
+	if array_length(_summon_specs) <= 0 || !is_array(_summon_specs[0].allowed_cells) {
+		Game.summon_controller = undefined;
+		return;
+	}
+	for (var _cell_index = 0; _cell_index < array_length(_summon_specs[0].allowed_cells); _cell_index++) {
+		var _cell_data = _summon_specs[0].allowed_cells[_cell_index];
+		var _cell = Game.field.get_cell(_cell_data[0], _cell_data[1]);
+		if _cell != undefined {
+			_cell.marked = true;
+		}
+	}
 	global.able_to_summon = true;
 	global.cell_action = function(cell) {
 		if (cell.marked) {
@@ -23,6 +41,10 @@ function SummonInputController() constructor{
 		if Game.game_loop_controller.state != STATE_LIST.summon 
 		or (Game.game_loop_controller.have_action() and Game.game_loop_controller.action.target_x != undefined) {
 			O_BoardDraw.clear_button_overlay();
+			var _overlay_index = array_get_index(Game.do_every_step_list, Button_set_overlay);
+			if _overlay_index != -1 {
+				array_delete(Game.do_every_step_list, _overlay_index, 1);
+			}
 			}
 	}
 	array_push(Game.do_every_step_list, Button_set_overlay)
@@ -35,8 +57,15 @@ function SummonInputController() constructor{
 	}
 
 	start_summon = function(target_x, target_y) {
-		Game.game_loop_controller.set_action(new SummonAction(target_x, target_y, Behaviours.get_sprite(figure_to_summon), figure_to_summon));
-		array_delete(Game.do_every_step_list, array_get_index(Game.do_every_step_list, Button_set_overlay), 1);
+		var _action = new EffectAction("summon", global.turn_owner, {target_cell: [target_x, target_y]});
+		_action.retarget_input_id = "target_cell";
+		_action.set_preview("target_cell", target_x, target_y);
+		Game.game_loop_controller.set_action(_action);
+		O_BoardDraw.unblock_end_button();
+		var _overlay_index = array_get_index(Game.do_every_step_list, Button_set_overlay);
+		if _overlay_index != -1 {
+			array_delete(Game.do_every_step_list, _overlay_index, 1);
+		}
 		O_BoardDraw.clear_button_overlay()
 		Game.summon_controller = undefined
 	}

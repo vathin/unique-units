@@ -57,6 +57,11 @@ cancel = function() {
 	if Game.game_loop_controller.is_turn_transition_active() {
 		return;
 	}
+	// The card is revealed when summon mode starts, so this commitment cannot
+	// be rolled back to fish for another card.
+	if Game.game_loop_controller.get_game_state() == STATE_LIST.summon {
+		return;
+	}
 	if !Game.game_loop_controller.is_local_turn() {
 		Game.game_loop_controller.set_game_state(STATE_LIST.enemy_turn);
 		Game.game_loop_controller.set_can_cancel(0);
@@ -77,6 +82,9 @@ cancel = function() {
 
 main_button_click = function() {
 	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		return;
+	}
+	if Game.game_loop_controller.get_game_state() == STATE_LIST.summon {
 		return;
 	}
 	if game_state == STATE_LIST.wait and
@@ -105,7 +113,13 @@ move_button_click = function() {
 }
 
 ability_button_click = function() {
+	show_debug_message("Game UI: ability dispatch, controller=" + string(Game.figure_action_controller != undefined));
 	if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
+		show_debug_message("Game UI: ability ignored because the turn is not available");
+		return;
+	}
+	if Game.game_loop_controller.have_action() && Game.game_loop_controller.action.type == "effect" && Game.game_loop_controller.action.effect_id == "warrior_move" {
+		Game.game_loop_controller.action.begin_warrior_strike();
 		return;
 	}
 	if Game.figure_action_controller != undefined {

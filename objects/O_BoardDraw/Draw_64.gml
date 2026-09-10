@@ -13,8 +13,7 @@ if in_game {
 	if end_button and Game.game_loop_controller.is_human_turn() {
 		UI_controller.set_button_frame(UI_controller.end_turn_button, SIDEBUTTONFRAMES.end_turn_active);
 	}
-	if Game.game_loop_controller.is_human_turn() and ((game_state == STATE_LIST.summon and global.cell_click_callback != undefined) or
-	Game.game_loop_controller.can_cancel) {
+	if Game.game_loop_controller.is_human_turn() and Game.game_loop_controller.can_cancel {
 		UI_controller.set_button_frame(UI_controller.cancel_button, SIDEBUTTONFRAMES.cancel_active)
 	}
 	switch game_state{
@@ -40,10 +39,17 @@ if in_game {
 			UI_controller.set_button_frame(UI_controller.ability_button, INGAMEBUTTONFRAMES.can_use_ability)
 		}
 		break;
+	case STATE_LIST.figure_move:
+		if Game.game_loop_controller.have_action() && Game.game_loop_controller.action.type == "effect" && Game.game_loop_controller.action.effect_id == "warrior_move" && !variable_struct_exists(Game.game_loop_controller.action.inputs, "strike_target") {
+			UI_controller.turn_on_button(UI_controller.ability_button);
+			UI_controller.set_button_frame(UI_controller.ability_button, INGAMEBUTTONFRAMES.can_use_ability);
+		}
+		break;
 	case STATE_LIST.summon:
 		UI_controller.turn_on_button(UI_controller.main_button);
-		if global.cell_click_callback != undefined and !is_button_have_overlay() {
-			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.cancel);
+		UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.can_summon);
+		if Game.summon_controller != undefined {
+			O_BoardDraw.set_button_overlay(Behaviours.get_sprite(Game.summon_controller.figure_to_summon), 0);
 		}
 		break;
 	case STATE_LIST.enemy_turn:

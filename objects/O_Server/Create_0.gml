@@ -15,6 +15,7 @@ _password = undefined;
 _id = undefined;
 _winner = undefined;
 _avatar_url = "";
+opponent_nickname = "";
 deck = []
 instance_create_depth(0, 0, 0, UI_controller);
 UI_controller.check_layers();
@@ -325,7 +326,11 @@ Server.add_reaction(function(msg)
 			break;
 		case ServerMessageType.GameEnd:
 			_winner = msg.data.winner;
-			if _winner == "" {winner = "draw"}
+			var _winner_name = "draw";
+			if (_winner != "" && Game != undefined && Game.game_loop_controller != undefined) {
+				_winner_name = Game.game_loop_controller.get_player_display_name(_winner);
+			}
+			show_debug_message("Online match finished: winner=" + _winner_name);
 			alarm[0] = 35;
 			break;
 		case ServerMessageType.PlayerInfo:
@@ -342,8 +347,9 @@ Server.add_reaction(function(msg)
 				else if (variable_struct_exists(_player, "nickname")) {
 					_name = _player.nickname;
 				}
-				if (_name != undefined && string(_name) != "" && string(_name) != "undefined") {
-					UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", _name);
+			if (_name != undefined && string(_name) != "" && string(_name) != "undefined") {
+				opponent_nickname = string(_name);
+				UI_controller.set_text_on_ui_layer(UI_controller.InGame_layer, "OpponentNickname", _name);
 				}
 				var _opponent_avatar_url = get_avatar_url_from_login_data(_player, false);
 				if (_opponent_avatar_url != "") {

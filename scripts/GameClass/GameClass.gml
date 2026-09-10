@@ -2,9 +2,18 @@
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function GameClass() constructor{
 	do_every_step_list = [];
+	last_step_callback_warning = 0;
 	do_every_step = function(list) {
-		for (i = 0; i < array_length(list); i++) {
-			list[i]();
+		var _step_count = array_length(list);
+		if _step_count > 32 && _step_count != last_step_callback_warning {
+			show_debug_message("Game step callbacks: unusually high count=" + string(_step_count));
+			last_step_callback_warning = _step_count;
+		}
+		else if _step_count <= 32 {
+			last_step_callback_warning = 0;
+		}
+		for (var _step_index = 0; _step_index < _step_count && _step_index < array_length(list); _step_index++) {
+			list[_step_index]();
 		}
 	}
 	online_match = false;
@@ -17,6 +26,13 @@ function GameClass() constructor{
 	local_match_mode = "local_vs_local";
 	bot_controller = undefined;
 	is_simulating = false;
+	game_state = undefined;
+	game_input = new GameInput();
+	game_rules = new GameRules();
+	game_state_presenter = undefined;
+	effect_choice_view_factory = function(_spec, _on_select) {
+		return new EffectChoiceView(_spec, _on_select);
+	}
 
 	set_local_match_mode = function(_mode) {
 		local_match_mode = _mode;
@@ -30,6 +46,12 @@ function GameClass() constructor{
 			"warrior", "warrior", "warrior", "warrior", "spearman", "spearman", "spearman", "spearman"],
 			player_deck_size: 20
 		};
+	}
+
+	sync_game_state_from_legacy = function() {
+		if game_rules != undefined and field != undefined {
+			game_state = game_rules.from_legacy_match();
+		}
 	}
 
 	make_local_deck_data = function(_source_deck = undefined) {
@@ -61,6 +83,7 @@ function GameClass() constructor{
 		if _field_data.ex_turn_owner != O_Server._id{
 			if _field_data.import_field {
 				Game.game_loop_controller.import(_field_data);
+				sync_game_state_from_legacy();
 			}
 			if _action_data != undefined {
 				Game.game_loop_controller.import_action(_action_data[0]);
@@ -148,6 +171,9 @@ function GameClass() constructor{
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
 		Maps_list.start(global.map);
+		game_state = game_rules.from_legacy_match();
+		game_state_presenter = new GameStatePresenter();
+		array_push(do_every_step_list, game_state_presenter.step);
 		in_match = 1;
 		if instance_exists(O_DeckManager) {
 			O_DeckManager.clear_card_displays();
@@ -167,6 +193,8 @@ function GameClass() constructor{
 		Player2 = undefined;
 		local_player = undefined;
 		bot_controller = undefined;
+		game_state = undefined;
+		game_state_presenter = undefined;
 		in_match = 0;
 		do_every_step_list = [];
 	}

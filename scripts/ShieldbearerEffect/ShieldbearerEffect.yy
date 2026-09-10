@@ -1,0 +1,1 @@
+{"$GMScript":"v1","%Name":"ShieldbearerEffect","isCompatibility":false,"isDnD":false,"name":"ShieldbearerEffect","parent":{"name":"Game","path":"folders/Scripts/Game.yy",},"resourceType":"GMScript","resourceVersion":"2.0",}
