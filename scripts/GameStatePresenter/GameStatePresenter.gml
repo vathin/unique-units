@@ -21,7 +21,7 @@ function GameStatePresenter() constructor {
 	make_figure = function(_state_figure) {
 		var _figure = new Figure();
 		_figure.set_behaviour(_state_figure.behaviour);
-		_figure.figure_id = _state_figure.id;
+		_figure.figure_id = string(_state_figure.id);
 		_figure.owner = _state_figure.owner_id;
 		_figure.update_stats();
 		_figure.state.is_active = _state_figure.status == "active";
@@ -31,11 +31,26 @@ function GameStatePresenter() constructor {
 		return _figure;
 	}
 
+	sync_figure_place = function(_place, _figures) {
+		_place.figures = [];
+		if !is_array(_figures) {
+			_place.sort(false);
+			return;
+		}
+		for (var _index = 0; _index < array_length(_figures); _index++) {
+			array_push(_place.figures, make_figure(_figures[_index]));
+		}
+		_place.sort(false);
+	}
+
 	apply_state = function(_state) {
 		var _existing = find_existing_figures();
 		for (var _clear_x = 0; _clear_x < Game.field.field_width; _clear_x++) {
 			for (var _clear_y = 0; _clear_y < Game.field.field_height; _clear_y++) {
-				Game.field.get_cell(_clear_x, _clear_y).clear();
+				var _field_cell = Game.field.get_cell(_clear_x, _clear_y);
+				_field_cell.clear();
+				var _state_cell = _state.get_cell(_clear_x, _clear_y);
+				_field_cell.can_be_conquested = _state_cell != undefined && _state_cell.can_be_conquested;
 			}
 		}
 		for (var _x = 0; _x < _state.data.width; _x++) {
@@ -57,10 +72,24 @@ function GameStatePresenter() constructor {
 			}
 		}
 		Game.field.movement_array = deep_copy(_state.data.movement_history);
+		var _player1_key = string(Game.Player1.player_id);
+		var _player2_key = string(Game.Player2.player_id);
+		sync_figure_place(Game.field.player1_captured,
+			variable_struct_exists(_state.data.captured_figures, _player1_key) ? _state.data.captured_figures[$ _player1_key] : []);
+		sync_figure_place(Game.field.player2_captured,
+			variable_struct_exists(_state.data.captured_figures, _player2_key) ? _state.data.captured_figures[$ _player2_key] : []);
+		sync_figure_place(Game.field.player1_dropped,
+			variable_struct_exists(_state.data.dropped_figures, _player1_key) ? _state.data.dropped_figures[$ _player1_key] : []);
+		sync_figure_place(Game.field.player2_dropped,
+			variable_struct_exists(_state.data.dropped_figures, _player2_key) ? _state.data.dropped_figures[$ _player2_key] : []);
 		if Game.game_loop_controller != undefined && Game.game_loop_controller.figures_counter != undefined {
 			Game.game_loop_controller.figures_counter.figures_id_counter = _state.data.next_figure_id;
 		}
 		Game.game_state = _state;
+		if Game.game_loop_controller != undefined {
+			Game.game_loop_controller.player1_captured = _state.data.captured[$ _player1_key];
+			Game.game_loop_controller.player2_captured = _state.data.captured[$ _player2_key];
+		}
 		var _player_keys = variable_struct_get_names(_state.data.players);
 		for (var _player_index = 0; _player_index < array_length(_player_keys); _player_index++) {
 			var _player = _state.data.players[$ _player_keys[_player_index]];
@@ -73,17 +102,35 @@ function GameStatePresenter() constructor {
 	}
 
 	play_batch = function(_batch) {
+		show_debug_message("Presenter batch: events=" + string(array_length(_batch)));
 		for (var _index = 0; _index < array_length(_batch); _index++) {
 			var _event = _batch[_index];
+			show_debug_message("Presenter event: type=" + string(_event.type)
+				+ ", figure_id=" + string(variable_struct_exists(_event, "figure_id") ? _event.figure_id : "none"));
 			if _event.type == "move" {
-				var _figure = Game.field.find_figure_from_id(_event.figure_id);
+				// The source cell is the visual authority at this point.  Using it
+				// avoids platform-specific number/string representation of figure IDs.
+				var _source_cell = Game.field.get_cell(_event.from[0], _event.from[1]);
+				var _figure = _source_cell != undefined && _source_cell.is_filled()
+					? _source_cell.filled_figure : Game.field.find_figure_from_id(_event.figure_id);
+				if _figure == undefined {
+					show_debug_message("Presenter move skipped: figure not found");
+				}
 				if _figure != undefined {
 					var _from = Game.field.get_cell_xy(Game.field.get_cell(_event.from[0], _event.from[1]));
 					var _to = Game.field.get_cell_xy(Game.field.get_cell(_event.to[0], _event.to[1]));
 					var _animation = new MoveAnimationController();
 					_animation.start_animation(_from[0], _from[1], _to[0], _to[1], _event.duration_frames);
 					_figure.add_animation(_animation);
-					array_push(pending_visual_updates, {type: "move", figure_id: _event.figure_id, to: deep_copy(_event.to)});
+					// This is presentation-only state. Keep the exact Figure reference until
+					// this batch ends: looking it up by id can select several legacy figures
+					// with the same value and clear unrelated cells on HTML5.
+					array_push(pending_visual_updates, {
+						type: "move",
+						figure: _figure,
+						from: deep_copy(_event.from),
+						to: deep_copy(_event.to)
+					});
 				}
 			}
 			else if _event.type == "summon" {
@@ -91,7 +138,10 @@ function GameStatePresenter() constructor {
 				var _summon_cell = Game.field.get_cell(_event.at[0], _event.at[1]);
 				if _summoned_figure == undefined && pending_state != undefined {
 					var _state_figure = pending_state.get_figure(_event.at[0], _event.at[1]);
-					if _state_figure != undefined && string(_state_figure.id) == string(_event.figure_id) && _summon_cell != undefined {
+					// The event location belongs to the confirmed result.  HTML5 may
+					// stringify numeric IDs differently (for example 3 vs 3.0), so
+					// do not reject the new figure solely on that presentation detail.
+					if _state_figure != undefined && _summon_cell != undefined {
 						_summoned_figure = make_figure(_state_figure);
 						_summon_cell.fill(_summoned_figure, false);
 					}
@@ -101,6 +151,10 @@ function GameStatePresenter() constructor {
 					var _summon_animation = new OverturnAnimationController();
 					_summon_animation.start_animation(_summon_position[0], _summon_position[1], _summon_position[0], _summon_position[1], _event.duration_frames);
 					_summoned_figure.add_animation(_summon_animation);
+				}
+				else {
+					show_debug_message("Presenter summon skipped: figure=" + string(_summoned_figure != undefined)
+						+ ", cell=" + string(_summon_cell != undefined));
 				}
 			}
 			else if _event.type == "hit" {
@@ -112,14 +166,45 @@ function GameStatePresenter() constructor {
 					_hit_cell.filled_figure.add_animation(_hit_animation);
 				}
 			}
+			else if _event.type == "conquest" {
+				var _conquest_cell = Game.field.get_cell(_event.at[0], _event.at[1]);
+				if _conquest_cell != undefined && _conquest_cell.is_filled() {
+					// pending_state is applied only after all visual batches. Mark the live
+					// figure now, otherwise Field never draws the second half of overturn.
+					_conquest_cell.filled_figure.state.is_active = false;
+					_conquest_cell.filled_figure.state.is_conquesting = true;
+					var _conquest_position = Game.field.get_cell_xy(_conquest_cell);
+					var _conquest_animation = new OverturnAnimationController();
+					_conquest_animation.start_animation(_conquest_position[0], _conquest_position[1], _conquest_position[0], _conquest_position[1], _event.duration_frames);
+					_conquest_cell.filled_figure.add_animation(_conquest_animation);
+				}
+			}
+			else if _event.type == "capture" {
+				var _capture_cell = Game.field.get_cell(_event.at[0], _event.at[1]);
+				if _capture_cell != undefined && _capture_cell.is_filled() {
+					var _capture_position = Game.field.get_cell_xy(_capture_cell);
+					var _capture_animation = new HitAnimationController();
+					_capture_animation.start_animation(_capture_position[0], _capture_position[1], _capture_position[0], _capture_position[1], _event.duration_frames);
+					_capture_cell.filled_figure.add_animation(_capture_animation);
+				}
+			}
 			else if _event.type == "drop" {
-				var _dropped_figure = Game.field.find_figure_from_id(_event.figure_id);
+				var _drop_cell = variable_struct_exists(_event, "at") ? Game.field.get_cell(_event.at[0], _event.at[1]) : undefined;
+				var _dropped_figure = _drop_cell != undefined && _drop_cell.is_filled()
+					? _drop_cell.filled_figure : Game.field.find_figure_from_id(_event.figure_id);
 				if _dropped_figure != undefined {
-					for (var _clear_x = 0; _clear_x < Game.field.field_width; _clear_x++) {
-						for (var _clear_y = 0; _clear_y < Game.field.field_height; _clear_y++) {
-							var _field_cell = Game.field.get_cell(_clear_x, _clear_y);
-							if _field_cell.is_filled() && string(_field_cell.filled_figure.figure_id) == string(_event.figure_id) {
-								_field_cell.clear();
+					if _drop_cell != undefined && _drop_cell.is_filled()
+						&& _drop_cell.filled_figure == _dropped_figure {
+						_drop_cell.clear();
+					}
+					else {
+						for (var _clear_x = 0; _clear_x < Game.field.field_width; _clear_x++) {
+							for (var _clear_y = 0; _clear_y < Game.field.field_height; _clear_y++) {
+								var _field_cell = Game.field.get_cell(_clear_x, _clear_y);
+								if _field_cell.is_filled() && _field_cell.filled_figure == _dropped_figure {
+									_field_cell.clear();
+									break;
+								}
 							}
 						}
 					}
@@ -137,16 +222,27 @@ function GameStatePresenter() constructor {
 			if _update.type != "move" {
 				continue;
 			}
-			var _figure = Game.field.find_figure_from_id(_update.figure_id);
+			var _figure = _update.figure;
 			var _target_cell = Game.field.get_cell(_update.to[0], _update.to[1]);
 			if _figure == undefined || _target_cell == undefined {
 				continue;
 			}
-			for (var _clear_x = 0; _clear_x < Game.field.field_width; _clear_x++) {
-				for (var _clear_y = 0; _clear_y < Game.field.field_height; _clear_y++) {
-					var _field_cell = Game.field.get_cell(_clear_x, _clear_y);
-					if _field_cell.is_filled() && string(_field_cell.filled_figure.figure_id) == string(_update.figure_id) {
-						_field_cell.clear();
+			var _source_cell = Game.field.get_cell(_update.from[0], _update.from[1]);
+			if _source_cell != undefined && _source_cell.is_filled()
+				&& _source_cell.filled_figure == _figure {
+				_source_cell.clear();
+			}
+			else {
+				// A batch may contain concurrent effects. In that case find this exact
+				// visual object rather than matching an id which need not be unique in
+				// old saves or imported matches.
+				for (var _clear_x = 0; _clear_x < Game.field.field_width; _clear_x++) {
+					for (var _clear_y = 0; _clear_y < Game.field.field_height; _clear_y++) {
+						var _field_cell = Game.field.get_cell(_clear_x, _clear_y);
+						if _field_cell.is_filled() && _field_cell.filled_figure == _figure {
+							_field_cell.clear();
+							break;
+						}
 					}
 				}
 			}
@@ -161,6 +257,7 @@ function GameStatePresenter() constructor {
 		pending_state = _state.clone();
 		pending_batches = deep_copy(_animation_batches);
 		pending_visual_updates = [];
+		show_debug_message("Presenter commit: batches=" + string(array_length(pending_batches)));
 		advance();
 	}
 

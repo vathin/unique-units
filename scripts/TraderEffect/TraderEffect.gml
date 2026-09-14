@@ -35,7 +35,14 @@ function TraderEffect() : GameEffect("trader_ability") constructor {
 		var _player = _next.data.players[$ string(_actor_id)];
 		var _offered = [array_pop(_player.deck), array_pop(_player.deck), array_pop(_player.deck)];
 		var _behaviour = _offered[_inputs.figure_choice];
-		for (var _index = 0; _index < 3; _index++) if _index != _inputs.figure_choice _next.data.dropped[$ string(_actor_id)]++;
+		for (var _index = 0; _index < 3; _index++) {
+			if _index != _inputs.figure_choice {
+				_next.data.dropped[$ string(_actor_id)]++;
+				var _discarded = {id: string(_next.data.next_figure_id), behaviour: _offered[_index], owner_id: _actor_id, status: "dropped"};
+				_next.data.next_figure_id++;
+				_next.add_dropped_figure(_actor_id, _discarded);
+			}
+		}
 		var _figure = {id: string(_next.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
 		_next.data.next_figure_id++;
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _figure);

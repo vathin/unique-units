@@ -312,18 +312,6 @@ Server.add_reaction(function(msg)
 			global.turn_owner = msg.data.turn
 			Start_online_match(msg.data.matchId, msg.data.opponent, msg.data.role);
 			break;
-		case ServerMessageType.GameplayTurn:
-			if msg.data.turn.turnOwner != _id {
-				Game.get_turn(msg.data.turn.fieldState, msg.data.turn.turn);
-				var _add = msg.data.turn.fieldState.additional_data
-				if _add != undefined {
-					if _add.type == "GetEnemyDeck" {
-						Game.get_enemy_deck(_add);
-						if _add.count == 0 {Game.send_deck(_add.count+1)}
-					}
-				}
-			}
-			break;
 		case ServerMessageType.GameEnd:
 			_winner = msg.data.winner;
 			var _winner_name = "draw";
@@ -332,6 +320,24 @@ Server.add_reaction(function(msg)
 			}
 			show_debug_message("Online match finished: winner=" + _winner_name);
 			alarm[0] = 35;
+			break;
+		case ServerMessageType.GameplayIntent:
+			if Game != undefined {
+				Game.receive_gameplay_intent(msg.data);
+			}
+			break;
+		case ServerMessageType.GameplayState:
+			if Game != undefined {
+				var _state = variable_struct_exists(msg.data, "logic_state") ? msg.data.logic_state : undefined;
+				var _batches = variable_struct_exists(msg.data, "animation_batches") ? msg.data.animation_batches : [];
+				var _revision = variable_struct_exists(msg.data, "revision") ? msg.data.revision : -1;
+				Game.receive_authoritative_state(_state, _batches, _revision);
+			}
+			break;
+		case ServerMessageType.GameplaySetup:
+			if Game != undefined {
+				Game.receive_gameplay_setup(msg.data);
+			}
 			break;
 		case ServerMessageType.PlayerInfo:
 			if msg.data.player.id != _id {

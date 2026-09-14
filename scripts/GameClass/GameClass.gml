@@ -27,6 +27,9 @@ function GameClass() constructor{
 	bot_controller = undefined;
 	is_simulating = false;
 	game_state = undefined;
+	Player1 = undefined;
+	Player2 = undefined;
+	pending_gameplay_setups = [];
 	game_input = new GameInput();
 	game_rules = new GameRules();
 	game_state_presenter = undefined;
@@ -48,9 +51,10 @@ function GameClass() constructor{
 		};
 	}
 
-	sync_game_state_from_legacy = function() {
+	sync_game_state_from_legacy = function(_preserve_match_decks = true) {
 		if game_rules != undefined and field != undefined {
-			game_state = game_rules.from_legacy_match();
+			var _deck_source_state = _preserve_match_decks ? game_state : undefined;
+			game_state = game_rules.from_legacy_match(_deck_source_state);
 		}
 	}
 
@@ -72,47 +76,97 @@ function GameClass() constructor{
 		opponent = _opponent;
 		role = _role;
 		online_match = 1;
+		network_revision = 0;
 		Server.send(new ServerMessage(ServerMessageType.PlayerInfo, {player: opponent}))
 	}
 
-	send_turn = function(_field_data, _action_data) {
-		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: _action_data, state: _field_data, turnOwner: O_Server._id}))
+	send_gameplay_intent = function(_effect_id, _inputs) {
+		Server.send(new ServerMessage(ServerMessageType.GameplayIntent, {
+			base_revision: network_revision,
+			effect_id: _effect_id,
+			inputs: deep_copy(_inputs)
+		}));
 	}
 
-	get_turn = function(_field_data, _action_data) {
-		if _field_data.ex_turn_owner != O_Server._id{
-			if _field_data.import_field {
-				Game.game_loop_controller.import(_field_data);
-				sync_game_state_from_legacy();
-			}
-			if _action_data != undefined {
-				Game.game_loop_controller.import_action(_action_data[0]);
-				if array_length(_action_data) > 1 {
-					Game.game_loop_controller.import_action(_action_data[1]);
-				}
-			}
+	send_authoritative_state = function(_logic_state, _animation_batches) {
+		if role != "host" || _logic_state == undefined {
+			return false;
 		}
+		var _next_turn_owner = _logic_state.data.active_player_id;
+		var _revision = network_revision + 1;
+		network_revision = _revision;
+		Server.send(new ServerMessage(ServerMessageType.GameplayState, {
+			revision: _revision,
+			logic_state: _logic_state,
+			animation_batches: deep_copy(_animation_batches),
+			events: [],
+			next_turn_owner: _next_turn_owner
+		}));
+		return true;
 	}
 
-	get_enemy_deck = function(_deck_data) {
-		var _id = O_Server.enemy;
-		user_data.save(_id, {player_cards: _deck_data.cards, player_figures: _deck_data.figures, player_deck_size: array_length(_deck_data.figures)});
-		O_DeckManager.create_card_displays(O_Server._id, 0);
-		O_DeckManager.create_card_displays(opponent, 1);
-		if global.turn_owner != O_Server._id {game_loop_controller.state = STATE_LIST.enemy_turn}
-	}
-
-	send_deck = function(_count = 0) {
-		var _id = O_Server._id;
-		_export_data = {
-			type: "GetEnemyDeck",
-			cards: user_data.load(_id).player_cards,
-			figures:  user_data.load(_id).player_figures,
-			count: _count
+	receive_gameplay_intent = function(_intent) {
+		if role != "host" || game_loop_controller == undefined || !is_struct(_intent) {
+			return false;
 		}
-		field_state = game_loop_controller.export(_export_data);
-		field_state.import_field = false;
-		Server.send(new ServerMessage(ServerMessageType.GameplayTurn, {action: undefined, state: field_state, turnOwner: O_Server._id}))
+		if _intent.actor_id != global.turn_owner || !variable_struct_exists(_intent, "effect_id") || !variable_struct_exists(_intent, "inputs") {
+			show_debug_message("GameplayIntent ignored: invalid actor or payload");
+			return false;
+		}
+		var _action = new EffectAction(_intent.effect_id, _intent.actor_id, _intent.inputs);
+		game_loop_controller.set_action(_action);
+		game_loop_controller.ready_to_send = 1;
+		game_loop_controller.end_move();
+		return true;
+	}
+
+	receive_authoritative_state = function(_logic_state, _animation_batches, _revision) {
+		if _revision <= network_revision {
+			return true;
+		}
+		network_revision = _revision;
+		if _logic_state == undefined || !is_struct(_logic_state) {
+			show_debug_message("GameplayState ignored: logic_state is missing");
+			return false;
+		}
+		var _confirmed_state = new GameState(deep_copy(_logic_state));
+		_confirmed_state.ensure_figure_ids();
+		if game_state_presenter != undefined {
+			game_state_presenter.commit(_confirmed_state, _animation_batches);
+		}
+		else {
+			game_state = _confirmed_state;
+		}
+		if game_loop_controller != undefined {
+			game_loop_controller.turn_transition_post_processed = false;
+			game_loop_controller.turn_transition_pending = true;
+			game_loop_controller.state = STATE_LIST.animation;
+			game_loop_controller.set_can_cancel(0);
+		}
+		return true;
+	}
+
+	send_gameplay_setup = function() {
+		var _deck = user_data.load(O_Server._id).player_figures;
+		Server.send(new ServerMessage(ServerMessageType.GameplaySetup, {deck: deep_copy(_deck)}));
+	}
+
+	receive_gameplay_setup = function(_setup) {
+		if !is_struct(_setup) || !variable_struct_exists(_setup, "actor_id") || !variable_struct_exists(_setup, "deck") {
+			return false;
+		}
+		if Player1 == undefined || Player2 == undefined {
+			array_push(pending_gameplay_setups, deep_copy(_setup));
+			return true;
+		}
+		user_data.save(_setup.actor_id, {player_cards: [], player_figures: deep_copy(_setup.deck), player_deck_size: array_length(_setup.deck)});
+		if role == "host" && game_state_presenter != undefined {
+			game_state = game_rules.create_match_state(global.map, Player1, Player2,
+				user_data.load(Player1.player_id).player_figures,
+				user_data.load(Player2.player_id).player_figures, global.turn_owner);
+			game_state_presenter.apply_state(game_state);
+		}
+		return true;
 	}
 
 	init = function() {
@@ -132,6 +186,10 @@ function GameClass() constructor{
 			user_data.save(O_Server._id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
 				player_figures: array_shuffle(O_DeckManager.get_selected_deck_array()),
 				player_deck_size: array_length(O_DeckManager.get_selected_deck_array())});
+			for (var _setup_index = 0; _setup_index < array_length(pending_gameplay_setups); _setup_index++) {
+				receive_gameplay_setup(pending_gameplay_setups[_setup_index]);
+			}
+			pending_gameplay_setups = [];
 		}
 		else {
 			var _player1_type = "local";
@@ -161,6 +219,11 @@ function GameClass() constructor{
 			user_data.save(Player1.player_id, make_local_deck_data(_source_deck));
 			user_data.save(Player2.player_id, make_local_deck_data(_source_deck));
 		}
+		Maps_list.select_map(global.map);
+		var _player1_deck = user_data.load(Player1.player_id).player_figures;
+		var _player2_deck = user_data.load(Player2.player_id).player_figures;
+		game_state = game_rules.create_match_state(global.map, Player1, Player2,
+			_player1_deck, _player2_deck, global.turn_owner);
 		game_loop_controller = new GameLoopController();
 		field = new Field();
 		array_push(do_every_step_list, game_loop_controller.step);
@@ -170,9 +233,8 @@ function GameClass() constructor{
 		figure_action_controller = undefined;
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
-		Maps_list.start(global.map);
-		game_state = game_rules.from_legacy_match();
 		game_state_presenter = new GameStatePresenter();
+		game_state_presenter.apply_state(game_state);
 		array_push(do_every_step_list, game_state_presenter.step);
 		in_match = 1;
 		if instance_exists(O_DeckManager) {
@@ -182,7 +244,7 @@ function GameClass() constructor{
 			bot_controller = new BotController();
 			array_push(do_every_step_list, bot_controller.step);
 		}
-		if online_match and global.turn_owner == O_Server._id {send_deck(0)}
+		if online_match {send_gameplay_setup()}
 	}
 
 	end_game = function() {

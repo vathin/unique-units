@@ -110,14 +110,32 @@ function Figure() constructor{
 	}
 
 	import = function(import_data) {
-		state.import(import_data.ex_state);
-		figure_id = import_data.ex_figure_id;
-		owner = import_data.ex_owner;
-		set_behaviour(import_data.ex_behaviour);
-		draw_x = import_data.ex_draw_x;
-		draw_y = import_data.ex_draw_y;
-		draw_xscale = import_data.ex_draw_scale;
-		draw_yscale = import_data.ex_draw_scale;
+		if !is_struct(import_data) {
+			return false;
+		}
+		if variable_struct_exists(import_data, "ex_state") && import_data.ex_state != undefined {
+			state.import(import_data.ex_state);
+		}
+		if variable_struct_exists(import_data, "ex_figure_id") && import_data.ex_figure_id != undefined {
+			figure_id = string(import_data.ex_figure_id);
+		}
+		if variable_struct_exists(import_data, "ex_owner") && import_data.ex_owner != undefined {
+			owner = import_data.ex_owner;
+		}
+		if variable_struct_exists(import_data, "ex_behaviour") && import_data.ex_behaviour != undefined {
+			set_behaviour(import_data.ex_behaviour);
+		}
+		if variable_struct_exists(import_data, "ex_draw_x") && is_real(import_data.ex_draw_x) {
+			draw_x = import_data.ex_draw_x;
+		}
+		if variable_struct_exists(import_data, "ex_draw_y") && is_real(import_data.ex_draw_y) {
+			draw_y = import_data.ex_draw_y;
+		}
+		if variable_struct_exists(import_data, "ex_draw_scale") && is_real(import_data.ex_draw_scale) {
+			draw_xscale = import_data.ex_draw_scale;
+			draw_yscale = import_data.ex_draw_scale;
+		}
 		update_stats();
+		return true;
 	}
 }

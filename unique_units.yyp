@@ -82,6 +82,7 @@
     {"id":{"name":"F_test","path":"fonts/F_test/F_test.yy",},},
     {"id":{"name":"F_turn_timer","path":"fonts/F_turn_timer/F_turn_timer.yy",},},
     {"id":{"name":"Bot","path":"notes/Bot/Bot.yy",},},
+    {"id":{"name":"Rules","path":"notes/Rules/Rules.yy",},},
     {"id":{"name":"B_StartGame","path":"objects/B_StartGame/B_StartGame.yy",},},
     {"id":{"name":"menu_button","path":"objects/menu_button/menu_button.yy",},},
     {"id":{"name":"O_AbilityButton","path":"objects/O_AbilityButton/O_AbilityButton.yy",},},

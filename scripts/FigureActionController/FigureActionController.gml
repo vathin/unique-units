@@ -43,7 +43,9 @@ function FigureActionController() constructor{
 		return 0;
 	}
 
-	Game.sync_game_state_from_legacy();
+	if Game.game_state == undefined {
+		Game.sync_game_state_from_legacy();
+	}
 	var _selected_figure = global.selected_cell.filled_figure;
 	var _source_inputs = {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
 	var _move_effect_id = get_move_effect_id(_selected_figure.behaviour);
@@ -52,7 +54,13 @@ function FigureActionController() constructor{
 		figure_can_move = 0;
 	}
 	var _ability_effect_id = get_ability_effect_id(_selected_figure.behaviour);
-	if _ability_effect_id == undefined || get_next_input_options(_ability_effect_id, _source_inputs) <= 0 {
+	var _ability_targets = _ability_effect_id == undefined ? 0 : get_next_input_options(_ability_effect_id, _source_inputs);
+	if _ability_effect_id == "warrior_ability" {
+		show_debug_message("Warrior ability UI: actor=" + string(global.turn_owner)
+			+ ", source=" + string(_source_inputs.source_cell[0]) + "," + string(_source_inputs.source_cell[1])
+			+ ", targets=" + string(_ability_targets));
+	}
+	if _ability_effect_id == undefined || _ability_targets <= 0 {
 		figure_have_ability = 0;
 	}
 	

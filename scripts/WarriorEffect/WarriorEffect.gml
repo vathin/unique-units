@@ -5,7 +5,7 @@ function WarriorEffect() : GameEffect("warrior_ability") constructor {
 		var _height = min(16, max(0, floor(_state.data.height)));
 		for (var _x = 0; _x < _width; _x++) for (var _y = 0; _y < _height; _y++) {
 			var _figure = _state.get_figure(_x, _y);
-			if _figure != undefined && _figure.owner_id == _actor_id && _figure.behaviour == "warrior" && _figure.status == "active" array_push(_cells, [_x, _y]);
+			if _figure != undefined && string(_figure.owner_id) == string(_actor_id) && _figure.behaviour == "warrior" && _figure.status == "active" array_push(_cells, [_x, _y]);
 		}
 		return _cells;
 	}
@@ -14,7 +14,7 @@ function WarriorEffect() : GameEffect("warrior_ability") constructor {
 		if !is_array(_source) || array_length(_source) != 2 return _cells;
 		for (var _dx = -1; _dx <= 1; _dx++) for (var _dy = -1; _dy <= 1; _dy++) {
 			var _figure = _state.get_figure(_source[0] + _dx, _source[1] + _dy);
-			if _figure != undefined && _figure.owner_id != _actor_id && _figure.status == "active" array_push(_cells, [_source[0] + _dx, _source[1] + _dy]);
+			if _figure != undefined && string(_figure.owner_id) != string(_actor_id) && _figure.status == "active" array_push(_cells, [_source[0] + _dx, _source[1] + _dy]);
 		}
 		return _cells;
 	}
@@ -46,6 +46,12 @@ function WarriorEffect() : GameEffect("warrior_ability") constructor {
 		_next.clear_cell(_inputs.target_cell[0], _inputs.target_cell[1]);
 		_next.data.dropped[$ string(_source_figure.owner_id)]++;
 		_next.data.dropped[$ string(_target_figure.owner_id)]++;
+		var _dropped_source = deep_copy(_source_figure);
+		var _dropped_target = deep_copy(_target_figure);
+		_dropped_source.status = "dropped";
+		_dropped_target.status = "dropped";
+		_next.add_dropped_figure(_source_figure.owner_id, _dropped_source);
+		_next.add_dropped_figure(_target_figure.owner_id, _dropped_target);
 		return {ok: true, error: "", next_state: _next,
 			animation_batches: [[{type: "hit", at: deep_copy(_inputs.target_cell), duration_frames: Settings.hit_animation_length}], [{type: "drop", figure_id: _source_figure.id, at: deep_copy(_inputs.source_cell)}, {type: "drop", figure_id: _target_figure.id, at: deep_copy(_inputs.target_cell)}]],
 			events: [{type: "warrior_strike", source_id: _source_figure.id, target_id: _target_figure.id}]};

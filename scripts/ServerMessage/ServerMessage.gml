@@ -29,11 +29,11 @@ function ServerMessageType() constructor {
 	static MatchmakingIn = "MatchmakingIn"; // сервер начал поиск игры
 	static MatchmakingOut = "MatchmakingOut"; // сервер прекратил поиск игры
 	
-	static GameplayTurn = "GameplayTurn"; // см. ниже:
-		/*
-			когда игрок нажал завершить ход, отправляется на сервер {action: удобные тебе данные об действии игрока, state: состояние доски после хода}
-			после этого сервер отправляет всем это сообщение с данными {turn: {turn: данные о действии которые ты передал в action, fieldState: состояние доски после ходаm turnOwner: чей ход был сделан}, newTurnOwner: айди игрока чей сейчас теперь ход}
-		*/
+	// New authoritative-match route. The guest sends an intent to the host;
+	// the host confirms the next logical state for both clients.
+	static GameplayIntent = "GameplayIntent";
+	static GameplayState = "GameplayState";
+	static GameplaySetup = "GameplaySetup";
 	static GameplayFinish = "GameplayFinish"; // когда хост считает что один из игроков победил, он отправляет это сообщение на сервер {winner: пустая строка если ничья, иначе айди игрока-победителя}
 	
 	static GameStart = "GameStart"; // сервер отправляет когда начинает игру между двух игроков {matchId: айди матча, opponent: айди игрока-оппонента, role: host/guest} если role = host, то именно этот компьютер будет смотреть кто победил и отправлять эту информацию

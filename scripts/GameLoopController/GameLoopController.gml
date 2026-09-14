@@ -10,7 +10,9 @@ function GameLoopController() constructor{
 	change_turn_owner = 1;
 	turn_transition_pending = false;
 	turn_transition_post_processed = false;
+	bot_scoring_baseline = undefined;
 	export_data = undefined;
+	pending_network_animation_batches = [];
 	action_export_data = [];
 	ready_to_send = 1;
 	player1_cards = [];
@@ -133,14 +135,7 @@ function GameLoopController() constructor{
 		else {
 			_cells = Game.field.get_clear_move_cells(_from_cell.xcord, _from_cell.ycord);
 		}
-		var _previous_cell = Game.field.check_movement_array(_figure.figure_id);
-		var _previous_index = array_get_index(_cells, _previous_cell);
-		var _blocked_previous_cell = undefined;
-		if _previous_index != -1 {
-			_blocked_previous_cell = _previous_cell;
-			array_delete(_cells, _previous_index, 1);
-		}
-		return {cells: _cells, blocked_previous_cell: _blocked_previous_cell};
+		return {cells: _cells, blocked_previous_cell: undefined};
 	}
 
 	get_adjacent_filled_cells = function(_xcord, _ycord, _excluded_cell = undefined, _enemy_of = undefined) {
@@ -174,11 +169,6 @@ function GameLoopController() constructor{
 			if _middle != undefined and _target != undefined and !_middle.is_filled() and !_target.is_filled() {
 				array_push(_cells, _target);
 			}
-		}
-		var _previous_cell = Game.field.check_movement_array(_from_cell.filled_figure.figure_id);
-		var _previous_index = array_get_index(_cells, _previous_cell);
-		if _previous_index != -1 {
-			array_delete(_cells, _previous_index, 1);
 		}
 		return _cells;
 	}
@@ -369,9 +359,9 @@ function GameLoopController() constructor{
 
 	/// Builds executable intents from the same input specs the human UI renders.
 	/// The queue is bounded because every input is a finite cell/choice set.
-	get_effect_action_descriptors = function(_player) {
+	get_effect_action_descriptors = function(_player, _state = Game.game_state) {
 		var _actions = [];
-		if Game.game_state == undefined || Game.game_rules == undefined {
+		if _state == undefined || Game.game_rules == undefined {
 			return _actions;
 		}
 		var _effect_ids = ["summon", "move", "archer_move", "warrior_move", "warrior_ability", "spearman_ability", "shieldbearer_ability", "trader_ability"];
@@ -383,7 +373,7 @@ function GameLoopController() constructor{
 				_iterations++;
 				var _inputs = _pending_inputs[0];
 				array_delete(_pending_inputs, 0, 1);
-				var _specs = Game.game_rules.get_inputs(Game.game_state, _player, _effect_id, _inputs);
+				var _specs = Game.game_rules.get_inputs(_state, _player, _effect_id, _inputs);
 				var _next_spec = undefined;
 				for (var _spec_index = 0; _spec_index < array_length(_specs); _spec_index++) {
 					if !variable_struct_exists(_inputs, _specs[_spec_index].id) {
@@ -392,12 +382,12 @@ function GameLoopController() constructor{
 					}
 				}
 				if _next_spec == undefined {
-					var _check = Game.game_rules.execute(Game.game_state, _player, {effect_id: _effect_id, inputs: _inputs});
+					var _check = Game.game_rules.execute(_state, _player, {effect_id: _effect_id, inputs: _inputs});
 					if _check.ok {
 						array_push(_actions, {kind: "effect", effect_id: _effect_id, player: _player, inputs: deep_copy(_inputs)});
 						if _effect_id == "warrior_move" && variable_struct_exists(_inputs, "target_cell") {
 							var _warrior_move_effect = Game.game_rules.get_effect("warrior_move");
-							var _strike_cells = _warrior_move_effect.get_strike_cells(Game.game_state, _player, _inputs.target_cell);
+							var _strike_cells = _warrior_move_effect.get_strike_cells(_state, _player, _inputs.target_cell);
 							for (var _strike_index = 0; _strike_index < array_length(_strike_cells); _strike_index++) {
 								var _strike_inputs = deep_copy(_inputs);
 								_strike_inputs.strike_target = deep_copy(_strike_cells[_strike_index]);
@@ -425,8 +415,88 @@ function GameLoopController() constructor{
 		return _actions;
 	}
 
-	get_legal_action_descriptors = function(_player) {
-		return get_effect_action_descriptors(_player);
+	/// Resumable variant used by the bot so expanding input combinations does not
+	/// monopolize one game step. Pass the returned state to
+	/// step_effect_action_search(search, deadline_us) until it returns true.
+	create_effect_action_search = function(_player, _state = Game.game_state) {
+		var _search = {
+			player: _player,
+			state: _state,
+			effect_ids: ["summon", "move", "archer_move", "warrior_move", "warrior_ability", "spearman_ability", "shieldbearer_ability", "trader_ability"],
+			effect_index: 0,
+			effect_iterations: 0,
+			pending_inputs: [{}],
+			actions: [],
+			finished: false
+		};
+		if (_state == undefined || Game.game_rules == undefined) {
+			_search.finished = true;
+			return _search;
+		}
+		step_effect_action_search = function(_search, _deadline_us) {
+			while (!_search.finished) {
+				if (get_timer() >= _deadline_us) {
+					return false;
+				}
+				if (array_length(_search.pending_inputs) <= 0 || _search.effect_iterations >= 4096) {
+					_search.effect_index++;
+					_search.effect_iterations = 0;
+					if (_search.effect_index >= array_length(_search.effect_ids)) {
+						_search.finished = true;
+						break;
+					}
+					_search.pending_inputs = [{}];
+					continue;
+				}
+				_search.effect_iterations++;
+				var _effect_id = _search.effect_ids[_search.effect_index];
+				var _inputs = _search.pending_inputs[0];
+				array_delete(_search.pending_inputs, 0, 1);
+				var _specs = Game.game_rules.get_inputs(_search.state, _search.player, _effect_id, _inputs);
+				var _next_spec = undefined;
+				for (var _spec_index = 0; _spec_index < array_length(_specs); _spec_index++) {
+					if !variable_struct_exists(_inputs, _specs[_spec_index].id) {
+						_next_spec = _specs[_spec_index];
+						break;
+					}
+				}
+				if (_next_spec == undefined) {
+					var _check = Game.game_rules.execute(_search.state, _search.player, {effect_id: _effect_id, inputs: _inputs});
+					if _check.ok {
+						array_push(_search.actions, {kind: "effect", effect_id: _effect_id, player: _search.player, inputs: deep_copy(_inputs)});
+						if _effect_id == "warrior_move" && variable_struct_exists(_inputs, "target_cell") {
+							var _warrior_move_effect = Game.game_rules.get_effect("warrior_move");
+							var _strike_cells = _warrior_move_effect.get_strike_cells(_search.state, _search.player, _inputs.target_cell);
+							for (var _strike_index = 0; _strike_index < array_length(_strike_cells); _strike_index++) {
+								var _strike_inputs = deep_copy(_inputs);
+								_strike_inputs.strike_target = deep_copy(_strike_cells[_strike_index]);
+								array_push(_search.actions, {kind: "effect", effect_id: _effect_id, player: _search.player, inputs: _strike_inputs});
+							}
+						}
+					}
+				}
+				else if _next_spec.type == "cell" && is_array(_next_spec.allowed_cells) {
+					for (var _cell_index = 0; _cell_index < array_length(_next_spec.allowed_cells); _cell_index++) {
+						var _next_inputs = deep_copy(_inputs);
+						_next_inputs[$ _next_spec.id] = deep_copy(_next_spec.allowed_cells[_cell_index]);
+						array_push(_search.pending_inputs, _next_inputs);
+					}
+				}
+				else if _next_spec.type == "choice" && is_array(_next_spec.options) {
+					for (var _choice_index = 0; _choice_index < array_length(_next_spec.options); _choice_index++) {
+						var _choice_inputs = deep_copy(_inputs);
+						_choice_inputs[$ _next_spec.id] = _next_spec.options[_choice_index].id;
+						array_push(_search.pending_inputs, _choice_inputs);
+					}
+				}
+			}
+			return true;
+		}
+		return _search;
+	}
+
+	get_legal_action_descriptors = function(_player, _state = Game.game_state) {
+		return get_effect_action_descriptors(_player, _state);
 	}
 
 	get_random_action_descriptor = function(_player) {
@@ -661,13 +731,308 @@ function GameLoopController() constructor{
 		};
 	}
 
-	score_effect_action_descriptor = function(_descriptor) {
+	get_state_active_figure_count = function(_state, _player) {
+		var _count = 0;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				var _figure = _state.get_figure(_x, _y);
+				if (_figure != undefined && _figure.owner_id == _player && _figure.status == "active") {
+					_count++;
+				}
+			}
+		}
+		return _count;
+	}
+
+	resolve_logic_turn = function(_state, _next_player) {
+		return Game.game_rules.resolve_turn(_state, _next_player).next_state;
+	}
+
+	get_state_winner = function(_state) {
+		var _player1 = Game.Player1.player_id;
+		var _player2 = Game.Player2.player_id;
+		var _player1_captured = _state.data.captured[$ string(_player1)];
+		var _player2_captured = _state.data.captured[$ string(_player2)];
+		if (_player1_captured >= 4 && _player2_captured >= 4) {
+			return "";
+		}
+		if (_player1_captured >= 4) {
+			return _player1;
+		}
+		if (_player2_captured >= 4) {
+			return _player2;
+		}
+		var _player1_deck = _state.data.players[$ string(_player1)].deck;
+		var _player2_deck = _state.data.players[$ string(_player2)].deck;
+		var _player1_figures = get_state_active_figure_count(_state, _player1);
+		var _player2_figures = get_state_active_figure_count(_state, _player2);
+		if (array_length(_player1_deck) <= 0 && _player1_figures <= 0) {
+			return _player2;
+		}
+		if (array_length(_player2_deck) <= 0 && _player2_figures <= 0) {
+			return _player1;
+		}
+		if (array_length(_player1_deck) <= 0 && array_length(_player2_deck) <= 0 && _player1_figures <= 0 && _player2_figures <= 0) {
+			if (_player1_captured > _player2_captured) {
+				return _player1;
+			}
+			if (_player2_captured > _player1_captured) {
+				return _player2;
+			}
+			return "";
+		}
+		return undefined;
+	}
+
+	get_player_goal_cells = function(_player) {
+		var _goal_index = _player == Game.Player1.player_id ? 1 : 0;
+		return Maps_list.get_cells_for_conquest()[_goal_index];
+	}
+
+	cell_is_in_list = function(_cell, _cells) {
+		if !is_array(_cell) || array_length(_cell) != 2 {
+			return false;
+		}
+		for (var _cell_index = 0; _cell_index < array_length(_cells); _cell_index++) {
+			if (_cell[0] == _cells[_cell_index][0] && _cell[1] == _cells[_cell_index][1]) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	can_player_reach_goal = function(_state, _player) {
+		var _goal_cells = get_player_goal_cells(_player);
+		var _movement_effects = ["summon", "move", "archer_move", "warrior_move", "spearman_ability", "shieldbearer_ability", "trader_ability"];
+		for (var _effect_index = 0; _effect_index < array_length(_movement_effects); _effect_index++) {
+			var _pending_inputs = [{}];
+			var _iterations = 0;
+			while (array_length(_pending_inputs) > 0 && _iterations < 256) {
+				_iterations++;
+				var _inputs = _pending_inputs[0];
+				array_delete(_pending_inputs, 0, 1);
+				var _specs = Game.game_rules.get_inputs(_state, _player, _movement_effects[_effect_index], _inputs);
+				var _next_spec = undefined;
+				for (var _spec_index = 0; _spec_index < array_length(_specs); _spec_index++) {
+					if !variable_struct_exists(_inputs, _specs[_spec_index].id) {
+						_next_spec = _specs[_spec_index];
+						break;
+					}
+				}
+				if (_next_spec == undefined) {
+					continue;
+				}
+				if (_next_spec.type == "cell" && is_array(_next_spec.allowed_cells)) {
+					for (var _allowed_index = 0; _allowed_index < array_length(_next_spec.allowed_cells); _allowed_index++) {
+						var _allowed_cell = _next_spec.allowed_cells[_allowed_index];
+						var _moves_to_goal = _next_spec.id == "destination_cell"
+							|| (_next_spec.id == "target_cell" && _movement_effects[_effect_index] != "shieldbearer_ability");
+						if (_moves_to_goal && cell_is_in_list(_allowed_cell, _goal_cells)) {
+							return true;
+						}
+						var _next_inputs = deep_copy(_inputs);
+						_next_inputs[$ _next_spec.id] = deep_copy(_allowed_cell);
+						array_push(_pending_inputs, _next_inputs);
+					}
+				}
+				else if (_next_spec.type == "choice" && is_array(_next_spec.options)) {
+					for (var _option_index = 0; _option_index < array_length(_next_spec.options); _option_index++) {
+						var _next_inputs = deep_copy(_inputs);
+						_next_inputs[$ _next_spec.id] = _next_spec.options[_option_index].id;
+						array_push(_pending_inputs, _next_inputs);
+					}
+				}
+			}
+		}
+		return false;
+	}
+
+	get_state_enemy_capture_threat = function(_state, _defender_player) {
+		var _attacker = get_opponent(_defender_player);
+		var _goal_cells = get_player_goal_cells(_attacker);
+		var _threat = 0;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				var _figure = _state.get_figure(_x, _y);
+				if (_figure == undefined || _figure.owner_id != _attacker || _figure.status != "active") {
+					continue;
+				}
+				var _closest_distance = 999;
+				for (var _goal_index = 0; _goal_index < array_length(_goal_cells); _goal_index++) {
+					var _goal = _goal_cells[_goal_index];
+					var _distance = abs(_x - _goal[0]) + abs(_y - _goal[1]);
+					if (_distance < _closest_distance) {
+						_closest_distance = _distance;
+					}
+				}
+				if (_closest_distance <= 2) {
+					var _proximity = 3 - _closest_distance;
+					_threat += _proximity * _proximity;
+				}
+			}
+		}
+		return _threat;
+	}
+
+	get_state_capture_point_defense = function(_state, _defender_player) {
+		var _attacker = get_opponent(_defender_player);
+		var _goal_cells = get_player_goal_cells(_attacker);
+		var _defense = 0;
+		for (var _goal_index = 0; _goal_index < array_length(_goal_cells); _goal_index++) {
+			var _goal = _goal_cells[_goal_index];
+			var _defender_figure = _state.get_figure(_goal[0], _goal[1]);
+			if (_defender_figure == undefined || _defender_figure.owner_id != _defender_player) {
+				continue;
+			}
+			_defense++;
+			var _closest_attacker_distance = 999;
+			for (var _x = 0; _x < _state.data.width; _x++) {
+				for (var _y = 0; _y < _state.data.height; _y++) {
+					var _figure = _state.get_figure(_x, _y);
+					if (_figure == undefined || _figure.owner_id != _attacker || _figure.status != "active") {
+						continue;
+					}
+					var _distance = abs(_x - _goal[0]) + abs(_y - _goal[1]);
+					if (_distance < _closest_attacker_distance) {
+						_closest_attacker_distance = _distance;
+					}
+				}
+			}
+			if (_closest_attacker_distance <= 2) {
+				var _proximity = 3 - _closest_attacker_distance;
+				_defense += _proximity * _proximity;
+			}
+		}
+		return _defense;
+	}
+
+	get_state_surrounding_pressure = function(_state, _player) {
+		var _empty_neighbors = 0;
+		var _blocked_figures = 0;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				var _figure = _state.get_figure(_x, _y);
+				if (_figure == undefined || _figure.owner_id != _player || _figure.status != "active") {
+					continue;
+				}
+				var _figure_empty_neighbors = 0;
+				for (var _dx = -1; _dx <= 1; _dx++) {
+					for (var _dy = -1; _dy <= 1; _dy++) {
+						if (_dx == 0 && _dy == 0) {
+							continue;
+						}
+						var _neighbor = _state.get_cell(_x + _dx, _y + _dy);
+						if (_neighbor != undefined && _neighbor.figure == undefined) {
+							_figure_empty_neighbors++;
+						}
+					}
+				}
+				_empty_neighbors += _figure_empty_neighbors;
+				if (_figure_empty_neighbors == 0) {
+					_blocked_figures++;
+				}
+			}
+		}
+		return {empty_neighbors: _empty_neighbors, blocked_figures: _blocked_figures};
+	}
+
+	get_state_surrounded_figure_count = function(_state, _player) {
+		var _count = 0;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				var _figure = _state.get_figure(_x, _y);
+				if (_figure == undefined || _figure.owner_id != _player || _figure.status != "active") {
+					continue;
+				}
+				var _has_empty_neighbor = false;
+				for (var _dx = -1; _dx <= 1; _dx++) {
+					for (var _dy = -1; _dy <= 1; _dy++) {
+						if (_dx == 0 && _dy == 0) {
+							continue;
+						}
+						var _neighbor = _state.get_cell(_x + _dx, _y + _dy);
+						if (_neighbor != undefined && _neighbor.figure == undefined) {
+							_has_empty_neighbor = true;
+							break;
+						}
+					}
+					if (_has_empty_neighbor) {
+						break;
+					}
+				}
+				if (!_has_empty_neighbor) {
+					_count++;
+				}
+			}
+		}
+		return _count;
+	}
+
+	begin_bot_scoring = function(_bot_player) {
+		var _opponent = get_opponent(_bot_player);
+		bot_scoring_baseline = {
+			bot_player: _bot_player,
+			bot_goal: can_player_reach_goal(Game.game_state, _bot_player),
+			opponent_goal: can_player_reach_goal(Game.game_state, _opponent),
+			bot_pressure: get_state_surrounding_pressure(Game.game_state, _bot_player),
+			opponent_pressure: get_state_surrounding_pressure(Game.game_state, _opponent)
+		};
+	}
+
+	get_bot_immediate_outcome = function(_descriptor, _result) {
+		var _bot_player = _descriptor.player;
+		var _opponent = get_opponent(_bot_player);
+		var _surrounded_figures = get_state_surrounded_figure_count(_result.next_state, _bot_player);
+		var _after_bot_turn = resolve_logic_turn(_result.next_state, _opponent);
+		var _immediate_winner = get_state_winner(_after_bot_turn);
+		if (_immediate_winner == _opponent) {
+			return {loss: true, win: false, own_surrounded: _surrounded_figures, state: _after_bot_turn};
+		}
+		if (_immediate_winner == _bot_player) {
+			return {loss: false, win: true, own_surrounded: _surrounded_figures, state: _after_bot_turn};
+		}
+		return {loss: false, win: false, own_surrounded: _surrounded_figures, state: _after_bot_turn};
+	}
+
+	get_bot_positional_risk = function(_descriptor, _after_bot_turn) {
+		var _bot_player = _descriptor.player;
+		var _opponent = get_opponent(_bot_player);
+		if (bot_scoring_baseline == undefined || bot_scoring_baseline.bot_player != _bot_player) {
+			begin_bot_scoring(_bot_player);
+		}
+		var _before_bot_goal = bot_scoring_baseline.bot_goal;
+		var _before_opponent_goal = bot_scoring_baseline.opponent_goal;
+		var _after_bot_goal = can_player_reach_goal(_after_bot_turn, _bot_player);
+		var _after_opponent_goal = can_player_reach_goal(_after_bot_turn, _opponent);
+		var _before_bot_pressure = bot_scoring_baseline.bot_pressure;
+		var _before_opponent_pressure = bot_scoring_baseline.opponent_pressure;
+		var _after_bot_pressure = get_state_surrounding_pressure(_after_bot_turn, _bot_player);
+		var _after_opponent_pressure = get_state_surrounding_pressure(_after_bot_turn, _opponent);
+		var _score = 0;
+		if (!_before_bot_goal && _after_bot_goal) {
+			_score += 350;
+		}
+		if (!_before_opponent_goal && _after_opponent_goal) {
+			_score -= 550;
+		}
+		_score += (_after_bot_pressure.empty_neighbors - _before_bot_pressure.empty_neighbors) * 18;
+		_score -= (_after_opponent_pressure.empty_neighbors - _before_opponent_pressure.empty_neighbors) * 18;
+		_score -= (_after_bot_pressure.blocked_figures - _before_bot_pressure.blocked_figures) * 250;
+		_score += (_after_opponent_pressure.blocked_figures - _before_opponent_pressure.blocked_figures) * 250;
+		return {loss: false, score: _score, bot_goal: _after_bot_goal, opponent_goal: _after_opponent_goal};
+	}
+
+	score_effect_action_descriptor = function(_descriptor, _include_position = true) {
 		var _result = Game.game_rules.execute(Game.game_state, _descriptor.player, {effect_id: _descriptor.effect_id, inputs: _descriptor.inputs});
 		if !_result.ok {
 			return -100000;
 		}
 		var _before = get_bot_state_metrics(Game.game_state, _descriptor.player);
 		var _after = get_bot_state_metrics(_result.next_state, _descriptor.player);
+		var _before_capture_threat = get_state_enemy_capture_threat(Game.game_state, _descriptor.player);
+		var _after_capture_threat = get_state_enemy_capture_threat(_result.next_state, _descriptor.player);
+		var _before_capture_defense = get_state_capture_point_defense(Game.game_state, _descriptor.player);
+		var _after_capture_defense = get_state_capture_point_defense(_result.next_state, _descriptor.player);
 		var _score = 0;
 		_score += (_before.enemy_figures - _after.enemy_figures) * 120;
 		_score -= (_before.own_figures - _after.own_figures) * 150;
@@ -679,6 +1044,8 @@ function GameLoopController() constructor{
 		_score -= (_after.enemy_progress - _before.enemy_progress) * 8;
 		_score += (_after.own_zone_figures - _before.own_zone_figures) * 100;
 		_score -= (_after.enemy_zone_figures - _before.enemy_zone_figures) * 100;
+		_score += (_before_capture_threat - _after_capture_threat) * 70;
+		_score += (_after_capture_defense - _before_capture_defense) * 55;
 		var _target = variable_struct_exists(_descriptor.inputs, "destination_cell") ? _descriptor.inputs.destination_cell : (variable_struct_exists(_descriptor.inputs, "target_cell") ? _descriptor.inputs.target_cell : undefined);
 		if is_array(_target) && array_length(_target) == 2 {
 			var _goal_index = _descriptor.player == Game.Player1.player_id ? 1 : 0;
@@ -705,58 +1072,58 @@ function GameLoopController() constructor{
 				}
 			}
 		}
+		var _immediate_outcome = get_bot_immediate_outcome(_descriptor, _result);
+		if (_immediate_outcome.loss) {
+			show_debug_message("Bot safety: rejecting effect=" + _descriptor.effect_id + ", immediate loss after move");
+			return -1000000;
+		}
+		if (_immediate_outcome.own_surrounded > 0) {
+			return -900000;
+		}
+		if (_immediate_outcome.win) {
+			return _score + 1000000;
+		}
+		if (_include_position) {
+			var _positional_risk = get_bot_positional_risk(_descriptor, _immediate_outcome.state);
+			_score += _positional_risk.score;
+		}
 		return _score;
 	}
 
 	export_logic_state = function() {
-		return {
-			field: Game.field.export(),
-			movement_array: json_parse(json_stringify(Game.field.movement_array)),
-			player1_captured: player1_captured,
-			player2_captured: player2_captured,
-			figures_counter: figures_counter.export(),
-			player1_able_to_summon: Game.Player1.able_to_summon,
-			player2_able_to_summon: Game.Player2.able_to_summon
-		};
+		return Game.game_state == undefined ? undefined : Game.game_state.clone();
 	}
 
 	import_logic_state = function(_state) {
-		Game.field.import(_state.field);
-		Game.field.movement_array = _state.movement_array;
-		player1_captured = _state.player1_captured;
-		player2_captured = _state.player2_captured;
-		figures_counter.player1_field_figures = _state.figures_counter.ex_player1_field_figures;
-		figures_counter.player2_field_figures = _state.figures_counter.ex_player2_field_figures;
-		figures_counter.figures_id_counter = _state.figures_counter.ex_figures_id_counter;
-		figures_counter.figures_to_capture = [];
-		Game.Player1.able_to_summon = _state.player1_able_to_summon;
-		Game.Player2.able_to_summon = _state.player2_able_to_summon;
+		if _state != undefined && is_struct(_state) && variable_struct_exists(_state, "clone") {
+			Game.game_state = _state.clone();
+		}
 	}
 
 	simulate_action_descriptor = function(_descriptor) {
-		var _state = export_logic_state();
-		var _was_simulating = Game.is_simulating;
-		Game.is_simulating = true;
-		var _action = create_action_from_descriptor(_descriptor, true);
-		var _metrics = undefined;
-		if (_action != undefined) {
-			_action.execute();
-			Game.field.check_conquested_cells();
-			Game.field.check_every_figure();
-			figures_counter.update_captured_figures_array();
-			Game.field.check_dropped_figures();
-			_metrics = get_bot_metrics(_descriptor.player);
+		if (_descriptor == undefined || !is_struct(_descriptor) || _descriptor.kind != "effect"
+		|| Game.game_state == undefined || Game.game_rules == undefined) {
+			return undefined;
 		}
-		Game.is_simulating = _was_simulating;
-		import_logic_state(_state);
-		return _metrics;
+		var _state = Game.game_state.clone();
+		var _result = Game.game_rules.execute(_state, _descriptor.player,
+			{effect_id: _descriptor.effect_id, inputs: _descriptor.inputs});
+		if !_result.ok {
+			return undefined;
+		}
+		var _next_player = Game.game_rules.get_opponent_id(_result.next_state, _descriptor.player);
+		var _turn_result = Game.game_rules.resolve_turn(_result.next_state, _next_player);
+		return get_bot_state_metrics(_turn_result.next_state, _descriptor.player);
 	}
 
-	score_action_descriptor = function(_descriptor) {
+	score_action_descriptor = function(_descriptor, _include_position = true) {
 		if _descriptor.kind == "effect" {
-			return score_effect_action_descriptor(_descriptor);
+			return score_effect_action_descriptor(_descriptor, _include_position);
 		}
-		var _before = get_bot_metrics(_descriptor.player);
+		if _descriptor.kind != "effect" {
+			return -100000;
+		}
+		var _before = get_bot_state_metrics(Game.game_state, _descriptor.player);
 		var _after = simulate_action_descriptor(_descriptor);
 		if (_after == undefined) {
 			return -100000;
@@ -819,8 +1186,23 @@ function GameLoopController() constructor{
 			show_debug_message("GameLoopController.end_move: skipped unfinished action");
 			action = undefined;
 		}
+		if ready_to_send and Game.online_match and Game.role == "guest" and have_action() {
+			if action.type != "effect" {
+				show_debug_message("GameplayIntent rejected: only EffectAction is supported by the authoritative protocol");
+				O_BoardDraw.unblock_end_button();
+				return;
+			}
+			Game.send_gameplay_intent(action.effect_id, action.inputs);
+			action = undefined;
+			clear_all();
+			turn_timer.stop_count();
+			turn_timer.active = 0;
+			set_can_cancel(0);
+			O_BoardDraw.block_end_button();
+			return;
+		}
 		if ready_to_send and Game.online_match and have_action(){
-			if O_Server._id == global.turn_owner{
+			if Game.role == "host"{
 				action_export_data = [action.export()]
 				export_data = [export(), action_export_data]
 			}
@@ -836,6 +1218,8 @@ function GameLoopController() constructor{
 			O_BoardDraw.unblock_end_button();
 			return;
 		}
+		pending_network_animation_batches = _action_result != undefined
+			&& variable_struct_exists(_action_result, "animation_batches") ? deep_copy(_action_result.animation_batches) : [];
 		turn_timer.stop_count();
 		turn_timer.active = 0;
 
@@ -848,14 +1232,27 @@ function GameLoopController() constructor{
 		UI_controller.clear_ingame_layer(1)
 	}
 
-	// The presenter keeps the old Field alive while its batches animate.  Only
-	// after it has installed the resulting state may the turn transition inspect it.
+	// The presenter installs the confirmed state only after every batch finishes.
 	complete_turn_state_transition = function() {
-		global.turn_owner = get_opponent(global.turn_owner);
-		Game.field.check_conquested_cells();
-		Game.field.check_every_figure();
-		Game.field.check_dropped_figures();
-		figures_counter.update_turn();
+		if Game.game_state == undefined {
+			return;
+		}
+		var _next_turn_owner = Game.game_state.data.active_player_id;
+		if (_next_turn_owner == undefined
+		|| !variable_struct_exists(Game.game_state.data.players, string(_next_turn_owner))) {
+			_next_turn_owner = get_opponent(global.turn_owner);
+			Game.game_state.data.active_player_id = _next_turn_owner;
+			show_debug_message("GameLoopController: restored missing next turn owner=" + string(_next_turn_owner));
+		}
+		global.turn_owner = _next_turn_owner;
+		player1_captured = Game.game_state.data.captured[$ string(Game.Player1.player_id)];
+		player2_captured = Game.game_state.data.captured[$ string(Game.Player2.player_id)];
+		Game.Player1.able_to_summon = Game.game_state.data.players[$ string(Game.Player1.player_id)].able_to_summon;
+		Game.Player2.able_to_summon = Game.game_state.data.players[$ string(Game.Player2.player_id)].able_to_summon;
+		figures_counter.player1_field_figures = Game.game_rules.get_active_figure_count(Game.game_state, Game.Player1.player_id);
+		figures_counter.player2_field_figures = Game.game_rules.get_active_figure_count(Game.game_state, Game.Player2.player_id);
+		figures_counter.sync_from_game_state(Game.game_state);
+		figures_counter.update_ui_counter();
 	}
 
 	finish_turn_transition = function() {
@@ -874,14 +1271,15 @@ function GameLoopController() constructor{
 		or (Game.game_state_presenter != undefined and Game.game_state_presenter.is_busy()) {
 			return;
 		}
-		Game.sync_game_state_from_legacy();
 		turn_transition_pending = false;
 		turn_timer.start_count(Settings.turn_time);
 		clear_all();
-		if Game.online_match and export_data != undefined and ready_to_send {
-			Game.send_turn(export_data[0], export_data[1]);
+		if Game.online_match and Game.role == "host" and export_data != undefined and ready_to_send {
+			var _logic_state = Game.game_state == undefined ? undefined : Game.game_state.serialize();
+			Game.send_authoritative_state(_logic_state, pending_network_animation_batches);
 		}
 		export_data = undefined;
+		pending_network_animation_batches = [];
 		if check_win_conditions() != undefined {
 			if Game.online_match {
 				if Game.role == "host" {
@@ -1034,7 +1432,15 @@ function GameLoopController() constructor{
 			//Game.game_data.save_action(action.export())
 			return action.execute();
 		}
-		return {ok: true, animation_batches: []};
+		if (Game.game_state == undefined || Game.game_rules == undefined) {
+			return {ok: true, animation_batches: []};
+		}
+		var _next_player = Game.game_rules.get_opponent_id(Game.game_state, global.turn_owner);
+		var _turn_result = Game.game_rules.resolve_turn(Game.game_state, _next_player);
+		if Game.game_state_presenter != undefined {
+			Game.game_state_presenter.commit(_turn_result.next_state, _turn_result.animation_batches);
+		}
+		return {ok: true, next_state: _turn_result.next_state, animation_batches: _turn_result.animation_batches, events: _turn_result.events};
 	}
 
 	clean_controllers = function() {

@@ -88,14 +88,22 @@ function Cell() constructor{
 
 	import = function(_import_data) {
 		clear();
-		can_be_conquested = _import_data.ex_can_be_conquested;
-		ex_draw_mark = _import_data.ex_draw_mark;
-		if _import_data.ex_filled_figure_struct != undefined {
-			_figure = new Figure();
-			_figure.behaviour = _import_data.ex_filled_figure_struct.ex_behaviour;
-			//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
-			_figure.import(_import_data.ex_filled_figure_struct);
-			fill(_figure, 0);
+		if !is_struct(_import_data) {
+			return false;
 		}
+		if variable_struct_exists(_import_data, "ex_can_be_conquested") {
+			can_be_conquested = _import_data.ex_can_be_conquested;
+		}
+		if variable_struct_exists(_import_data, "ex_draw_mark") {
+			draw_mark = _import_data.ex_draw_mark;
+		}
+		if variable_struct_exists(_import_data, "ex_filled_figure_struct") && _import_data.ex_filled_figure_struct != undefined {
+			var _figure = new Figure();
+			//Game.game_loop_controller.figures_counter.change_field_figures_amount(global.turn_owner, -1);
+			if _figure.import(_import_data.ex_filled_figure_struct) {
+				fill(_figure, false);
+			}
+		}
+		return true;
 	}
 }

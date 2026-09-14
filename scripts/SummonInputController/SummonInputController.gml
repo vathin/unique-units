@@ -6,15 +6,24 @@ function SummonInputController() constructor{
 	Game.field.selected_cell = undefined;
 	global.selected_cell = undefined;
 	Game.game_loop_controller.set_can_cancel(0);
-	load_data = Game.user_data.load(global.turn_owner);
-	if !is_struct(load_data) or !is_array(load_data.player_figures) or array_length(load_data.player_figures) <= 0 {
+	// The pending match state is authoritative for a summon.  In particular on
+	// HTML5, file-backed user_data may lag one effect behind the presenter.
+	if Game.game_state == undefined {
+		Game.sync_game_state_from_legacy();
+	}
+	var _player_key = string(global.turn_owner);
+	if Game.game_state == undefined or !variable_struct_exists(Game.game_state.data.players, _player_key) {
 		Game.summon_controller = undefined;
 		return;
 	}
-	figure_to_summon = load_data.player_figures[array_length(load_data.player_figures) - 1];
+	var _deck = Game.game_state.data.players[$ _player_key].deck;
+	if !is_array(_deck) or array_length(_deck) <= 0 {
+		Game.summon_controller = undefined;
+		return;
+	}
+	figure_to_summon = _deck[array_length(_deck) - 1];
 	global.mark = S_Summon_mark;
 	// The UI must render exactly the same cells SummonEffect validates.
-	Game.sync_game_state_from_legacy();
 	var _summon_specs = Game.game_rules.get_inputs(Game.game_state, global.turn_owner, "summon", {});
 	if array_length(_summon_specs) <= 0 || !is_array(_summon_specs[0].allowed_cells) {
 		Game.summon_controller = undefined;

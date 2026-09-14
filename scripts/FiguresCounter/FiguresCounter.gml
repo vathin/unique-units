@@ -48,6 +48,42 @@ function FiguresCounter() constructor {
 		return Game.game_loop_controller.get_opponent(global.turn_owner);
 	}
 
+	sync_from_game_state = function(_state) {
+		if (_state == undefined || !is_struct(_state) || !variable_struct_exists(_state, "data")
+		|| !variable_struct_exists(_state.data, "players")) {
+			return false;
+		}
+		var _player_id = get_display_player();
+		var _opponent_id = get_display_opponent();
+		var _keys = variable_struct_get_names(_state.data.players);
+		if !variable_struct_exists(_state.data.players, string(_player_id)) && array_length(_keys) > 0 {
+			_player_id = _state.data.players[$ _keys[0]].id;
+		}
+		if !variable_struct_exists(_state.data.players, string(_opponent_id)) {
+			for (var _index = 0; _index < array_length(_keys); _index++) {
+				var _candidate_id = _state.data.players[$ _keys[_index]].id;
+				if string(_candidate_id) != string(_player_id) {
+					_opponent_id = _candidate_id;
+					break;
+				}
+			}
+		}
+		var _player = variable_struct_exists(_state.data.players, string(_player_id))
+			? _state.data.players[$ string(_player_id)] : undefined;
+		var _opponent = variable_struct_exists(_state.data.players, string(_opponent_id))
+			? _state.data.players[$ string(_opponent_id)] : undefined;
+		display_player_figures = _player != undefined && is_array(_player.deck) ? array_length(_player.deck) : 0;
+		display_opponent_figures = _opponent != undefined && is_array(_opponent.deck) ? array_length(_opponent.deck) : 0;
+		current_player_figures = display_player_figures;
+		var _player_data = _player_id != undefined ? Game.user_data.load(_player_id) : undefined;
+		var _opponent_data = _opponent_id != undefined ? Game.user_data.load(_opponent_id) : undefined;
+		display_player_max_figures = is_struct(_player_data) && variable_struct_exists(_player_data, "player_deck_size")
+			? _player_data.player_deck_size : max(display_player_max_figures, display_player_figures);
+		display_opponent_max_figures = is_struct(_opponent_data) && variable_struct_exists(_opponent_data, "player_deck_size")
+			? _opponent_data.player_deck_size : max(display_opponent_max_figures, display_opponent_figures);
+		return true;
+	}
+
 	update_captured_figures_array = function() {
 		if array_length(figures_to_capture) > 0 {
 			while array_length(figures_to_capture) > 0 {
@@ -62,9 +98,17 @@ function FiguresCounter() constructor {
 	}
 
 	update_turn = function() {
+		if Game.game_state != undefined && Game.game_rules != undefined && sync_from_game_state(Game.game_state) {
+			player1_field_figures = Game.game_rules.get_active_figure_count(Game.game_state, Game.Player1.player_id);
+			player2_field_figures = Game.game_rules.get_active_figure_count(Game.game_state, Game.Player2.player_id);
+			update_ui_counter();
+			return;
+		}
 		player1_field_figures = array_length(Game.field.get_player_field_figures(Game.Player1.player_id));
 		player2_field_figures = array_length(Game.field.get_player_field_figures(Game.Player2.player_id));
-		current_player_figures = array_length(Game.user_data.load(global.turn_owner).player_figures);
+		var _turn_data = global.turn_owner != undefined ? Game.user_data.load(global.turn_owner) : undefined;
+		current_player_figures = is_struct(_turn_data) && variable_struct_exists(_turn_data, "player_figures") && is_array(_turn_data.player_figures)
+			? array_length(_turn_data.player_figures) : 0;
 		update_display_figures();
 		if current_player_figures <= 0 or (get_field_figures(global.turn_owner) >= Settings.max_field_figures){
 			Game.game_loop_controller.get_player(global.turn_owner).able_to_summon = 0
@@ -77,12 +121,21 @@ function FiguresCounter() constructor {
 	}
 	
 	update_display_figures = function() {
+		if Game.game_state != undefined && sync_from_game_state(Game.game_state) {
+			return;
+		}
 		var _display_player = get_display_player();
 		var _display_opponent = get_display_opponent();
-		display_player_figures = array_length(Game.user_data.load(_display_player).player_figures);
-		display_opponent_figures = array_length(Game.user_data.load(_display_opponent).player_figures);
-		display_player_max_figures = Game.user_data.load(_display_player).player_deck_size;
-		display_opponent_max_figures = Game.user_data.load(_display_opponent).player_deck_size;
+		var _player_data = _display_player != undefined ? Game.user_data.load(_display_player) : undefined;
+		var _opponent_data = _display_opponent != undefined ? Game.user_data.load(_display_opponent) : undefined;
+		display_player_figures = is_struct(_player_data) && variable_struct_exists(_player_data, "player_figures") && is_array(_player_data.player_figures)
+			? array_length(_player_data.player_figures) : 0;
+		display_opponent_figures = is_struct(_opponent_data) && variable_struct_exists(_opponent_data, "player_figures") && is_array(_opponent_data.player_figures)
+			? array_length(_opponent_data.player_figures) : 0;
+		display_player_max_figures = is_struct(_player_data) && variable_struct_exists(_player_data, "player_deck_size")
+			? _player_data.player_deck_size : display_player_figures;
+		display_opponent_max_figures = is_struct(_opponent_data) && variable_struct_exists(_opponent_data, "player_deck_size")
+			? _opponent_data.player_deck_size : display_opponent_figures;
 	}
 
 	update_ui_counter = function() {

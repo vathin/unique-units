@@ -16,10 +16,8 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 	}
 
 	execute_logic = function() {
-		// The legacy Field is still the authoritative visual source during this
-		// migration. Refresh the pure snapshot immediately before validation.
-		if Game.game_state_presenter == undefined || !Game.game_state_presenter.is_busy() {
-			Game.sync_game_state_from_legacy();
+		if Game.game_state == undefined {
+			return {ok: false, error: "Game state is not initialized", next_state: undefined, animation_batches: [], events: []};
 		}
 		var _result = Game.game_rules.execute(Game.game_state, actor_id, {effect_id: effect_id, inputs: inputs});
 		if !_result.ok {
@@ -27,10 +25,25 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 				+ ", actor=" + string(actor_id) + ", turn=" + string(global.turn_owner)
 				+ ", inputs=" + json_stringify(inputs) + ", reason=" + string(_result.error));
 		}
+		if !_result.ok {
+			return _result;
+		}
+		var _next_player = Game.game_rules.get_opponent_id(_result.next_state, actor_id);
+		var _turn_result = Game.game_rules.resolve_turn(_result.next_state, _next_player);
+		for (var _batch_index = 0; _batch_index < array_length(_turn_result.animation_batches); _batch_index++) {
+			array_push(_result.animation_batches, _turn_result.animation_batches[_batch_index]);
+		}
+		for (var _event_index = 0; _event_index < array_length(_turn_result.events); _event_index++) {
+			array_push(_result.events, _turn_result.events[_event_index]);
+		}
+		_result.next_state = _turn_result.next_state;
 		return _result;
 	}
 
 	execute_ui = function(_result) {
+		show_debug_message("EffectAction UI: effect=" + string(effect_id)
+			+ ", animation_batches=" + string(array_length(_result.animation_batches))
+			+ ", presenter_exists=" + string(Game.game_state_presenter != undefined));
 		Game.game_state_presenter.commit(_result.next_state, _result.animation_batches);
 	}
 

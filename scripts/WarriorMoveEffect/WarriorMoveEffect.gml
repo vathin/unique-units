@@ -7,7 +7,7 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 		var _height = min(16, max(0, floor(_state.data.height)));
 		for (var _x = 0; _x < _width; _x++) for (var _y = 0; _y < _height; _y++) {
 			var _figure = _state.get_figure(_x, _y);
-			if _figure != undefined && _figure.owner_id == _actor_id && _figure.behaviour == "warrior" && _figure.status == "active" array_push(_cells, [_x, _y]);
+			if _figure != undefined && string(_figure.owner_id) == string(_actor_id) && _figure.behaviour == "warrior" && _figure.status == "active" array_push(_cells, [_x, _y]);
 		}
 		return _cells;
 	}
@@ -15,13 +15,10 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 	static get_move_cells = function(_state, _source) {
 		var _cells = [];
 		if !is_array(_source) || array_length(_source) != 2 return _cells;
-		var _figure = _state.get_figure(_source[0], _source[1]);
-		var _previous = _figure == undefined ? undefined : _state.get_previous_cell(_figure.id);
 		for (var _dx = -1; _dx <= 1; _dx++) for (var _dy = -1; _dy <= 1; _dy++) {
 			if !(_dx == 0 && _dy == 0) {
 				var _cell = _state.get_cell(_source[0] + _dx, _source[1] + _dy);
-				var _is_previous = _previous != undefined && _cell != undefined && _cell.x == _previous[0] && _cell.y == _previous[1];
-				if _cell != undefined && _cell.figure == undefined && !_is_previous array_push(_cells, [_cell.x, _cell.y]);
+				if _cell != undefined && _cell.figure == undefined array_push(_cells, [_cell.x, _cell.y]);
 			}
 		}
 		return _cells;
@@ -34,7 +31,7 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 			for (var _dy = -1; _dy <= 1; _dy++) {
 				if !(_dx == 0 && _dy == 0) {
 					var _figure = _state.get_figure(_destination[0] + _dx, _destination[1] + _dy);
-					if _figure != undefined && _figure.owner_id != _actor_id && _figure.status == "active" {
+					if _figure != undefined && string(_figure.owner_id) != string(_actor_id) && _figure.status == "active" {
 						array_push(_cells, [_destination[0] + _dx, _destination[1] + _dy]);
 					}
 				}
@@ -88,6 +85,12 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 			_next.clear_cell(_inputs.strike_target[0], _inputs.strike_target[1]);
 			_next.data.dropped[$ string(_warrior.owner_id)] += 1;
 			_next.data.dropped[$ string(_target.owner_id)] += 1;
+			var _dropped_warrior = deep_copy(_warrior);
+			var _dropped_target = deep_copy(_target);
+			_dropped_warrior.status = "dropped";
+			_dropped_target.status = "dropped";
+			_next.add_dropped_figure(_warrior.owner_id, _dropped_warrior);
+			_next.add_dropped_figure(_target.owner_id, _dropped_target);
 			array_push(_batches, [{type: "hit", at: deep_copy(_inputs.strike_target), duration_frames: Settings.hit_animation_length}]);
 			array_push(_batches, [{type: "drop", figure_id: _warrior.id, at: deep_copy(_inputs.target_cell)}, {type: "drop", figure_id: _target.id, at: deep_copy(_inputs.strike_target)}]);
 			array_push(_events, {type: "warrior_strike", source_id: _warrior.id, target_id: _target.id});

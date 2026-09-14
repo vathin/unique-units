@@ -10,13 +10,10 @@ function MoveEffect() : GameEffect("move") constructor {
 	get_target_cells = function(_state, _from) {
 		var _result = [];
 		if !is_array(_from) || array_length(_from) != 2 return _result;
-		var _figure = _state.get_figure(_from[0], _from[1]);
-		var _previous = _figure == undefined ? undefined : _state.get_previous_cell(_figure.id);
 		for (var _dx = -1; _dx <= 1; _dx++) for (var _dy = -1; _dy <= 1; _dy++) {
 			if !(_dx == 0 && _dy == 0) {
 				var _cell = _state.get_cell(_from[0] + _dx, _from[1] + _dy);
-				var _is_previous = _previous != undefined && _cell != undefined && _cell.x == _previous[0] && _cell.y == _previous[1];
-				if _cell != undefined && _cell.figure == undefined && !_is_previous array_push(_result, [_cell.x, _cell.y]);
+				if _cell != undefined && _cell.figure == undefined array_push(_result, [_cell.x, _cell.y]);
 			}
 		}
 		return _result;

@@ -11,16 +11,12 @@ function SpearmanEffect() : GameEffect("spearman_ability") constructor {
 		var _cells = [];
 		var _directions = [[1, 0], [-1, 0], [0, 1], [0, -1]];
 		if !is_array(_source) || array_length(_source) != 2 return _cells;
-		var _figure = _state.get_figure(_source[0], _source[1]);
-		var _previous = _figure == undefined ? undefined : _state.get_previous_cell(_figure.id);
 		for (var _index = 0; _index < array_length(_directions); _index++) {
 			var _direction = _directions[_index];
 			var _middle = _state.get_cell(_source[0] + _direction[0], _source[1] + _direction[1]);
 			var _target = _state.get_cell(_source[0] + _direction[0] * 2, _source[1] + _direction[1] * 2);
-			var _is_previous = _previous != undefined && _target != undefined && _target.x == _previous[0] && _target.y == _previous[1];
-			if _middle != undefined && _target != undefined && _middle.figure == undefined && _target.figure == undefined && !_is_previous array_push(_cells, [_target.x, _target.y]);
+			if _middle != undefined && _target != undefined && _middle.figure == undefined && _target.figure == undefined array_push(_cells, [_target.x, _target.y]);
 		}
-		show_debug_message("Spearman effect: source=" + json_stringify(_source) + ", jump_targets=" + json_stringify(_cells));
 		return _cells;
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {

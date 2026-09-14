@@ -77,6 +77,9 @@ function SummonEffect() : GameEffect("summon") constructor {
 		var _next_state = _state.clone();
 		var _player = _next_state.data.players[$ string(_actor_id)];
 		var _behaviour = array_pop(_player.deck);
+		show_debug_message("Summon: actor=" + string(_actor_id)
+			+ ", behaviour=" + string(_behaviour)
+			+ ", deck_remaining=" + string(array_length(_player.deck)));
 		var _target = _inputs.target_cell;
 		var _figure = {id: string(_next_state.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
 		_next_state.data.next_figure_id++;

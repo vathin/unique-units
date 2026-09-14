@@ -58,6 +58,7 @@ function CapturedFiguresCounter(_owner, _position = 1) constructor{
 			captured_figure = new Figure();
 			captured_figure.owner = player;
 			captured_figure.set_behaviour(behaviour);
+			captured_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
 			captured_figure.capture(0);
 			add_figure(captured_figure, false);
 		}

@@ -21,6 +21,7 @@ function Field() constructor{
 	player1_dropped = new DroppedFiguresCounter(Game.Player1.player_id);
 	player2_dropped = new DroppedFiguresCounter(Game.Player2.player_id);
 	movement_array = [];
+	fallback_figure_id_counter = 0;
 
 	field_cord = {
 		top: start_y,
@@ -52,17 +53,24 @@ function Field() constructor{
 			show_debug_message("Field.create_figure failed: invalid cell x=" + string(_xcord) + ", y=" + string(_ycord) + ", behaviour=" + string(_behaviour));
 			return undefined;
 		}
-		new_figure = new Figure()
-		new_figure.set_behaviour(_behaviour);
-		new_figure.owner = _owner;
-		new_figure.draw_xscale = get_figure_scale();
-		new_figure.draw_yscale = get_figure_scale();
-		_cell.fill(new_figure);
+		var _new_figure = new Figure();
+		_new_figure.set_behaviour(_behaviour);
+		_new_figure.owner = _owner;
+		_new_figure.draw_xscale = get_figure_scale();
+		_new_figure.draw_yscale = get_figure_scale();
 		if _is_figure_new {
-			new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
+			if Game.game_loop_controller != undefined && Game.game_loop_controller.figures_counter != undefined {
+				_new_figure.figure_id = Game.game_loop_controller.figures_counter.get_figure_id();
+			}
+			else {
+				_new_figure.figure_id = "field_" + string(fallback_figure_id_counter);
+				fallback_figure_id_counter++;
+				show_debug_message("Field.create_figure: used fallback id before FiguresCounter initialization");
+			}
 			//Game.game_loop_controller.figures_counter.change_field_figures_amount(_owner, 1);
 		}
-		return new_figure;
+		_cell.fill(_new_figure);
+		return _new_figure;
 	}
 
 	find_figure_from_id = function(_id) {
@@ -71,7 +79,7 @@ function Field() constructor{
 			for (var w = 0; w < field_width; w++)
 			{
 				if get_cell(w, h).is_filled() {
-					if get_cell(w, h).filled_figure.figure_id == _id {
+					if string(get_cell(w, h).filled_figure.figure_id) == string(_id) {
 						return get_cell(w, h).filled_figure;
 					}
 				}
@@ -268,9 +276,7 @@ function Field() constructor{
 	}
 
 	place_figure = function(_xcord, _ycord, _behaviour ){
-		cell = get_cell(_xcord, _ycord)
-		cell.fill(new Figure())
-		cell.filled_figure.set_behaviour(_behaviour)
+		return create_figure(_behaviour, _xcord, _ycord, true, global.turn_owner);
 	}
 
 	check_clear_move_cells = function(_xcord, _ycord) {
@@ -606,7 +612,7 @@ function Field() constructor{
 		for (i = array_length(movement_array)-1; i >= 0; i--) {
 			var _move = movement_array[i];
 			var _is_ability = variable_struct_exists(_move, "is_ability") && _move.is_ability;
-			if _move.figure_id == _figure_id and _is_ability and array_length(movement_array) - i < 3{
+			if string(_move.figure_id) == string(_figure_id) and _is_ability and array_length(movement_array) - i < 3{
 				return get_cell(_move.from[0], _move.from[1])
 			}
 		}
