@@ -21,7 +21,7 @@ function GameStatePresenter() constructor {
 	make_figure = function(_state_figure) {
 		var _figure = new Figure();
 		_figure.set_behaviour(_state_figure.behaviour);
-		_figure.figure_id = string(_state_figure.id);
+		_figure.figure_id = string(_state_figure.figure_id);
 		_figure.owner = _state_figure.owner_id;
 		_figure.update_stats();
 		_figure.state.is_active = _state_figure.status == "active";
@@ -59,7 +59,7 @@ function GameStatePresenter() constructor {
 				if _state_figure == undefined {
 					continue;
 				}
-				var _id = string(_state_figure.id);
+				var _id = string(_state_figure.figure_id);
 				var _can_reuse = variable_struct_exists(_existing, _id)
 					&& _existing[$ _id].owner == _state_figure.owner_id
 					&& _existing[$ _id].behaviour == _state_figure.behaviour;
@@ -93,10 +93,10 @@ function GameStatePresenter() constructor {
 		var _player_keys = variable_struct_get_names(_state.data.players);
 		for (var _player_index = 0; _player_index < array_length(_player_keys); _player_index++) {
 			var _player = _state.data.players[$ _player_keys[_player_index]];
-			var _deck_data = Game.user_data.load(_player.id);
+			var _deck_data = Game.user_data.load(_player.player_id);
 			if is_struct(_deck_data) {
 				_deck_data.player_figures = deep_copy(_player.deck);
-				Game.user_data.save(_player.id, _deck_data);
+				Game.user_data.save(_player.player_id, _deck_data);
 			}
 		}
 	}

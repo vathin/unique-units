@@ -88,9 +88,10 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 		var _path = get_reachable(_state, _inputs.source_cell).paths[_inputs.target_cell[0]][_inputs.target_cell[1]];
 		_next.clear_cell(_inputs.source_cell[0], _inputs.source_cell[1]);
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _archer);
-		array_push(_next.data.movement_history, {figure_id: _archer.id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell)});
+		var _archer_id = _archer.figure_id;
+		array_push(_next.data.movement_history, {figure_id: _archer_id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell)});
 		var _batches = [];
-		for (var _index = 0; _index < array_length(_path) - 1; _index++) array_push(_batches, [{type: "move", figure_id: _archer.id, from: deep_copy(_path[_index]), to: deep_copy(_path[_index + 1]), duration_frames: Settings.move_animation_length}]);
-		return {ok: true, error: "", next_state: _next, animation_batches: _batches, events: [{type: "figure_moved", figure_id: _archer.id, trajectory: deep_copy(_path)}]};
+		for (var _index = 0; _index < array_length(_path) - 1; _index++) array_push(_batches, [{type: "move", figure_id: _archer_id, from: deep_copy(_path[_index]), to: deep_copy(_path[_index + 1]), duration_frames: Settings.move_animation_length}]);
+		return {ok: true, error: "", next_state: _next, animation_batches: _batches, events: [{type: "figure_moved", figure_id: _archer_id, trajectory: deep_copy(_path)}]};
 	}
 }

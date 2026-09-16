@@ -5,7 +5,9 @@
     {"$GMAudioGroup":"v1","%Name":"audiogroup_default","exportDir":"","name":"audiogroup_default","resourceType":"GMAudioGroup","resourceVersion":"2.0","targets":-1,},
   ],
   "configs":{
-    "children":[],
+    "children":[
+      {"children":[],"name":"test",},
+    ],
     "name":"Default",
   },
   "defaultScriptType":1,
@@ -172,6 +174,9 @@
     {"id":{"name":"GameEffect","path":"scripts/GameEffect/GameEffect.yy",},},
     {"id":{"name":"GameInput","path":"scripts/GameInput/GameInput.yy",},},
     {"id":{"name":"GameLoopController","path":"scripts/GameLoopController/GameLoopController.yy",},},
+    {"id":{"name":"GameplayRulesTests","path":"scripts/GameplayRulesTests/GameplayRulesTests.yy",},},
+    {"id":{"name":"GameplayTests","path":"scripts/GameplayTests/GameplayTests.yy",},},
+    {"id":{"name":"GameplayTestSuite","path":"scripts/GameplayTestSuite/GameplayTestSuite.yy",},},
     {"id":{"name":"GameRules","path":"scripts/GameRules/GameRules.yy",},},
     {"id":{"name":"GameState","path":"scripts/GameState/GameState.yy",},},
     {"id":{"name":"GameStatePresenter","path":"scripts/GameStatePresenter/GameStatePresenter.yy",},},

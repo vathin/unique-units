@@ -3,7 +3,7 @@
 function GameState(_data = undefined) constructor {
 	if (_data == undefined) {
 		data = {
-			schema_version: 1,
+			schema_version: 2,
 			revision: 0,
 			map: "map1",
 			width: 6,
@@ -66,9 +66,8 @@ function GameState(_data = undefined) constructor {
 		return set_figure(_x, _y, undefined);
 	}
 
-	// Network snapshots from the legacy protocol used figure_id, while effects use
-	// id. Normalize the state at the rules boundary so a missing old field cannot
-	// leak into animation events or movement history.
+	// figure_id is the canonical identity of a logical figure. Do not use `id`:
+	// HTML5 treats that name specially for some struct access paths.
 	ensure_figure_ids = function() {
 		if !variable_struct_exists(data, "next_figure_id") || !is_real(data.next_figure_id) {
 			data.next_figure_id = 1;
@@ -100,11 +99,7 @@ function GameState(_data = undefined) constructor {
 					_figure.status = _status;
 					_normalized++;
 				}
-				var _candidate = variable_struct_exists(_figure, "id") ? _figure.id : undefined;
-				if (_candidate == undefined || string(_candidate) == "" || string(_candidate) == "undefined")
-				&& variable_struct_exists(_figure, "figure_id") {
-					_candidate = _figure.figure_id;
-				}
+				var _candidate = variable_struct_exists(_figure, "figure_id") ? _figure.figure_id : undefined;
 				var _id = _candidate == undefined ? "" : string(_candidate);
 				if (_id == "" || _id == "undefined" || variable_struct_exists(_used_ids, _id)) {
 					while variable_struct_exists(_used_ids, string(data.next_figure_id)) {
@@ -114,7 +109,7 @@ function GameState(_data = undefined) constructor {
 					data.next_figure_id++;
 					_repaired++;
 				}
-				_figure.id = _id;
+				_figure.figure_id = _id;
 				_used_ids[$ _id] = true;
 				while variable_struct_exists(_used_ids, string(data.next_figure_id)) {
 					data.next_figure_id++;
@@ -140,7 +135,7 @@ function GameState(_data = undefined) constructor {
 
 	add_player = function(_player_id, _deck = [], _side = undefined) {
 		var _key = string(_player_id);
-		data.players[$ _key] = {id: _player_id, deck: deep_copy(_deck), able_to_summon: true, side: _side};
+		data.players[$ _key] = {player_id: _player_id, deck: deep_copy(_deck), able_to_summon: true, side: _side};
 		data.captured[$ _key] = 0;
 		data.dropped[$ _key] = 0;
 		data.captured_figures[$ _key] = [];

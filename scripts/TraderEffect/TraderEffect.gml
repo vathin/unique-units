@@ -38,14 +38,14 @@ function TraderEffect() : GameEffect("trader_ability") constructor {
 		for (var _index = 0; _index < 3; _index++) {
 			if _index != _inputs.figure_choice {
 				_next.data.dropped[$ string(_actor_id)]++;
-				var _discarded = {id: string(_next.data.next_figure_id), behaviour: _offered[_index], owner_id: _actor_id, status: "dropped"};
+			var _discarded = {figure_id: string(_next.data.next_figure_id), behaviour: _offered[_index], owner_id: _actor_id, status: "dropped"};
 				_next.data.next_figure_id++;
 				_next.add_dropped_figure(_actor_id, _discarded);
 			}
 		}
-		var _figure = {id: string(_next.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
+		var _figure = {figure_id: string(_next.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
 		_next.data.next_figure_id++;
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _figure);
-		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "summon", figure_id: _figure.id, at: deep_copy(_inputs.target_cell), duration_frames: 20}]], events: [{type: "trader_summon", figure_id: _figure.id, discarded: _offered}]};
+		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "summon", figure_id: _figure.figure_id, at: deep_copy(_inputs.target_cell), duration_frames: 20}]], events: [{type: "trader_summon", figure_id: _figure.figure_id, discarded: _offered}]};
 	}
 }

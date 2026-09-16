@@ -41,7 +41,8 @@ function ShieldbearerEffect() : GameEffect("shieldbearer_ability") constructor {
 		var _figure = _next.get_figure(_inputs.target_cell[0], _inputs.target_cell[1]);
 		_next.clear_cell(_inputs.target_cell[0], _inputs.target_cell[1]);
 		_next.set_figure(_inputs.destination_cell[0], _inputs.destination_cell[1], _figure);
-		array_push(_next.data.movement_history, {figure_id: _figure.id, from: deep_copy(_inputs.target_cell), to: deep_copy(_inputs.destination_cell), is_ability: true});
-		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "move", figure_id: _figure.id, from: deep_copy(_inputs.target_cell), to: deep_copy(_inputs.destination_cell), duration_frames: Settings.move_animation_length * 1.2}]], events: [{type: "shieldbearer_push", figure_id: _figure.id}]};
+		var _figure_id = _figure.figure_id;
+		array_push(_next.data.movement_history, {figure_id: _figure_id, from: deep_copy(_inputs.target_cell), to: deep_copy(_inputs.destination_cell), is_ability: true});
+		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "move", figure_id: _figure_id, from: deep_copy(_inputs.target_cell), to: deep_copy(_inputs.destination_cell), duration_frames: Settings.move_animation_length * 1.2}]], events: [{type: "shieldbearer_push", figure_id: _figure_id}]};
 	}
 }

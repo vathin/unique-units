@@ -53,7 +53,7 @@ function WarriorEffect() : GameEffect("warrior_ability") constructor {
 		_next.add_dropped_figure(_source_figure.owner_id, _dropped_source);
 		_next.add_dropped_figure(_target_figure.owner_id, _dropped_target);
 		return {ok: true, error: "", next_state: _next,
-			animation_batches: [[{type: "hit", at: deep_copy(_inputs.target_cell), duration_frames: Settings.hit_animation_length}], [{type: "drop", figure_id: _source_figure.id, at: deep_copy(_inputs.source_cell)}, {type: "drop", figure_id: _target_figure.id, at: deep_copy(_inputs.target_cell)}]],
-			events: [{type: "warrior_strike", source_id: _source_figure.id, target_id: _target_figure.id}]};
+			animation_batches: [[{type: "hit", at: deep_copy(_inputs.target_cell), duration_frames: Settings.hit_animation_length}], [{type: "drop", figure_id: _source_figure.figure_id, at: deep_copy(_inputs.source_cell)}, {type: "drop", figure_id: _target_figure.figure_id, at: deep_copy(_inputs.target_cell)}]],
+			events: [{type: "warrior_strike", source_id: _source_figure.figure_id, target_id: _target_figure.figure_id}]};
 	}
 }

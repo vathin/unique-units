@@ -9,8 +9,8 @@ function SummonEffect() : GameEffect("summon") constructor {
 		var _player_keys = variable_struct_get_names(_state.data.players);
 		for (var _player_index = 0; _player_index < array_length(_player_keys); _player_index++) {
 			var _candidate = _state.data.players[$ _player_keys[_player_index]];
-			if _candidate.id != _actor_id {
-				_opponent_id = _candidate.id;
+			if _candidate.player_id != _actor_id {
+				_opponent_id = _candidate.player_id;
 				break;
 			}
 		}
@@ -81,15 +81,15 @@ function SummonEffect() : GameEffect("summon") constructor {
 			+ ", behaviour=" + string(_behaviour)
 			+ ", deck_remaining=" + string(array_length(_player.deck)));
 		var _target = _inputs.target_cell;
-		var _figure = {id: string(_next_state.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
+		var _figure = {figure_id: string(_next_state.data.next_figure_id), behaviour: _behaviour, owner_id: _actor_id, status: "active"};
 		_next_state.data.next_figure_id++;
 		_next_state.set_figure(_target[0], _target[1], _figure);
 		return {
 			ok: true,
 			error: "",
 			next_state: _next_state,
-			animation_batches: [[{type: "summon", figure_id: _figure.id, at: deep_copy(_target), duration_frames: 20}]],
-			events: [{type: "figure_summoned", figure_id: _figure.id, owner_id: _actor_id, behaviour: _behaviour, at: deep_copy(_target)}]
+			animation_batches: [[{type: "summon", figure_id: _figure.figure_id, at: deep_copy(_target), duration_frames: 20}]],
+			events: [{type: "figure_summoned", figure_id: _figure.figure_id, owner_id: _actor_id, behaviour: _behaviour, at: deep_copy(_target)}]
 		};
 	}
 }

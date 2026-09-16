@@ -1,0 +1,10 @@
+{
+  "$GMScript":"v1",
+  "%Name":"GameplayTestSuite",
+  "isCompatibility":false,
+  "isDnD":false,
+  "name":"GameplayTestSuite",
+  "parent":{"name":"Game","path":"folders/Scripts/Game.yy",},
+  "resourceType":"GMScript",
+  "resourceVersion":"2.0",
+}

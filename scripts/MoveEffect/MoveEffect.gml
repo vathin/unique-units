@@ -36,7 +36,8 @@ function MoveEffect() : GameEffect("move") constructor {
 		var _figure = _next.get_figure(_inputs.from_cell[0], _inputs.from_cell[1]);
 		_next.clear_cell(_inputs.from_cell[0], _inputs.from_cell[1]);
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _figure);
-		array_push(_next.data.movement_history, {figure_id: _figure.id, from: deep_copy(_inputs.from_cell), to: deep_copy(_inputs.target_cell)});
-		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "move", figure_id: _figure.id, from: deep_copy(_inputs.from_cell), to: deep_copy(_inputs.target_cell), duration_frames: Settings.move_animation_length}]], events: [{type: "figure_moved", figure_id: _figure.id}]};
+		var _figure_id = _figure.figure_id;
+		array_push(_next.data.movement_history, {figure_id: _figure_id, from: deep_copy(_inputs.from_cell), to: deep_copy(_inputs.target_cell)});
+		return {ok: true, error: "", next_state: _next, animation_batches: [[{type: "move", figure_id: _figure_id, from: deep_copy(_inputs.from_cell), to: deep_copy(_inputs.target_cell), duration_frames: Settings.move_animation_length}]], events: [{type: "figure_moved", figure_id: _figure_id}]};
 	}
 }

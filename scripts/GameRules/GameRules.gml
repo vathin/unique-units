@@ -57,16 +57,16 @@ function GameRules() constructor {
 		for (var _index = 0; _index < array_length(_keys); _index++) {
 			var _player = _state.data.players[$ _keys[_index]];
 			var _side = _index;
-			if variable_struct_exists(_player, "side") && _player.side != undefined && is_real(_player.side) {
+			if variable_struct_exists(_player, "side") && _player.side != undefined {
 				_side = _player.side;
 			}
 			if (_side >= 0 && _side < 2) {
-				_players[_side] = _player.id;
+				_players[_side] = _player.player_id;
 			}
 		}
 		for (var _index = 0; _index < min(2, array_length(_keys)); _index++) {
 			if (_players[_index] == undefined) {
-				_players[_index] = _state.data.players[$ _keys[_index]].id;
+				_players[_index] = _state.data.players[$ _keys[_index]].player_id;
 			}
 		}
 		return _players;
@@ -78,7 +78,7 @@ function GameRules() constructor {
 		}
 		var _keys = variable_struct_get_names(_state.data.players);
 		for (var _index = 0; _index < array_length(_keys); _index++) {
-			var _candidate_id = _state.data.players[$ _keys[_index]].id;
+			var _candidate_id = _state.data.players[$ _keys[_index]].player_id;
 			if string(_candidate_id) != string(_player_id) {
 				return _candidate_id;
 			}
@@ -185,20 +185,20 @@ function GameRules() constructor {
 				var _zone_player = _next.data.players[$ string(_zone_owner)];
 				if (_zone_player != undefined && is_array(_zone_player.deck) && array_length(_zone_player.deck) > 0) {
 					var _reward_behaviour = array_pop(_zone_player.deck);
-					var _reward = {id: string(_next.data.next_figure_id), behaviour: _reward_behaviour, owner_id: _zone_owner, status: "captured"};
+					var _reward = {figure_id: string(_next.data.next_figure_id), behaviour: _reward_behaviour, owner_id: _zone_owner, status: "captured"};
 					_next.data.next_figure_id++;
 					_next.add_captured_figure(_figure.owner_id, _reward);
-					show_debug_message("Conquest: invader=" + string(_figure.id)
+					show_debug_message("Conquest: invader=" + string(_figure.figure_id)
 						+ ", owner=" + string(_figure.owner_id)
 						+ ", captured=" + string(_reward.behaviour)
 						+ ", from_player=" + string(_zone_owner));
 				}
 				else {
-					show_debug_message("Conquest: invader=" + string(_figure.id)
+					show_debug_message("Conquest: invader=" + string(_figure.figure_id)
 						+ ", opponent deck is empty; no card reward available");
 				}
-				array_push(_batches, [{type: "conquest", figure_id: _figure.id, at: deep_copy(_at), duration_frames: 30}]);
-				array_push(_events, {type: "figure_conquested", figure_id: _figure.id, at: deep_copy(_at), score_owner_id: _zone_owner});
+				array_push(_batches, [{type: "conquest", figure_id: _figure.figure_id, at: deep_copy(_at), duration_frames: 30}]);
+				array_push(_events, {type: "figure_conquested", figure_id: _figure.figure_id, at: deep_copy(_at), score_owner_id: _zone_owner});
 			}
 		}
 
@@ -209,25 +209,39 @@ function GameRules() constructor {
 				|| (_figure.status != "active" && _figure.status != "conquesting" && _figure.status != "dropped")
 				|| !is_surrounded(_next, _x, _y)) {
 					continue;
-				}
-				var _captor_id = get_opponent_id(_next, _figure.owner_id);
-				var _captured = deep_copy(_figure);
+			}
+			var _captor_id = get_opponent_id(_next, _figure.owner_id);
+			if _captor_id == undefined {
+				var _known_players = variable_struct_get_names(_next.data.players);
+				show_debug_message("GameState integrity error: surrounded figure has no opponent; figure="
+					+ string(_figure.figure_id) + ", owner=" + string(_figure.owner_id)
+					+ ", players=" + json_stringify(_known_players));
+				continue;
+			}
+			var _captured = deep_copy(_figure);
 				_captured.status = "captured";
 				_next.clear_cell(_x, _y);
 				_next.add_captured_figure(_captor_id, _captured);
 				_next.data.captured[$ string(_captor_id)] += 1;
-				array_push(_batches, [{type: "capture", figure_id: _figure.id, at: [_x, _y], duration_frames: Settings.hit_animation_length}]);
-				array_push(_events, {type: "figure_captured", figure_id: _figure.id, at: [_x, _y], captor_id: _captor_id});
+			array_push(_batches, [{type: "capture", figure_id: _figure.figure_id, at: [_x, _y], duration_frames: Settings.hit_animation_length}]);
+			array_push(_events, {type: "figure_captured", figure_id: _figure.figure_id, at: [_x, _y], captor_id: _captor_id});
 			}
 		}
 
 		for (var _player_index = 0; _player_index < array_length(_players); _player_index++) {
 			var _player_id = _players[_player_index];
-			var _player = _next.data.players[$ string(_player_id)];
-			if _player != undefined {
-				_player.able_to_summon = is_array(_player.deck) && array_length(_player.deck) > 0
-					&& get_active_figure_count(_next, _player_id) < Settings.max_field_figures;
+			if _player_id == undefined {
+				show_debug_message("GameState integrity error: missing player id for side=" + string(_player_index));
+				continue;
 			}
+			var _player_key = string(_player_id);
+			if !variable_struct_exists(_next.data.players, _player_key) {
+				show_debug_message("GameState integrity error: missing player=" + _player_key);
+				continue;
+			}
+			var _player = _next.data.players[$ _player_key];
+			_player.able_to_summon = is_array(_player.deck) && array_length(_player.deck) > 0
+				&& get_active_figure_count(_next, _player_id) < Settings.max_field_figures;
 		}
 		_next.data.active_player_id = _next_player_id;
 		_next.data.revision++;
@@ -277,7 +291,7 @@ function GameRules() constructor {
 					else if _legacy_figure.state.is_dropped _status = "dropped";
 					else if _legacy_figure.state.is_conquesting _status = "conquesting";
 					else if _legacy_figure.state.is_captured _status = "captured";
-					_figure = {id: _legacy_id_text, behaviour: string(_legacy_figure.behaviour), owner_id: _legacy_figure.owner, status: _status};
+					_figure = {figure_id: _legacy_id_text, behaviour: string(_legacy_figure.behaviour), owner_id: _legacy_figure.owner, status: _status};
 				}
 				_state.data.cells[_x][_y] = {x: _x, y: _y, figure: _figure, can_be_conquested: _legacy_cell != undefined && _legacy_cell.can_be_conquested};
 			}
@@ -337,7 +351,7 @@ function GameRules() constructor {
 					_pile_figure.figure_id = _pile_id;
 					var _state_pile = _place_data.target[$ string(_pile_owner_id)];
 					array_push(_state_pile, {
-						id: _pile_id,
+						figure_id: _pile_id,
 						behaviour: string(_pile_figure.behaviour),
 						owner_id: _pile_figure.owner,
 						status: _place_data.status

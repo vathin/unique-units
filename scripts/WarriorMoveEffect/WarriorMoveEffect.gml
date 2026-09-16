@@ -77,8 +77,9 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 		var _warrior = _next.get_figure(_inputs.source_cell[0], _inputs.source_cell[1]);
 		_next.clear_cell(_inputs.source_cell[0], _inputs.source_cell[1]);
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _warrior);
-		var _batches = [[{type: "move", figure_id: _warrior.id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell), duration_frames: Settings.move_animation_length}]];
-		var _events = [{type: "figure_moved", figure_id: _warrior.id}];
+		var _warrior_id = _warrior.figure_id;
+		var _batches = [[{type: "move", figure_id: _warrior_id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell), duration_frames: Settings.move_animation_length}]];
+		var _events = [{type: "figure_moved", figure_id: _warrior_id}];
 		if variable_struct_exists(_inputs, "strike_target") {
 			var _target = _next.get_figure(_inputs.strike_target[0], _inputs.strike_target[1]);
 			_next.clear_cell(_inputs.target_cell[0], _inputs.target_cell[1]);
@@ -92,11 +93,11 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 			_next.add_dropped_figure(_warrior.owner_id, _dropped_warrior);
 			_next.add_dropped_figure(_target.owner_id, _dropped_target);
 			array_push(_batches, [{type: "hit", at: deep_copy(_inputs.strike_target), duration_frames: Settings.hit_animation_length}]);
-			array_push(_batches, [{type: "drop", figure_id: _warrior.id, at: deep_copy(_inputs.target_cell)}, {type: "drop", figure_id: _target.id, at: deep_copy(_inputs.strike_target)}]);
-			array_push(_events, {type: "warrior_strike", source_id: _warrior.id, target_id: _target.id});
+			array_push(_batches, [{type: "drop", figure_id: _warrior_id, at: deep_copy(_inputs.target_cell)}, {type: "drop", figure_id: _target.figure_id, at: deep_copy(_inputs.strike_target)}]);
+			array_push(_events, {type: "warrior_strike", source_id: _warrior_id, target_id: _target.figure_id});
 		}
 		else {
-			array_push(_next.data.movement_history, {figure_id: _warrior.id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell)});
+			array_push(_next.data.movement_history, {figure_id: _warrior_id, from: deep_copy(_inputs.source_cell), to: deep_copy(_inputs.target_cell)});
 		}
 		return {ok: true, error: "", next_state: _next, animation_batches: _batches, events: _events};
 	}
