@@ -20,37 +20,22 @@ update_layout = function() {
 	turn_owner_cord = [width/1.85, height/7.5];
 }
 
-figure_click = function(_figure) {
+// The click target is resolved from GameState; Field is only the hit-test and
+// rendering projection, so it deliberately is not accepted as a Figure here.
+figure_click = function() {
 		if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
 			return;
 		}
-		if _figure.state.is_active {
-			game_state = Game.game_loop_controller.get_game_state()
-			if game_state == STATE_LIST.wait {
-				global.selected_cell = global.cell_click_callback;
-				Game.field.clear_all_marks();
-				Game.figure_action_controller = new FigureActionController()
-			}
-			else{
-				if (game_state == STATE_LIST.figure_move or game_state == STATE_LIST.figure_action) and !global.cell_click_callback.is_filled(){
-					if Game.game_loop_controller.have_action() {
-						Game.game_loop_controller.action.set_new_target_coordinates(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
-					}
-					else if (Game.move_input_controller != undefined){
-						Game.move_input_controller.start_move(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
-					}
-				}
-				if game_state == STATE_LIST.figure_ability {
-					if Game.game_loop_controller.have_action() {
-						Game.game_loop_controller.action.set_target(_figure, global.cell_click_callback);
-					}
-					else {
-						Game.ability_input_controller.start_ability();
-						Game.game_loop_controller.action.set_target(_figure, global.cell_click_callback);
-					}
-				}
-			}
+		if Game.game_loop_controller.get_game_state() != STATE_LIST.wait || Game.game_state == undefined || global.cell_click_callback == undefined {
+			return;
 		}
+		var _state_figure = Game.game_state.get_figure(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
+		if _state_figure == undefined || string(_state_figure.owner_id) != string(global.turn_owner) || _state_figure.status != "active" {
+			return;
+		}
+		global.selected_cell = global.cell_click_callback;
+		Game.field.clear_all_marks();
+		Game.figure_action_controller = new FigureActionController();
 	}
 
 cancel = function() {
@@ -87,8 +72,10 @@ main_button_click = function() {
 	if Game.game_loop_controller.get_game_state() == STATE_LIST.summon {
 		return;
 	}
-	if game_state == STATE_LIST.wait and
-		Game.game_loop_controller.get_player(global.turn_owner).able_to_summon {
+	var _player_key = string(global.turn_owner);
+	var _can_summon = Game.game_state != undefined && variable_struct_exists(Game.game_state.data.players, _player_key)
+		&& Game.game_state.data.players[$ _player_key].able_to_summon;
+	if game_state == STATE_LIST.wait && _can_summon {
 		Game.summon_controller = new SummonInputController();
 	}
 	else {cancel()}

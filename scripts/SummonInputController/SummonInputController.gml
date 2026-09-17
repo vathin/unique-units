@@ -6,11 +6,6 @@ function SummonInputController() constructor{
 	Game.field.selected_cell = undefined;
 	global.selected_cell = undefined;
 	Game.game_loop_controller.set_can_cancel(0);
-	// The pending match state is authoritative for a summon.  In particular on
-	// HTML5, file-backed user_data may lag one effect behind the presenter.
-	if Game.game_state == undefined {
-		Game.sync_game_state_from_legacy();
-	}
 	var _player_key = string(global.turn_owner);
 	if Game.game_state == undefined or !variable_struct_exists(Game.game_state.data.players, _player_key) {
 		Game.summon_controller = undefined;
@@ -38,7 +33,7 @@ function SummonInputController() constructor{
 	}
 	global.able_to_summon = true;
 	global.cell_action = function(cell) {
-		if (cell.marked) {
+		if cell != undefined && Game.game_input.has_cell(_summon_specs[0], [cell.xcord, cell.ycord]) {
 			global.cell_click_callback = cell;
 			Game.field.set_selected_cell(cell)
 			Game.game_loop_controller.choose_cell_for_summon();

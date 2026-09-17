@@ -99,19 +99,26 @@ function GameLoopController() constructor{
 	}
 
 	get_next_summon_behaviour = function(_player) {
-		var _load_data = Game.user_data.load(_player);
-		if !is_struct(_load_data) or !variable_struct_exists(_load_data, "player_figures") {
+		if Game.game_state == undefined || !variable_struct_exists(Game.game_state.data, "players") {
 			return undefined;
 		}
-		var _figures = _load_data.player_figures;
-		if !is_array(_figures) or array_length(_figures) <= 0 {
+		var _player_key = string(_player);
+		if !variable_struct_exists(Game.game_state.data.players, _player_key) {
 			return undefined;
 		}
-		return _figures[array_length(_figures) - 1];
+		var _deck = Game.game_state.data.players[$ _player_key].deck;
+		if !is_array(_deck) || array_length(_deck) <= 0 {
+			return undefined;
+		}
+		return _deck[array_length(_deck) - 1];
 	}
 
 	get_summon_target_cells = function(_player) {
-		return Game.field.get_controlled_summon_cells(_player);
+		if Game.game_state == undefined || Game.game_rules == undefined {
+			return [];
+		}
+		var _specs = Game.game_rules.get_inputs(Game.game_state, _player, "summon", {});
+		return array_length(_specs) > 0 && is_array(_specs[0].allowed_cells) ? deep_copy(_specs[0].allowed_cells) : [];
 	}
 
 	get_move_target_cells = function(_from_cell) {
@@ -175,12 +182,15 @@ function GameLoopController() constructor{
 
 	get_trader_ability_choices = function(_player) {
 		var _choices = [];
-		var _load_data = Game.user_data.load(_player);
-		if !is_struct(_load_data) or !variable_struct_exists(_load_data, "player_figures") or !is_array(_load_data.player_figures) {
+		if Game.game_state == undefined || !variable_struct_exists(Game.game_state.data, "players") {
 			return _choices;
 		}
-		var _figures = _load_data.player_figures;
-		if array_length(_figures) < 3 {
+		var _player_key = string(_player);
+		if !variable_struct_exists(Game.game_state.data.players, _player_key) {
+			return _choices;
+		}
+		var _figures = Game.game_state.data.players[$ _player_key].deck;
+		if !is_array(_figures) || array_length(_figures) < 3 {
 			return _choices;
 		}
 		for (var i = 0; i < 3; i++) {
@@ -516,83 +526,14 @@ function GameLoopController() constructor{
 	}
 
 	create_action_from_descriptor = function(_descriptor, _simulation = false) {
-		var _skip_ui = _simulation or !is_human_turn();
-		if _descriptor.kind == "effect" {
+		if !is_struct(_descriptor) || !variable_struct_exists(_descriptor, "kind") || _descriptor.kind != "effect" {
+			show_debug_message("GameplayIntent rejected: legacy action descriptors are no longer executable");
+			return undefined;
+		}
+		if variable_struct_exists(_descriptor, "effect_id") && variable_struct_exists(_descriptor, "player") && variable_struct_exists(_descriptor, "inputs") {
 			return new EffectAction(_descriptor.effect_id, _descriptor.player, _descriptor.inputs);
 		}
-		if _descriptor.kind == "summon" {
-			var _behaviour = _descriptor.behaviour;
-			if !_simulation {
-				var _load_data = Game.user_data.load(_descriptor.player);
-				if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) and array_length(_load_data.player_figures) > 0 {
-					_behaviour = array_pop(_load_data.player_figures);
-					Game.user_data.save(_descriptor.player, _load_data);
-				}
-			}
-			return new SummonAction(_descriptor.target_x, _descriptor.target_y, Behaviours.get_sprite(_behaviour), _behaviour, _skip_ui);
-		}
-		if _descriptor.kind == "move" {
-			var _action_constructor = _descriptor.action_constructor;
-			if _action_constructor == WarriorMoveAndAbility {
-				return new WarriorMoveAndAbility(_descriptor.from_x, _descriptor.from_y, _descriptor.target_x, _descriptor.target_y, undefined, _skip_ui);
-			}
-			return new _action_constructor(_descriptor.from_x, _descriptor.from_y, _descriptor.target_x, _descriptor.target_y, undefined, _skip_ui);
-		}
-		if _descriptor.kind == "move_ability_warrior" {
-			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
-			var _target_cell = Game.field.get_cell(_descriptor.ability_target_x, _descriptor.ability_target_y);
-			if _from_cell == undefined or !_from_cell.is_filled() or _target_cell == undefined or !_target_cell.is_filled()
-			or _target_cell.filled_figure.owner == _from_cell.filled_figure.owner {
-				return undefined;
-			}
-			var _action = new WarriorMoveAndAbility(_descriptor.from_x, _descriptor.from_y, _descriptor.target_x, _descriptor.target_y, undefined, _skip_ui);
-			_action.using_ability = true;
-			_action.target_cell = _target_cell;
-			return _action;
-		}
-		if _descriptor.kind == "ability" {
-			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
-			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
-			var _action_constructor = _descriptor.action_constructor;
-			var _action = new _action_constructor(_from_cell.filled_figure, _from_cell, _skip_ui);
-			_action.set_target(_target_cell.filled_figure, _target_cell);
-			return _action;
-		}
-		if _descriptor.kind == "ability_shieldbearer" {
-			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
-			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
-			var _fill_cell = Game.field.get_cell(_descriptor.fill_x, _descriptor.fill_y);
-			var _action = new ShieldbearerAbility(_from_cell.filled_figure, _from_cell, _skip_ui);
-			_action.target_cell = _target_cell;
-			_action.target_figure = _target_cell.filled_figure;
-			_action.fill_cell = _fill_cell;
-			_action.selected = true;
-			return _action;
-		}
-		if _descriptor.kind == "ability_trader" {
-			var _from_cell = Game.field.get_cell(_descriptor.from_x, _descriptor.from_y);
-			var _target_cell = Game.field.get_cell(_descriptor.target_x, _descriptor.target_y);
-			var _action = new TraderAbility(_from_cell.filled_figure, _from_cell, _skip_ui);
-			_action.buttons = [];
-			var _load_data = Game.user_data.load(_descriptor.player);
-			if is_struct(_load_data) and variable_struct_exists(_load_data, "player_figures") and is_array(_load_data.player_figures) {
-				if array_length(_load_data.player_figures) < 3 {
-					return undefined;
-				}
-				if _simulation {
-					_action.buttons = get_trader_ability_choices(_descriptor.player);
-				}
-				else {
-					for (var i = 0; i < 3; i++) {
-						_action.buttons[i] = array_pop(_load_data.player_figures);
-					}
-					Game.user_data.save(_descriptor.player, _load_data);
-				}
-			}
-			_action.chosen_button = _descriptor.chosen_button;
-			_action.target_cell = _target_cell;
-			return _action;
-		}
+		show_debug_message("GameplayIntent rejected: incomplete effect descriptor");
 		return undefined;
 	}
 
@@ -1358,6 +1299,9 @@ function GameLoopController() constructor{
 	}
 
 	get_opponent = function(player) {
+		if Game.game_state != undefined && Game.game_rules != undefined {
+			return Game.game_rules.get_opponent_id(Game.game_state, player);
+		}
 		if player = Game.Player1.player_id {
 			return Game.Player2.player_id
 		}
@@ -1410,9 +1354,19 @@ function GameLoopController() constructor{
 		if !is_human_turn() {
 			return;
 		}
-		cells = Game.field.get_filled_cells(global.turn_owner)
-		for (i = 0; i < array_length(cells); i++) {
-			if cells[i].filled_figure.state.is_active {cells[i].marked = 1}
+		if Game.game_state == undefined {
+			return;
+		}
+		for (var _x = 0; _x < Game.game_state.data.width; _x++) {
+			for (var _y = 0; _y < Game.game_state.data.height; _y++) {
+				var _figure = Game.game_state.get_figure(_x, _y);
+				if _figure != undefined && string(_figure.owner_id) == string(global.turn_owner) && _figure.status == "active" {
+					var _cell = Game.field.get_cell(_x, _y);
+					if _cell != undefined {
+						_cell.marked = true;
+					}
+				}
+			}
 		}
 		global.mark = S_Controlled_mark;
 	}
@@ -1462,15 +1416,19 @@ function GameLoopController() constructor{
 		}
 	}
 	cell_is_playable = function(cell) {
-		return (!is_turn_transition_active() and state == STATE_LIST.wait and is_human_turn() and cell.is_filled() and
-				cell.filled_figure.owner == global.turn_owner and
-				cell.filled_figure.state.is_active);
+		if is_turn_transition_active() || state != STATE_LIST.wait || !is_human_turn() || cell == undefined || Game.game_state == undefined {
+			return false;
+		}
+		var _state_figure = Game.game_state.get_figure(cell.xcord, cell.ycord);
+		return _state_figure != undefined
+			&& string(_state_figure.owner_id) == string(global.turn_owner)
+			&& _state_figure.status == "active";
 	}
 	select_movable_figure = function(cell) {
 		global.cell_click_callback = cell;
 		global.selected_cell = cell;
 		set_can_cancel(1);
-		O_BoardDraw.figure_click(cell.filled_figure)
+		O_BoardDraw.figure_click();
 	}
 
 	clear_all = function() {
@@ -1494,31 +1452,16 @@ function GameLoopController() constructor{
 	}
 
 	check_win_conditions = function() {
-		if player1_captured >= 4 and player2_captured >= 4 {return ""}
-		else {
-			if player1_captured >= 4 {return Game.Player1.player_id}
-			if player2_captured >= 4 {return Game.Player2.player_id}
+		if Game.game_state != undefined {
+			var _state_winner = get_state_winner(Game.game_state);
+			if _state_winner != undefined {
+				return _state_winner;
+			}
 		}
-		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and
-		figures_counter.get_field_figures(Game.Player1.player_id) == 0 {return Game.Player2.player_id}
-		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and
-		figures_counter.get_field_figures(Game.Player2.player_id) == 0 {return Game.Player1.player_id}
 		if turn_timer.player_out_of_time != undefined {
-			if global.turn_owner == Game.Player1.player_id {return Game.Player1.player_id}
-			else {return Game.Player2.player_id}
+			return get_opponent(global.turn_owner);
 		}
-		out_of_figures = 0
-		if figures_counter.get_summon_figures_amount(Game.Player1.player_id) == 0 and
-		Game.field.get_active_player_field_figures(Game.Player1.player_id) == 0 {out_of_figures++}
-		if figures_counter.get_summon_figures_amount(Game.Player2.player_id) == 0 and
-		Game.field.get_active_player_field_figures(Game.Player2.player_id) == 0 {out_of_figures++}
-		if out_of_figures == 2 {
-			if player1_captured > player2_captured {return Game.Player1.player_id}
-			if player2_captured > player1_captured {return Game.Player2.player_id}
-			if player1_captured == player2_captured {return ""}
-		}
-
-		return undefined
+		return undefined;
 	}
 
 	add_captured_figure = function(player) {

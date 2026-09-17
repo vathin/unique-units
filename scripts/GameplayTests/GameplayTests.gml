@@ -1,5 +1,8 @@
 // This is the only automatic test entry point in the project.
 if (os_get_config() == "test") {
+	var _bootstrap_log = file_text_open_write("gameplay-tests.log");
+	file_text_write_string(_bootstrap_log, "TEST BOOTSTRAP: config=" + os_get_config() + "\n");
+	file_text_close(_bootstrap_log);
 	new Maps_list();
 	new Settings();
 	global.map = "map1";

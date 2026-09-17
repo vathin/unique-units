@@ -172,7 +172,7 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 		global.mark = S_Ability_mark;
 		global.cell_action = function(_cell) {
 			var _active_action = Game.game_loop_controller.action;
-			if _cell != undefined && _cell.marked && _active_action != undefined && _active_action.type == "effect" && _active_action.effect_id == "warrior_move" {
+			if _cell != undefined && _active_action != undefined && _active_action.type == "effect" && _active_action.effect_id == "warrior_move" {
 				if _active_action.set_new_input_coordinates("strike_target", _cell.xcord, _cell.ycord) {
 					O_BoardDraw.unblock_end_button();
 				}

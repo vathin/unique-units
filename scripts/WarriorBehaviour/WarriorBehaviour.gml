@@ -8,5 +8,5 @@ function WarriorBehaviour() : FigureBehaviour() constructor{
 	ability = WarriorAbility;
 	move_ability = WarriorMoveAndAbility;
 	rarity = 2;
-	max_deck_amount = 15;
+	max_deck_amount = 5;
 }

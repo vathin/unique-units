@@ -53,7 +53,7 @@ function EffectInputController(_effect_id, _actor_id, _initial_inputs = {}) cons
 			if _completed_spec != undefined && _completed_spec.type == "cell" {
 				global.cell_action = function(_cell) {
 					var _active_action = Game.game_loop_controller.action;
-					if _cell != undefined && _cell.marked && _active_action != undefined && _active_action.type == "effect" {
+					if _cell != undefined && _active_action != undefined && _active_action.type == "effect" {
 						_active_action.set_new_input_coordinates(_active_action.retarget_input_id, _cell.xcord, _cell.ycord);
 					}
 				};
@@ -71,7 +71,7 @@ function EffectInputController(_effect_id, _actor_id, _initial_inputs = {}) cons
 		}
 		mark_cells(current_spec);
 		global.cell_action = function(_cell) {
-			if _cell != undefined && _cell.marked {
+			if _cell != undefined && Game.game_input.has_cell(current_spec, [_cell.xcord, _cell.ycord]) {
 				inputs[$ current_spec.id] = [_cell.xcord, _cell.ycord];
 				global.cell_click_callback = _cell;
 				refresh();
