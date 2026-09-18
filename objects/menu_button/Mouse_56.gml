@@ -4,12 +4,12 @@
 if UI_controller.gui_mouse_in_bbox(bbox_left, bbox_top, bbox_right, bbox_bottom) {
 	switch button_function {
 		case "invite":
-		if O_DeckManager.get_selected_deck() != undefined {
+		if O_DeckManager.is_selected_deck_valid() {
 				O_Server.start_invite();
 			}
 		break;
 		case "fast_search":
-			if O_DeckManager.get_selected_deck() != undefined {
+			if O_DeckManager.is_selected_deck_valid() {
 				O_Server.start_fast_search();
 			}
 		break;

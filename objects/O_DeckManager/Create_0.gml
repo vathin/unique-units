@@ -40,6 +40,61 @@ get_first_deck_id = function() {
 	return undefined;
 }
 
+get_first_valid_deck_id = function() {
+	for (var i = 0; i < array_length(decks); i++) {
+		if is_struct(decks[i]) && variable_struct_exists(decks[i], "id") && is_deck_valid(decks[i]) {
+			return decks[i].id;
+		}
+	}
+	return undefined;
+}
+
+validate_deck = function(_deck) {
+	var _errors = [];
+	if !is_struct(_deck) || !variable_struct_exists(_deck, "units") || !is_struct(_deck.units) {
+		return {ok: false, errors: ["Deck has no unit list"], figures: []};
+	}
+	var _figures = [];
+	var _names = struct_get_names(_deck.units);
+	for (var i = 0; i < array_length(_names); i++) {
+		var _figure = _names[i];
+		var _amount = struct_get(_deck.units, _figure);
+		if !Behaviours.has(_figure) {
+			array_push(_errors, "Unknown figure: " + string(_figure));
+			continue;
+		}
+		if !is_real(_amount) || _amount != floor(_amount) || _amount < 1 {
+			array_push(_errors, "Invalid figure amount: " + string(_figure));
+			continue;
+		}
+		if _amount > Behaviours.get_max_deck_amount(_figure) {
+			array_push(_errors, "Figure limit exceeded: " + string(_figure));
+			continue;
+		}
+		for (var m = 0; m < _amount; m++) {
+			array_push(_figures, _figure);
+		}
+	}
+	if array_length(_figures) != max_figures_in_deck {
+		array_push(_errors, "Deck must contain exactly " + string(max_figures_in_deck) + " figures");
+	}
+	return {ok: array_length(_errors) == 0, errors: _errors, figures: _figures};
+}
+
+is_deck_valid = function(_deck) {
+	return validate_deck(_deck).ok;
+}
+
+is_selected_deck_valid = function() {
+	var _deck = get_selected_deck();
+	return _deck != undefined && is_deck_valid(_deck);
+}
+
+get_selected_deck_validation = function() {
+	var _deck = get_selected_deck();
+	return _deck == undefined ? {ok: false, errors: ["No deck selected"], figures: []} : validate_deck(_deck);
+}
+
 set_decks = function(_decks) {
 	var _selected_id = undefined;
 	if get_selected_deck() != undefined {
@@ -61,7 +116,7 @@ set_decks = function(_decks) {
 		switch_deck(_selected_id);
 	}
 	else {
-		var _first_deck_id = get_first_deck_id();
+		var _first_deck_id = get_first_valid_deck_id();
 		if _first_deck_id != undefined {
 			switch_deck(_first_deck_id);
 		}
@@ -271,7 +326,7 @@ delete_deck = function(_deck_id) {
 		}
 		selected_deck = {id: undefined}
 		reset_decks_page();
-		var _first_deck_id = get_first_deck_id();
+		var _first_deck_id = get_first_valid_deck_id();
 		if _first_deck_id != undefined {
 			switch_deck(_first_deck_id);
 		}

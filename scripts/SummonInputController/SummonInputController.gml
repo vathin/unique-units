@@ -24,8 +24,11 @@ function SummonInputController() constructor{
 		Game.summon_controller = undefined;
 		return;
 	}
-	for (var _cell_index = 0; _cell_index < array_length(_summon_specs[0].allowed_cells); _cell_index++) {
-		var _cell_data = _summon_specs[0].allowed_cells[_cell_index];
+	// Closures do not retain constructor locals consistently on HTML5.
+	// Keep the rules-generated specification on the controller itself.
+	summon_spec = deep_copy(_summon_specs[0]);
+	for (var _cell_index = 0; _cell_index < array_length(summon_spec.allowed_cells); _cell_index++) {
+		var _cell_data = summon_spec.allowed_cells[_cell_index];
 		var _cell = Game.field.get_cell(_cell_data[0], _cell_data[1]);
 		if _cell != undefined {
 			_cell.marked = true;
@@ -33,7 +36,8 @@ function SummonInputController() constructor{
 	}
 	global.able_to_summon = true;
 	global.cell_action = function(cell) {
-		if cell != undefined && Game.game_input.has_cell(_summon_specs[0], [cell.xcord, cell.ycord]) {
+		if cell != undefined && Game.summon_controller != undefined
+		&& Game.game_input.has_cell(Game.summon_controller.summon_spec, [cell.xcord, cell.ycord]) {
 			global.cell_click_callback = cell;
 			Game.field.set_selected_cell(cell)
 			Game.game_loop_controller.choose_cell_for_summon();

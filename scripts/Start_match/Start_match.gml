@@ -1,4 +1,9 @@
 function Start_match(_mode = "local_vs_local"){
+	if instance_exists(O_DeckManager) && !O_DeckManager.is_selected_deck_valid() {
+		var _validation = O_DeckManager.get_selected_deck_validation();
+		show_debug_message("Start_match rejected: selected deck is invalid: " + json_stringify(_validation.errors));
+		return false;
+	}
 	global.cell_click_callback = undefined;
 	global.selected_cell = undefined;
 	global.able_to_summon = false;
@@ -38,6 +43,5 @@ function Start_match(_mode = "local_vs_local"){
 	global.game.set_local_match_mode(_mode);
 
 	room_goto(R_Test);
-
-
+	return true;
 }

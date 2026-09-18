@@ -1,6 +1,6 @@
 switch type {
 	case "accept":
-		if O_DeckManager.get_selected_deck() != undefined {
+		if O_DeckManager.is_selected_deck_valid() {
 			O_Server.invite_accept();
 		}
 	break;
