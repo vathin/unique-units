@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Start_online_match",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Network",
+    "path":"folders/Scripts/Network.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

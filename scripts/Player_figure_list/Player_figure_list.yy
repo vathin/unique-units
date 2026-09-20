@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Player_figure_list",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Deck",
+    "path":"folders/Scripts/Deck.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

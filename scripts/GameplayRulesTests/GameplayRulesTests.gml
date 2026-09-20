@@ -58,6 +58,13 @@ function GameplayRulesTests(_suite) constructor {
 		_state.set_figure(1, 1, {figure_id: "anchor", behaviour: "spearman", owner_id: 1, status: "active"});
 		_inputs = rules.get_inputs(_state, 1, "archer_move", {source_cell: [2, 2]});
 		suite.assert_true(array_length(_inputs) == 2 && array_length(_inputs[1].allowed_cells) > 0, "archer gains movement when connected to another figure");
+
+		_state = make_state([], []);
+		_state.set_figure(1, 1, {figure_id: "archer", behaviour: "archer", owner_id: 1, status: "active"});
+		_state.set_figure(0, 1, {figure_id: "left_anchor", behaviour: "spearman", owner_id: 1, status: "active"});
+		_state.set_figure(3, 1, {figure_id: "right_anchor", behaviour: "spearman", owner_id: 1, status: "active"});
+		_inputs = rules.get_inputs(_state, 1, "archer_move", {source_cell: [1, 1]});
+		suite.assert_true(!Game.game_input.has_cell(_inputs[1], [2, 1]), "archer cannot detach from one figure to cross a gap to another");
 	}
 
 	test_surround_capture = function() {

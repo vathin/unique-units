@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"FigureCapture",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Actions",
+    "path":"folders/Scripts/Game/Actions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

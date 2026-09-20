@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Player",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Deck",
+    "path":"folders/Scripts/Deck.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

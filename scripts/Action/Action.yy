@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Action",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Actions",
+    "path":"folders/Scripts/Game/Actions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

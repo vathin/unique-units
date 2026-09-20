@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"GameLoopController",
   "parent":{
-    "name":"Controllers",
-    "path":"folders/Scripts/Game/Controllers.yy",
+    "name":"State",
+    "path":"folders/Scripts/Game/State.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

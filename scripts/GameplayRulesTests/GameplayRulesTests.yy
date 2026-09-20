@@ -4,7 +4,10 @@
   "isCompatibility":false,
   "isDnD":false,
   "name":"GameplayRulesTests",
-  "parent":{"name":"Game","path":"folders/Scripts/Game.yy",},
+  "parent":{
+    "name":"Tests",
+    "path":"folders/Scripts/Tests.yy",
+  },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
 }

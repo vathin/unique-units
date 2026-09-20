@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"FigureCard",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Model",
+    "path":"folders/Scripts/Figures/Model.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

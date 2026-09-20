@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"MoveAnimationController",
   "parent":{
-    "name":"animation",
-    "path":"folders/Scripts/animation.yy",
+    "name":"Animation",
+    "path":"folders/Scripts/Figures/Animation.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

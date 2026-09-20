@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Behaviours",
   "parent":{
-    "name":"FigureBehaviours",
-    "path":"folders/Scripts/FigureBehaviours.yy",
+    "name":"Behaviours",
+    "path":"folders/Scripts/Figures/Behaviours.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"GameplayTests",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Tests",
+    "path":"folders/Scripts/Tests.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

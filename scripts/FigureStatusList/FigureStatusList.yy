@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"FigureStatusList",
   "parent":{
-    "name":"FigureStatus",
-    "path":"folders/Scripts/FigureStatus.yy",
+    "name":"Status",
+    "path":"folders/Scripts/Figures/Status.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

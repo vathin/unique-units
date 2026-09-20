@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"MoveInputController",
   "parent":{
-    "name":"Controllers",
-    "path":"folders/Scripts/Game/Controllers.yy",
+    "name":"Input",
+    "path":"folders/Scripts/Game/Input.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

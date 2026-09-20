@@ -1,1 +1,5 @@
-{"$GMScript":"v1","%Name":"SpearmanEffect","isCompatibility":false,"isDnD":false,"name":"SpearmanEffect","parent":{"name":"Game","path":"folders/Scripts/Game.yy",},"resourceType":"GMScript","resourceVersion":"2.0",}
+{"$GMScript":"v1","%Name":"SpearmanEffect","isCompatibility":false,"isDnD":false,"name":"SpearmanEffect",
+  "parent":{
+    "name":"Effects",
+    "path":"folders/Scripts/Game/Effects.yy",
+  },"resourceType":"GMScript","resourceVersion":"2.0",}

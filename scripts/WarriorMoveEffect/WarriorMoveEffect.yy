@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"WarriorMoveEffect",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Effects",
+    "path":"folders/Scripts/Game/Effects.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

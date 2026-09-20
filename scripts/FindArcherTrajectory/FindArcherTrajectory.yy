@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"FindArcherTrajectory",
   "parent":{
-    "name":"animation",
-    "path":"folders/Scripts/animation.yy",
+    "name":"Utilities",
+    "path":"folders/Scripts/Utilities.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

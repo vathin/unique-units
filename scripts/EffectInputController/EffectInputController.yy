@@ -1,1 +1,5 @@
-{"$GMScript":"v1","%Name":"EffectInputController","isCompatibility":false,"isDnD":false,"name":"EffectInputController","parent":{"name":"Controllers","path":"folders/Scripts/Game/Controllers.yy",},"resourceType":"GMScript","resourceVersion":"2.0",}
+{"$GMScript":"v1","%Name":"EffectInputController","isCompatibility":false,"isDnD":false,"name":"EffectInputController",
+  "parent":{
+    "name":"Input",
+    "path":"folders/Scripts/Game/Input.yy",
+  },"resourceType":"GMScript","resourceVersion":"2.0",}

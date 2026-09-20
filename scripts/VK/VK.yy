@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"VK",
   "parent":{
-    "name":"VK",
-    "path":"folders/Extensions/VK.yy",
+    "name":"Network",
+    "path":"folders/Scripts/Network.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

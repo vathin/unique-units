@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"WarriorMoveAndAbility",
   "parent":{
-    "name":"FigureAbilities",
-    "path":"folders/Scripts/FigureAbilities.yy",
+    "name":"Actions",
+    "path":"folders/Scripts/Game/Actions.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

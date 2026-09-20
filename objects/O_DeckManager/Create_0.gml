@@ -11,7 +11,7 @@ deck_create_button = "CreateButton";
 deck_name_panel = "DeckNameField";
 card_display_panel = ["CardsDisplay_1", "CardsDisplay_2"];
 default_deck = {id: "000", name: "", owner: "",units: {"trader": 1, "archer": 1, "warrior": 1, "shieldbearer": 1, "spearman": 1}}
-available_figures = ["trader", "archer", "warrior", "shieldbearer", "spearman"];
+available_figures = Behaviours.get_deckbuilder_figure_list();
 max_figures_in_deck = 20;
 deck_limit = 5;
 next_dynamic_element_id = 1000;
@@ -55,12 +55,17 @@ validate_deck = function(_deck) {
 		return {ok: false, errors: ["Deck has no unit list"], figures: []};
 	}
 	var _figures = [];
+	var _class_amounts = {};
 	var _names = struct_get_names(_deck.units);
 	for (var i = 0; i < array_length(_names); i++) {
 		var _figure = _names[i];
 		var _amount = struct_get(_deck.units, _figure);
 		if !Behaviours.has(_figure) {
 			array_push(_errors, "Unknown figure: " + string(_figure));
+			continue;
+		}
+		if Behaviours.is_development_only(_figure) {
+			array_push(_errors, "Development figure is not available: " + string(_figure));
 			continue;
 		}
 		if !is_real(_amount) || _amount != floor(_amount) || _amount < 1 {
@@ -71,14 +76,49 @@ validate_deck = function(_deck) {
 			array_push(_errors, "Figure limit exceeded: " + string(_figure));
 			continue;
 		}
+		var _deck_class = Behaviours.get_deck_class(_figure);
+		if _deck_class == undefined || Behaviours.get_deck_class_max_amount(_deck_class) <= 0 {
+			array_push(_errors, "Unknown deck class: " + string(_figure));
+			continue;
+		}
+		var _class_amount = variable_struct_exists(_class_amounts, _deck_class) ? _class_amounts[$ _deck_class] : 0;
+		_class_amounts[$ _deck_class] = _class_amount + _amount;
 		for (var m = 0; m < _amount; m++) {
 			array_push(_figures, _figure);
+		}
+	}
+	var _classes = struct_get_names(_class_amounts);
+	for (var _class_index = 0; _class_index < array_length(_classes); _class_index++) {
+		var _class = _classes[_class_index];
+		if _class_amounts[$ _class] > Behaviours.get_deck_class_max_amount(_class) {
+			array_push(_errors, "Class limit exceeded: " + string(_class));
 		}
 	}
 	if array_length(_figures) != max_figures_in_deck {
 		array_push(_errors, "Deck must contain exactly " + string(max_figures_in_deck) + " figures");
 	}
 	return {ok: array_length(_errors) == 0, errors: _errors, figures: _figures};
+}
+
+get_deck_class_amount = function(_units, _deck_class) {
+	if !is_struct(_units) {return 0;}
+	var _amount = 0;
+	var _names = struct_get_names(_units);
+	for (var i = 0; i < array_length(_names); i++) {
+		var _figure = _names[i];
+		var _figure_amount = struct_get(_units, _figure);
+		if Behaviours.has(_figure) && Behaviours.get_deck_class(_figure) == _deck_class
+		&& is_real(_figure_amount) && _figure_amount > 0 {
+			_amount += floor(_figure_amount);
+		}
+	}
+	return _amount;
+}
+
+can_add_figure_to_deck = function(_units, _figure) {
+	if !Behaviours.has(_figure) {return false;}
+	var _deck_class = Behaviours.get_deck_class(_figure);
+	return get_deck_class_amount(_units, _deck_class) < Behaviours.get_deck_class_max_amount(_deck_class);
 }
 
 is_deck_valid = function(_deck) {
@@ -158,7 +198,7 @@ get_deck_figures_array = function(_deck_units) {
 	var _array = [];
 	for (var i = 0; i < array_length(_names); i++) {
 		var _figure = _names[i];
-		if !Behaviours.has(_figure) {
+		if !Behaviours.has(_figure) || Behaviours.is_development_only(_figure) {
 			show_debug_message("DeckManager: skipped unknown figure in deck units: " + string(_figure));
 			continue;
 		}
@@ -348,7 +388,7 @@ deck_button_click = function(_deck_id) {
 }
 
 card_add = function(_figure, _amount) {
-	if !Behaviours.has(_figure) {
+	if !Behaviours.has(_figure) || Behaviours.is_development_only(_figure) {
 		show_debug_message("DeckManager: card_add skipped unknown figure: " + string(_figure));
 		return false;
 	}
@@ -368,13 +408,14 @@ card_add = function(_figure, _amount) {
 }
 
 card_click = function(_figure) {
-	if !Behaviours.has(_figure) {
+	if !Behaviours.has(_figure) || Behaviours.is_development_only(_figure) {
 		show_debug_message("DeckManager: card_click skipped unknown figure: " + string(_figure));
 		return false;
 	}
 	var _card = card_get_instance(_figure);
-	if array_length(get_deck_figures_array(get_deck_from_cards())) < max_figures_in_deck
-	and get_selected_deck() != undefined {
+	var _deck_units = get_deck_from_cards();
+	if array_length(get_deck_figures_array(_deck_units)) < max_figures_in_deck
+	and get_selected_deck() != undefined && can_add_figure_to_deck(_deck_units, _figure) {
 		if _card != undefined {
 			_card.change_amount();
 		}

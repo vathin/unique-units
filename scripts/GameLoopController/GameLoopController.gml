@@ -213,9 +213,6 @@ function GameLoopController() constructor{
 		if _ability == SpearmanAbility {
 			return get_spearman_ability_target_cells(_from_cell);
 		}
-		if _ability == ShieldbearerAbility {
-			return get_adjacent_ability_target_cells(_from_cell);
-		}
 		if _ability == TraderAbility {
 			if array_length(get_trader_ability_choices(_from_cell.filled_figure.owner)) < 3 {
 				return [];
@@ -327,25 +324,6 @@ function GameLoopController() constructor{
 							behaviour: _choices[c],
 							target_x: _target_cells[t].xcord,
 							target_y: _target_cells[t].ycord
-						});
-					}
-				}
-				continue;
-			}
-			if _ability == ShieldbearerAbility {
-				var _target_cells = get_ability_target_cells(_from_cell);
-				var _fill_cells = Game.field.get_clear_move_cells(_from_cell.xcord, _from_cell.ycord);
-				for (var t = 0; t < array_length(_target_cells); t++) {
-					for (var f = 0; f < array_length(_fill_cells); f++) {
-						array_push(_actions, {
-							kind: "ability_shieldbearer",
-							player: _player,
-							from_x: _from_cell.xcord,
-							from_y: _from_cell.ycord,
-							target_x: _target_cells[t].xcord,
-							target_y: _target_cells[t].ycord,
-							fill_x: _fill_cells[f].xcord,
-							fill_y: _fill_cells[f].ycord
 						});
 					}
 				}
@@ -1313,12 +1291,17 @@ function GameLoopController() constructor{
 	choose_cell_for_summon = function() {
 		if have_action() {
 			if action.type == "effect" && action.effect_id == "summon" {
-				global.selected_cell.filled_figure_status.set_status("will_be_summoned", 0);
-				global.selected_cell.marked = 1;
+				if global.cell_click_callback == undefined
+				or !action.set_new_target_coordinates(global.cell_click_callback.xcord, global.cell_click_callback.ycord) {
+					return;
+				}
+				if global.selected_cell != undefined {
+					global.selected_cell.filled_figure_status.set_status("will_be_summoned", 0);
+					global.selected_cell.marked = 1;
+				}
 				global.selected_cell = global.cell_click_callback;
 				global.cell_click_callback.marked = 0;
 				global.cell_click_callback.filled_figure_status.set_status("will_be_summoned", 1);
-				action.set_new_target_coordinates(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
 			}
 			return;
 		}

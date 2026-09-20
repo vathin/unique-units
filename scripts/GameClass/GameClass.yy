@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"GameClass",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"State",
+    "path":"folders/Scripts/Game/State.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

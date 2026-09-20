@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"CapturedFiguresCounter",
   "parent":{
-    "name":"Counters",
-    "path":"folders/Scripts/Game/Counters.yy",
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

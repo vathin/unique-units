@@ -4,7 +4,10 @@
   "isCompatibility":false,
   "isDnD":false,
   "name":"SummonEffect",
-  "parent":{"name":"Game","path":"folders/Scripts/Game.yy",},
+  "parent":{
+    "name":"Effects",
+    "path":"folders/Scripts/Game/Effects.yy",
+  },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
 }

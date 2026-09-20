@@ -26,6 +26,36 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 		return false;
 	}
 
+	// The archer may change cells only while staying next to the same figure.
+	// Merely being next to one figure before a step and another after it would
+	// allow it to cross an empty gap between two otherwise disconnected figures.
+	has_common_neighbour_figure = function(_state, _from, _to, _source) {
+		for (var _from_dx = -1; _from_dx <= 1; _from_dx++) {
+			for (var _from_dy = -1; _from_dy <= 1; _from_dy++) {
+				if _from_dx == 0 && _from_dy == 0 continue;
+				var _from_x = _from[0] + _from_dx;
+				var _from_y = _from[1] + _from_dy;
+				if _from_x == _source[0] && _from_y == _source[1] continue;
+				var _from_figure = _state.get_figure(_from_x, _from_y);
+				if _from_figure == undefined continue;
+
+				for (var _to_dx = -1; _to_dx <= 1; _to_dx++) {
+					for (var _to_dy = -1; _to_dy <= 1; _to_dy++) {
+						if _to_dx == 0 && _to_dy == 0 continue;
+						var _to_x = _to[0] + _to_dx;
+						var _to_y = _to[1] + _to_dy;
+						if _to_x == _source[0] && _to_y == _source[1] continue;
+						var _to_figure = _state.get_figure(_to_x, _to_y);
+						if _to_figure != undefined && _to_figure.figure_id == _from_figure.figure_id {
+							return true;
+						}
+					}
+				}
+			}
+		}
+		return false;
+	}
+
 	get_reachable = function(_state, _source) {
 		var _paths = array_create(_state.data.width);
 		var _visited = array_create(_state.data.width);
@@ -36,7 +66,6 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 		var _result = {cells: [], paths: _paths};
 		if !is_array(_source) || array_length(_source) != 2 return _result;
 		// The archer may only move while it remains connected to another figure.
-		// Do not let a later path cell establish that connection from nothing.
 		if !has_neighbour_figure(_state, _source, [-1, -1]) return _result;
 		var _queue = [{cell: _source, path: [_source]}];
 		_visited[_source[0]][_source[1]] = true;
@@ -52,8 +81,8 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 				var _candidate = [_current[0] + _dx, _current[1] + _dy];
 				var _candidate_cell = _state.get_cell(_candidate[0], _candidate[1]);
 				if _candidate_cell != undefined && !_visited[_candidate[0]][_candidate[1]] && _state.get_figure(_candidate[0], _candidate[1]) == undefined {
-					_visited[_candidate[0]][_candidate[1]] = true;
-					if has_neighbour_figure(_state, _candidate, _source) {
+					if has_common_neighbour_figure(_state, _current, _candidate, _source) {
+						_visited[_candidate[0]][_candidate[1]] = true;
 						var _path = deep_copy(_node.path);
 						array_push(_path, _candidate);
 						_result.paths[_candidate[0]][_candidate[1]] = _path;

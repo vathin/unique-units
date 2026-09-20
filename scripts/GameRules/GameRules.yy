@@ -4,7 +4,10 @@
   "isCompatibility":false,
   "isDnD":false,
   "name":"GameRules",
-  "parent":{"name":"Game","path":"folders/Scripts/Game.yy",},
+  "parent":{
+    "name":"State",
+    "path":"folders/Scripts/Game/State.yy",
+  },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",
 }

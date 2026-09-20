@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Turn",
   "parent":{
-    "name":"Scripts",
-    "path":"folders/Scripts.yy",
+    "name":"Controllers",
+    "path":"folders/Scripts/Game/Controllers.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

@@ -5,8 +5,8 @@
   "isDnD":false,
   "name":"Field",
   "parent":{
-    "name":"Game",
-    "path":"folders/Scripts/Game.yy",
+    "name":"Model",
+    "path":"folders/Scripts/Figures/Model.yy",
   },
   "resourceType":"GMScript",
   "resourceVersion":"2.0",

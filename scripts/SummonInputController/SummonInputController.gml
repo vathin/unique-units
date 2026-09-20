@@ -69,6 +69,18 @@ function SummonInputController() constructor{
 		_action.retarget_input_id = "target_cell";
 		_action.set_preview("target_cell", target_x, target_y);
 		Game.game_loop_controller.set_action(_action);
+		// The controller is released after the card is revealed. Continue routing
+		// later clicks through the pending action, which revalidates every target.
+		global.cell_action = function(_cell) {
+			if _cell == undefined {
+				return;
+			}
+			var _active_action = Game.game_loop_controller.action;
+			if _active_action != undefined && _active_action.type == "effect" && _active_action.effect_id == "summon" {
+				global.cell_click_callback = _cell;
+				Game.game_loop_controller.choose_cell_for_summon();
+			}
+		};
 		O_BoardDraw.unblock_end_button();
 		var _overlay_index = array_get_index(Game.do_every_step_list, Button_set_overlay);
 		if _overlay_index != -1 {
