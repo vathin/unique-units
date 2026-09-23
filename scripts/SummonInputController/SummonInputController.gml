@@ -65,9 +65,6 @@ function SummonInputController() constructor{
 	array_push(Game.do_every_step_list, Button_set_overlay)
 
 	time_end = function() {
-		//drop_figure = instance_create_depth(O_SummonButton.x, O_SummonButton.y, -1, O_Figure);
-		//drop_figure.set_behaviour(figure_to_summon);
-		//drop_figure.drop();
 		Game.summon_controller = undefined
 	}
 
