@@ -1,4 +1,4 @@
-// Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
+// Р РµСЃСѓСЂСЃС‹ СЃРєСЂРёРїС‚РѕРІ Р±С‹Р»Рё РёР·РјРµРЅРµРЅС‹ РґР»СЏ РІРµСЂСЃРёРё 2.3.0, РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё СЃРј. РїРѕ Р°РґСЂРµСЃСѓ
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function FigureActionController() constructor{
 	buttons_visiblity = 1;
@@ -8,19 +8,11 @@ function FigureActionController() constructor{
 	move_and_ability = false;
 
 	get_move_effect_id = function(_behaviour) {
-		if _behaviour == "warrior" return "warrior_move";
-		if _behaviour == "archer" return "archer_move";
-		return "move";
+		return Behaviours.get_move_effect_id(_behaviour);
 	}
 
 	get_ability_effect_id = function(_behaviour) {
-		switch _behaviour {
-			case "warrior": return "warrior_ability";
-			case "spearman": return "spearman_ability";
-			case "shieldbearer": return "shieldbearer_ability";
-			case "trader": return "trader_ability";
-		}
-		return undefined;
+		return Behaviours.get_ability_effect_id(_behaviour);
 	}
 
 	get_next_input_options = function(_effect_id, _inputs) {
@@ -46,10 +38,10 @@ function FigureActionController() constructor{
 	// The visual board supplies only the selected coordinates. Ownership, status
 	// and available effects are always read from the logical match state.
 	get_selected_state_figure = function() {
-		if Game.game_state == undefined || global.selected_cell == undefined {
+		if Game.game_state == undefined || Game.input_session.selected_cell == undefined {
 			return undefined;
 		}
-		var _figure = Game.game_state.get_figure(global.selected_cell.xcord, global.selected_cell.ycord);
+		var _figure = Game.game_state.get_figure(Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord);
 		if _figure == undefined || string(_figure.owner_id) != string(global.turn_owner) || _figure.status != "active" {
 			return undefined;
 		}
@@ -61,9 +53,9 @@ function FigureActionController() constructor{
 		figure_have_ability = 0;
 	}
 	else {
-		var _source_inputs = {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+		var _source_inputs = {source_cell: [Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord]};
 		var _move_effect_id = get_move_effect_id(_selected_figure.behaviour);
-		var _move_inputs = _move_effect_id == "move" ? {from_cell: [global.selected_cell.xcord, global.selected_cell.ycord]} : _source_inputs;
+		var _move_inputs = _move_effect_id == "move" ? {from_cell: [Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord]} : _source_inputs;
 		if get_next_input_options(_move_effect_id, _move_inputs) <= 0 {
 			figure_can_move = 0;
 		}
@@ -82,9 +74,9 @@ function FigureActionController() constructor{
 		var _selected_figure = get_selected_state_figure();
 		if figure_can_move && _selected_figure != undefined {
 			var _effect_id = get_move_effect_id(_selected_figure.behaviour);
-			var _inputs = {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+			var _inputs = {source_cell: [Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord]};
 			if _effect_id == "move" {
-				_inputs = {from_cell: [global.selected_cell.xcord, global.selected_cell.ycord]};
+				_inputs = {from_cell: [Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord]};
 			}
 			Game.ability_input_controller = new EffectInputController(_effect_id, global.turn_owner, _inputs);
 			destroy_self();
@@ -96,7 +88,7 @@ function FigureActionController() constructor{
 		if figure_have_ability && _selected_figure != undefined {
 			var _effect_id = get_ability_effect_id(_selected_figure.behaviour);
 			if _effect_id != undefined {
-				Game.ability_input_controller = new EffectInputController(_effect_id, global.turn_owner, {source_cell: [global.selected_cell.xcord, global.selected_cell.ycord]});
+				Game.ability_input_controller = new EffectInputController(_effect_id, global.turn_owner, {source_cell: [Game.input_session.selected_cell.xcord, Game.input_session.selected_cell.ycord]});
 				destroy_self();
 			}
 		}
@@ -117,21 +109,21 @@ function FigureActionController() constructor{
 		Game.game_loop_controller.state = STATE_LIST.figure_move
 		Game.game_loop_controller.action.using_ability = 0;
 		Game.field.clear_all_marks();
-		global.mark = S_Move_mark;
+		Game.input_session.mark_sprite = S_Move_mark;
 	}
 
 	if (Game.game_loop_controller.get_game_state() == STATE_LIST.figure_action) {
-		global.cell_action = function(cell) {
+		Game.input_session.set_handler(function(cell) {
 			if cell == undefined || Game.game_state == undefined {
 				return;
 			}
 			var _figure = Game.game_state.get_figure(cell.xcord, cell.ycord);
 			if _figure != undefined && string(_figure.owner_id) == string(global.turn_owner) && _figure.status == "active" {
-				global.selected_cell = cell;
-				global.cell_click_callback = cell;
+				Game.input_session.selected_cell = cell;
+				Game.input_session.clicked_cell = cell;
 				Game.field.clear_all_marks();
 				Game.figure_action_controller = new FigureActionController();
 			}
-		}
+		})
 	}
 }

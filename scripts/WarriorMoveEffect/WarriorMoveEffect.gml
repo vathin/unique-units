@@ -41,15 +41,15 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 	}
 
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _source = Game.game_input.cell("source_cell", "game.input.warrior_source", get_sources(_state, _actor_id));
+		var _source = GameInput.cell("source_cell", "game.input.warrior_source", get_sources(_state, _actor_id));
 		if !variable_struct_exists(_partial, "source_cell") {
 			return [_source];
 		}
-		if !Game.game_input.has_cell(_source, _partial.source_cell) {
+		if !GameInput.has_cell(_source, _partial.source_cell) {
 			return [_source];
 		}
-		var _target = Game.game_input.cell("target_cell", "game.input.move_target", get_move_cells(_state, _partial.source_cell));
-		if !variable_struct_exists(_partial, "target_cell") || !Game.game_input.has_cell(_target, _partial.target_cell) {
+		var _target = GameInput.cell("target_cell", "game.input.move_target", get_move_cells(_state, _partial.source_cell));
+		if !variable_struct_exists(_partial, "target_cell") || !GameInput.has_cell(_target, _partial.target_cell) {
 			return [_source, _target];
 		}
 		return [_source, _target];
@@ -58,14 +58,14 @@ function WarriorMoveEffect() : GameEffect("warrior_move") constructor {
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot move now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid warrior move"};
+		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid warrior move"};
 		if abs(_inputs.target_cell[0] - _inputs.source_cell[0]) > 1
 		or abs(_inputs.target_cell[1] - _inputs.source_cell[1]) > 1 {
 			return {ok: false, error: "Warrior move must target an adjacent cell"};
 		}
 		if variable_struct_exists(_inputs, "strike_target") {
-			var _strike_spec = Game.game_input.cell("strike_target", "game.input.warrior_target", get_strike_cells(_state, _actor_id, _inputs.target_cell));
-			if !Game.game_input.has_cell(_strike_spec, _inputs.strike_target) return {ok: false, error: "Invalid warrior strike"};
+			var _strike_spec = GameInput.cell("strike_target", "game.input.warrior_target", get_strike_cells(_state, _actor_id, _inputs.target_cell));
+			if !GameInput.has_cell(_strike_spec, _inputs.strike_target) return {ok: false, error: "Invalid warrior strike"};
 		}
 		return {ok: true, error: ""};
 	}

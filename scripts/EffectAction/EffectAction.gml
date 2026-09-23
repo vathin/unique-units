@@ -1,4 +1,4 @@
-/// Legacy GameLoopController adapter for a validated GameRules intent.
+/// Match-flow adapter for a validated GameRules intent.
 function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 	type = "effect";
 	effect_id = _effect_id;
@@ -10,6 +10,7 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 	preview_cell = undefined;
 	preview_status = undefined;
 	retarget_input_id = undefined;
+	cancel_progress = {card_revealed: effect_id == "summon" || effect_id == "trader_ability"};
 	if effect_id == "summon" && variable_struct_exists(inputs, "target_cell") {
 		target_x = inputs.target_cell[0];
 		target_y = inputs.target_cell[1];
@@ -67,14 +68,24 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 		draw_sprite_ext(Behaviours.get_sprite(_behaviour), _enemy_side, _position[0], _position[1], Game.field.get_figure_scale(), Game.field.get_figure_scale(), 0, c_white, 0.5);
 	}
 
+	is_cancelable = function() {
+		if Game.game_state == undefined || Game.game_rules == undefined {
+			return false;
+		}
+		return Game.game_rules.is_effect_cancelable(Game.game_state, actor_id, effect_id, inputs, cancel_progress);
+	}
+
 	back = function() {
+		if !is_cancelable() {
+			return;
+		}
 		clear_preview();
 		Game.field.clear_all_marks();
 		Game.game_loop_controller.action = undefined;
 		O_BoardDraw.clear();
 		if effect_id == "summon" {
 			Game.game_loop_controller.clean_controllers();
-			global.cell_click_callback = undefined;
+			Game.input_session.clicked_cell = undefined;
 			return;
 		}
 		Game.game_loop_controller.quit_from_action();
@@ -123,7 +134,7 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 		var _input_spec = undefined;
 		if _input_id == "strike_target" && effect_id == "warrior_move" && variable_struct_exists(_partial_inputs, "target_cell") {
 			var _warrior_move_effect = Game.game_rules.get_effect("warrior_move");
-			_input_spec = Game.game_input.cell("strike_target", "game.input.warrior_target", _warrior_move_effect.get_strike_cells(Game.game_state, actor_id, _partial_inputs.target_cell));
+			_input_spec = GameInput.cell("strike_target", "game.input.warrior_target", _warrior_move_effect.get_strike_cells(Game.game_state, actor_id, _partial_inputs.target_cell));
 		}
 		else {
 			var _specs = Game.game_rules.get_inputs(Game.game_state, actor_id, effect_id, _partial_inputs);
@@ -134,7 +145,7 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 				}
 			}
 		}
-		if _input_spec == undefined || !Game.game_input.has_cell(_input_spec, [_x, _y]) {
+		if _input_spec == undefined || !GameInput.has_cell(_input_spec, [_x, _y]) {
 			return false;
 		}
 		inputs[$ _input_id] = [_x, _y];
@@ -169,15 +180,15 @@ function EffectAction(_effect_id, _actor_id, _inputs) : Action() constructor {
 		retarget_input_id = "strike_target";
 		Game.game_loop_controller.state = STATE_LIST.figure_ability;
 		O_BoardDraw.block_end_button();
-		global.mark = S_Ability_mark;
-		global.cell_action = function(_cell) {
+		Game.input_session.mark_sprite = S_Ability_mark;
+		Game.input_session.set_handler(function(_cell) {
 			var _active_action = Game.game_loop_controller.action;
 			if _cell != undefined && _active_action != undefined && _active_action.type == "effect" && _active_action.effect_id == "warrior_move" {
 				if _active_action.set_new_input_coordinates("strike_target", _cell.xcord, _cell.ycord) {
 					O_BoardDraw.unblock_end_button();
 				}
 			}
-		};
+		});
 		return true;
 	}
 

@@ -19,14 +19,14 @@ function MoveEffect() : GameEffect("move") constructor {
 		return _result;
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _from = Game.game_input.cell("from_cell", "game.input.move_figure", get_owned_figure_cells(_state, _actor_id));
-		if !variable_struct_exists(_partial, "from_cell") || !Game.game_input.has_cell(_from, _partial.from_cell) return [_from];
-		return [_from, Game.game_input.cell("target_cell", "game.input.move_target", get_target_cells(_state, _partial.from_cell))];
+		var _from = GameInput.cell("from_cell", "game.input.move_figure", get_owned_figure_cells(_state, _actor_id));
+		if !variable_struct_exists(_partial, "from_cell") || !GameInput.has_cell(_from, _partial.from_cell) return [_from];
+		return [_from, GameInput.cell("target_cell", "game.input.move_target", get_target_cells(_state, _partial.from_cell))];
 	}
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot move now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid move"};
+		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid move"};
 		return {ok: true, error: ""};
 	}
 	execute = function(_state, _actor_id, _inputs) {

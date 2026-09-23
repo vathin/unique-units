@@ -7,6 +7,12 @@ function GameEffect(_id = "") constructor {
 		return [];
 	}
 
+	// Progress contains presentation facts, such as a card already being shown.
+	// It is deliberately separate from inputs, which are sent to the rules.
+	is_cancelable = function(_state, _actor_id, _partial_inputs = {}, _progress = {}) {
+		return true;
+	}
+
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		return {ok: true, error: ""};
 	}

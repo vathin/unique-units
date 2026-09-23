@@ -1,4 +1,8 @@
 function SummonEffect() : GameEffect("summon") constructor {
+	is_cancelable = function(_state, _actor_id, _partial_inputs = {}, _progress = {}) {
+		return !is_struct(_progress) || !variable_struct_exists(_progress, "card_revealed") || !_progress.card_revealed;
+	}
+
 	get_summon_cells = function(_state, _actor_id) {
 		var _cells = [];
 		var _player_key = string(_actor_id);
@@ -50,7 +54,15 @@ function SummonEffect() : GameEffect("summon") constructor {
 	}
 
 	get_inputs = function(_state, _actor_id, _partial_inputs = {}) {
-		return [Game.game_input.cell("target_cell", "game.input.summon_target", get_summon_cells(_state, _actor_id))];
+		var _cells = [];
+		var _player_key = string(_actor_id);
+		if _state != undefined && variable_struct_exists(_state.data, "players") && variable_struct_exists(_state.data.players, _player_key) {
+			var _player = _state.data.players[$ _player_key];
+			if _state.data.active_player_id == _actor_id && _player.able_to_summon && is_array(_player.deck) && array_length(_player.deck) > 0 {
+				_cells = get_summon_cells(_state, _actor_id);
+			}
+		}
+		return [GameInput.cell("target_cell", "game.input.summon_target", _cells)];
 	}
 
 	validate_inputs = function(_state, _actor_id, _inputs) {
@@ -63,7 +75,7 @@ function SummonEffect() : GameEffect("summon") constructor {
 			return {ok: false, error: "No figure available for summon"};
 		}
 		var _spec = get_inputs(_state, _actor_id)[0];
-		if !is_struct(_inputs) || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_spec, _inputs.target_cell) {
+		if !is_struct(_inputs) || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_spec, _inputs.target_cell) {
 			return {ok: false, error: "Invalid summon target"};
 		}
 		return {ok: true, error: ""};

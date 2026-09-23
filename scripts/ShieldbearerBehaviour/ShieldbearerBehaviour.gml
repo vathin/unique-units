@@ -6,7 +6,7 @@ function ShieldbearerBehaviour() : FigureBehaviour() constructor{
 	card = S_shieldbearer_card;
 	logo = S_ShieldbearerLogo;
 	ability = undefined;
-	move_ability = StandartMoveAbility;
+	ability_effect_id = "shieldbearer_ability";
 	rarity = 3;
 	deck_class = "B";
 	max_deck_amount = 5;

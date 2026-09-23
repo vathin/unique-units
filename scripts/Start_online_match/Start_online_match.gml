@@ -1,7 +1,8 @@
 
 function Start_online_match(_server_id, _enemy, _role){
-	global.cell_click_callback = undefined;
-	global.selected_cell = undefined;
+	if Game != undefined && Game.input_session != undefined {
+		Game.input_session.clear();
+	}
 	global.able_to_summon = false;
 	global.moving_figure = false;
 	global.using_ability = false;

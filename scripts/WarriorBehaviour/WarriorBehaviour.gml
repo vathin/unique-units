@@ -5,8 +5,9 @@ function WarriorBehaviour() : FigureBehaviour() constructor{
 	index = "warrior";
 	card = S_warrior_card;
 	logo = S_WarriorLogo;
-	ability = WarriorAbility;
-	move_ability = WarriorMoveAndAbility;
+	ability = undefined;
+	move_effect_id = "warrior_move";
+	ability_effect_id = "warrior_ability";
 	rarity = 2;
 	deck_class = "C";
 	max_deck_amount = 5;

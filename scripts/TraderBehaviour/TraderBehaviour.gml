@@ -5,8 +5,8 @@ function TraderBehaviour() : FigureBehaviour() constructor{
 	index = "trader";
 	card = S_trader_card;
 	logo = S_TraderLogo;
-	ability = TraderAbility;
-	move_ability = StandartMoveAbility;
+	ability = undefined;
+	ability_effect_id = "trader_ability";
 	rarity = 5;
 	deck_class = "S";
 	max_deck_amount = 1;

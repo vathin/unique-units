@@ -5,8 +5,8 @@ function SpearmanBehaviour() : FigureBehaviour() constructor{
 	index = "spearman";
 	card = S_spearman_card;
 	logo = S_SpearmanLogo;
-	ability = SpearmanAbility;
-	move_ability = StandartMoveAbility;
+	ability = undefined;
+	ability_effect_id = "spearman_ability";
 	rarity = 1;
 	deck_class = "D";
 	max_deck_amount = 5;

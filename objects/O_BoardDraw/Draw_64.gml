@@ -24,9 +24,12 @@ if in_game {
 				UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.opponent_turn);
 			}
 		}
-		else if Game.game_loop_controller.get_player(global.turn_owner).able_to_summon and !is_button_have_overlay() {
+		else if O_BoardDraw.can_current_player_summon() and !is_button_have_overlay() {
 			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.can_summon);
 			Game.game_loop_controller.figures_counter.display_available_figures();
+		}
+		else if !is_button_have_overlay() {
+			UI_controller.set_button_frame(UI_controller.main_button, INGAMEBUTTONFRAMES.cant_summon);
 		}
 		break;
 	case STATE_LIST.figure_action:

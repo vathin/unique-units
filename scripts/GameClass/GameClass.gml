@@ -27,10 +27,14 @@ function GameClass() constructor{
 	bot_controller = undefined;
 	is_simulating = false;
 	game_state = undefined;
+	input_session = new GameInputSession();
 	Player1 = undefined;
 	Player2 = undefined;
 	pending_gameplay_setups = [];
-	game_input = new GameInput();
+	// Match decks are transient setup data. Persistent deck-building data lives in
+	// user_data, while a running match is owned exclusively by GameState.
+	match_decks = {};
+	match_state_initialized = false;
 	game_rules = new GameRules();
 	game_state_presenter = undefined;
 	effect_choice_view_factory = function(_spec, _on_select) {
@@ -51,13 +55,6 @@ function GameClass() constructor{
 		};
 	}
 
-	sync_game_state_from_legacy = function(_preserve_match_decks = true) {
-		if game_rules != undefined and field != undefined {
-			var _deck_source_state = _preserve_match_decks ? game_state : undefined;
-			game_state = game_rules.from_legacy_match(_deck_source_state);
-		}
-	}
-
 	make_local_deck_data = function(_source_deck = undefined) {
 		var _deck = get_default_local_deck();
 		if _source_deck != undefined and is_struct(_source_deck) and variable_struct_exists(_source_deck, "player_figures") {
@@ -68,6 +65,37 @@ function GameClass() constructor{
 		_deck.player_figures = array_shuffle(_deck.player_figures);
 		_deck.player_deck_size = array_length(_deck.player_figures);
 		return _deck;
+	}
+
+	set_match_deck = function(_player_id, _deck) {
+		if _player_id == undefined {
+			return false;
+		}
+		match_decks[$ string(_player_id)] = is_array(_deck) ? deep_copy(_deck) : [];
+		return true;
+	}
+
+	get_match_deck = function(_player_id) {
+		var _key = string(_player_id);
+		return variable_struct_exists(match_decks, _key) ? deep_copy(match_decks[$ _key]) : undefined;
+	}
+
+	try_initialize_match_state = function() {
+		if match_state_initialized || Player1 == undefined || Player2 == undefined {
+			return false;
+		}
+		var _player1_deck = get_match_deck(Player1.player_id);
+		var _player2_deck = get_match_deck(Player2.player_id);
+		if _player1_deck == undefined || _player2_deck == undefined {
+			return false;
+		}
+		game_state = game_rules.create_match_state(global.map, Player1, Player2,
+			_player1_deck, _player2_deck, global.turn_owner);
+		match_state_initialized = true;
+		if game_state_presenter != undefined {
+			game_state_presenter.apply_state(game_state);
+		}
+		return true;
 	}
 
 
@@ -131,8 +159,9 @@ function GameClass() constructor{
 		}
 		var _confirmed_state = new GameState(deep_copy(_logic_state));
 		_confirmed_state.ensure_figure_ids();
+		var _batches = is_array(_animation_batches) ? _animation_batches : [];
 		if game_state_presenter != undefined {
-			game_state_presenter.commit(_confirmed_state, _animation_batches);
+			game_state_presenter.commit(_confirmed_state, _batches);
 		}
 		else {
 			game_state = _confirmed_state;
@@ -147,8 +176,13 @@ function GameClass() constructor{
 	}
 
 	send_gameplay_setup = function() {
-		var _deck = user_data.load(O_Server._id).player_figures;
-		Server.send(new ServerMessage(ServerMessageType.GameplaySetup, {deck: deep_copy(_deck)}));
+		var _deck = get_match_deck(O_Server._id);
+		if _deck == undefined {
+			show_debug_message("GameplaySetup skipped: local match deck is missing");
+			return false;
+		}
+		Server.send(new ServerMessage(ServerMessageType.GameplaySetup, {deck: _deck}));
+		return true;
 	}
 
 	receive_gameplay_setup = function(_setup) {
@@ -159,14 +193,8 @@ function GameClass() constructor{
 			array_push(pending_gameplay_setups, deep_copy(_setup));
 			return true;
 		}
-		user_data.save(_setup.actor_id, {player_cards: [], player_figures: deep_copy(_setup.deck), player_deck_size: array_length(_setup.deck)});
-		if role == "host" && game_state_presenter != undefined {
-			game_state = game_rules.create_match_state(global.map, Player1, Player2,
-				user_data.load(Player1.player_id).player_figures,
-				user_data.load(Player2.player_id).player_figures, global.turn_owner);
-			game_state_presenter.apply_state(game_state);
-		}
-		return true;
+		set_match_deck(_setup.actor_id, _setup.deck);
+		return try_initialize_match_state();
 	}
 
 	init = function() {
@@ -181,11 +209,8 @@ function GameClass() constructor{
 				Player2 = new Player(O_Server._id, "local");
 				local_player = Player2;
 			}
-			user_data.reset();
 			randomize();
-			user_data.save(O_Server._id, {player_cards: O_DeckManager.get_selected_deck_names_list(),
-				player_figures: array_shuffle(O_DeckManager.get_selected_deck_array()),
-				player_deck_size: array_length(O_DeckManager.get_selected_deck_array())});
+			set_match_deck(O_Server._id, array_shuffle(O_DeckManager.get_selected_deck_array()));
 			for (var _setup_index = 0; _setup_index < array_length(pending_gameplay_setups); _setup_index++) {
 				receive_gameplay_setup(pending_gameplay_setups[_setup_index]);
 			}
@@ -211,19 +236,14 @@ function GameClass() constructor{
 				local_player = undefined;
 			}
 			global.turn_owner = Player1.player_id;
-			user_data.reset();
 			var _source_deck = undefined;
 			if variable_global_exists("local_match_deck") and global.local_match_deck != undefined {
 				_source_deck = global.local_match_deck;
 			}
-			user_data.save(Player1.player_id, make_local_deck_data(_source_deck));
-			user_data.save(Player2.player_id, make_local_deck_data(_source_deck));
+			set_match_deck(Player1.player_id, make_local_deck_data(_source_deck).player_figures);
+			set_match_deck(Player2.player_id, make_local_deck_data(_source_deck).player_figures);
 		}
 		Maps_list.select_map(global.map);
-		var _player1_deck = user_data.load(Player1.player_id).player_figures;
-		var _player2_deck = user_data.load(Player2.player_id).player_figures;
-		game_state = game_rules.create_match_state(global.map, Player1, Player2,
-			_player1_deck, _player2_deck, global.turn_owner);
 		game_loop_controller = new GameLoopController();
 		field = new Field();
 		array_push(do_every_step_list, game_loop_controller.step);
@@ -234,7 +254,14 @@ function GameClass() constructor{
 		ability_input_controller = undefined;
 		move_input_controller = undefined;
 		game_state_presenter = new GameStatePresenter();
-		game_state_presenter.apply_state(game_state);
+		input_session.clear();
+		input_session.set_handler(game_loop_controller.default_cell_click_action);
+		if game_state != undefined {
+			game_state_presenter.apply_state(game_state);
+		}
+		else {
+			try_initialize_match_state();
+		}
 		array_push(do_every_step_list, game_state_presenter.step);
 		in_match = 1;
 		if instance_exists(O_DeckManager) {
@@ -256,7 +283,10 @@ function GameClass() constructor{
 		local_player = undefined;
 		bot_controller = undefined;
 		game_state = undefined;
+		input_session.clear();
 		game_state_presenter = undefined;
+		match_decks = {};
+		match_state_initialized = false;
 		in_match = 0;
 		do_every_step_list = [];
 	}

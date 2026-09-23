@@ -1,5 +1,4 @@
-/// Pure archer movement. Every path cell must neighbour at least one figure;
-/// different neighbouring groups are all valid movement routes.
+/// Pure archer movement. Each step must remain connected to a shared figure.
 function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 	get_sources = function(_state, _actor_id) {
 		var _cells = [];
@@ -56,6 +55,31 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 		return false;
 	}
 
+	is_valid_path = function(_state, _source, _target, _path) {
+		if !is_array(_path) || array_length(_path) < 2 {
+			return false;
+		}
+		var _last_index = array_length(_path) - 1;
+		if _path[0][0] != _source[0] || _path[0][1] != _source[1]
+		|| _path[_last_index][0] != _target[0] || _path[_last_index][1] != _target[1] {
+			return false;
+		}
+		for (var _index = 1; _index < array_length(_path); _index++) {
+			var _from = _path[_index - 1];
+			var _to = _path[_index];
+			if abs(_to[0] - _from[0]) + abs(_to[1] - _from[1]) != 1 {
+				return false;
+			}
+			if _state.get_cell(_to[0], _to[1]) == undefined || _state.get_figure(_to[0], _to[1]) != undefined {
+				return false;
+			}
+			if !has_common_neighbour_figure(_state, _from, _to, _source) {
+				return false;
+			}
+		}
+		return true;
+	}
+
 	get_reachable = function(_state, _source) {
 		var _paths = array_create(_state.data.width);
 		var _visited = array_create(_state.data.width);
@@ -96,16 +120,16 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 	}
 
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _source = Game.game_input.cell("source_cell", "game.input.archer_source", get_sources(_state, _actor_id));
-		if !variable_struct_exists(_partial, "source_cell") || !Game.game_input.has_cell(_source, _partial.source_cell) return [_source];
+		var _source = GameInput.cell("source_cell", "game.input.archer_source", get_sources(_state, _actor_id));
+		if !variable_struct_exists(_partial, "source_cell") || !GameInput.has_cell(_source, _partial.source_cell) return [_source];
 		var _reachable = get_reachable(_state, _partial.source_cell);
-		return [_source, Game.game_input.cell("target_cell", "game.input.move_target", _reachable.cells)];
+		return [_source, GameInput.cell("target_cell", "game.input.move_target", _reachable.cells)];
 	}
 
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot move now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid archer move"};
+		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid archer move"};
 		return {ok: true, error: ""};
 	}
 
@@ -115,6 +139,9 @@ function ArcherMoveEffect() : GameEffect("archer_move") constructor {
 		var _next = _state.clone();
 		var _archer = _next.get_figure(_inputs.source_cell[0], _inputs.source_cell[1]);
 		var _path = get_reachable(_state, _inputs.source_cell).paths[_inputs.target_cell[0]][_inputs.target_cell[1]];
+		if _archer == undefined || !is_valid_path(_state, _inputs.source_cell, _inputs.target_cell, _path) {
+			return {ok: false, error: "Invalid archer route", next_state: _state, animation_batches: [], events: []};
+		}
 		_next.clear_cell(_inputs.source_cell[0], _inputs.source_cell[1]);
 		_next.set_figure(_inputs.target_cell[0], _inputs.target_cell[1], _archer);
 		var _archer_id = _archer.figure_id;

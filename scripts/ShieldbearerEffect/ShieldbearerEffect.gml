@@ -22,16 +22,16 @@ function ShieldbearerEffect() : GameEffect("shieldbearer_ability") constructor {
 		return _cells;
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _source = Game.game_input.cell("source_cell", "game.input.shieldbearer_source", get_sources(_state, _actor_id));
-		if !variable_struct_exists(_partial, "source_cell") || !Game.game_input.has_cell(_source, _partial.source_cell) return [_source];
-		var _target = Game.game_input.cell("target_cell", "game.input.shieldbearer_figure", get_neighbors(_state, _partial.source_cell, true));
-		if !variable_struct_exists(_partial, "target_cell") || !Game.game_input.has_cell(_target, _partial.target_cell) return [_source, _target];
-		return [_source, _target, Game.game_input.cell("destination_cell", "game.input.shieldbearer_destination", get_neighbors(_state, _partial.source_cell, false))];
+		var _source = GameInput.cell("source_cell", "game.input.shieldbearer_source", get_sources(_state, _actor_id));
+		if !variable_struct_exists(_partial, "source_cell") || !GameInput.has_cell(_source, _partial.source_cell) return [_source];
+		var _target = GameInput.cell("target_cell", "game.input.shieldbearer_figure", get_neighbors(_state, _partial.source_cell, true));
+		if !variable_struct_exists(_partial, "target_cell") || !GameInput.has_cell(_target, _partial.target_cell) return [_source, _target];
+		return [_source, _target, GameInput.cell("destination_cell", "game.input.shieldbearer_destination", get_neighbors(_state, _partial.source_cell, false))];
 	}
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot use shieldbearer ability now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 3 || !variable_struct_exists(_inputs, "destination_cell") || !Game.game_input.has_cell(_specs[2], _inputs.destination_cell) return {ok: false, error: "Invalid shieldbearer input"};
+		if array_length(_specs) != 3 || !variable_struct_exists(_inputs, "destination_cell") || !GameInput.has_cell(_specs[2], _inputs.destination_cell) return {ok: false, error: "Invalid shieldbearer input"};
 		return {ok: true, error: ""};
 	}
 	execute = function(_state, _actor_id, _inputs) {

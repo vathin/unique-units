@@ -90,15 +90,6 @@ function GameStatePresenter() constructor {
 			Game.game_loop_controller.player1_captured = _state.data.captured[$ _player1_key];
 			Game.game_loop_controller.player2_captured = _state.data.captured[$ _player2_key];
 		}
-		var _player_keys = variable_struct_get_names(_state.data.players);
-		for (var _player_index = 0; _player_index < array_length(_player_keys); _player_index++) {
-			var _player = _state.data.players[$ _player_keys[_player_index]];
-			var _deck_data = Game.user_data.load(_player.player_id);
-			if is_struct(_deck_data) {
-				_deck_data.player_figures = deep_copy(_player.deck);
-				Game.user_data.save(_player.player_id, _deck_data);
-			}
-		}
 	}
 
 	play_batch = function(_batch) {
@@ -252,13 +243,18 @@ function GameStatePresenter() constructor {
 	}
 
 	commit = function(_state, _animation_batches) {
+		if _state == undefined || !is_struct(_state) || !variable_struct_exists(_state, "clone") {
+			show_debug_message("Presenter commit skipped: invalid game state");
+			return false;
+		}
 		// A received result belongs to this animation transaction even if another
 		// caller later reuses or mutates its source state.
 		pending_state = _state.clone();
-		pending_batches = deep_copy(_animation_batches);
+		pending_batches = is_array(_animation_batches) ? deep_copy(_animation_batches) : [];
 		pending_visual_updates = [];
 		show_debug_message("Presenter commit: batches=" + string(array_length(pending_batches)));
 		advance();
+		return true;
 	}
 
 	advance = function() {

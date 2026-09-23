@@ -1,14 +1,18 @@
-// Ресурсы скриптов были изменены для версии 2.3.0, подробности см. по адресу
+// Р РµСЃСѓСЂСЃС‹ СЃРєСЂРёРїС‚РѕРІ Р±С‹Р»Рё РёР·РјРµРЅРµРЅС‹ РґР»СЏ РІРµСЂСЃРёРё 2.3.0, РїРѕРґСЂРѕР±РЅРѕСЃС‚Рё СЃРј. РїРѕ Р°РґСЂРµСЃСѓ
 // https://help.yoyogames.com/hc/en-us/articles/360005277377
 function SummonInputController() constructor{
 	Game.game_loop_controller.state = STATE_LIST.summon
 	Game.field.clear_all_marks();
-	Game.field.selected_cell = undefined;
-	global.selected_cell = undefined;
+	Game.input_session.selected_cell = undefined;
 	Game.game_loop_controller.set_can_cancel(0);
 	var _player_key = string(global.turn_owner);
 	if Game.game_state == undefined or !variable_struct_exists(Game.game_state.data.players, _player_key) {
 		Game.summon_controller = undefined;
+		return;
+	}
+	if Game.game_rules == undefined || !Game.game_rules.can_summon(Game.game_state, global.turn_owner) {
+		Game.summon_controller = undefined;
+		Game.game_loop_controller.set_game_state(STATE_LIST.wait);
 		return;
 	}
 	var _deck = Game.game_state.data.players[$ _player_key].deck;
@@ -17,7 +21,10 @@ function SummonInputController() constructor{
 		return;
 	}
 	figure_to_summon = _deck[array_length(_deck) - 1];
-	global.mark = S_Summon_mark;
+	Game.game_loop_controller.set_can_cancel(Game.game_rules.is_effect_cancelable(
+		Game.game_state, global.turn_owner, "summon", {}, {card_revealed: true}
+	));
+	Game.input_session.mark_sprite = S_Summon_mark;
 	// The UI must render exactly the same cells SummonEffect validates.
 	var _summon_specs = Game.game_rules.get_inputs(Game.game_state, global.turn_owner, "summon", {});
 	if array_length(_summon_specs) <= 0 || !is_array(_summon_specs[0].allowed_cells) {
@@ -35,14 +42,14 @@ function SummonInputController() constructor{
 		}
 	}
 	global.able_to_summon = true;
-	global.cell_action = function(cell) {
+	Game.input_session.set_handler(function(cell) {
 		if cell != undefined && Game.summon_controller != undefined
-		&& Game.game_input.has_cell(Game.summon_controller.summon_spec, [cell.xcord, cell.ycord]) {
-			global.cell_click_callback = cell;
+		&& GameInput.has_cell(Game.summon_controller.summon_spec, [cell.xcord, cell.ycord]) {
+			Game.input_session.clicked_cell = cell;
 			Game.field.set_selected_cell(cell)
 			Game.game_loop_controller.choose_cell_for_summon();
 		}	
-	}
+	})
 	
 	Button_set_overlay = function() {
 		O_BoardDraw.set_button_overlay(Behaviours.get_sprite(figure_to_summon), 0)
@@ -71,16 +78,16 @@ function SummonInputController() constructor{
 		Game.game_loop_controller.set_action(_action);
 		// The controller is released after the card is revealed. Continue routing
 		// later clicks through the pending action, which revalidates every target.
-		global.cell_action = function(_cell) {
+		Game.input_session.set_handler(function(_cell) {
 			if _cell == undefined {
 				return;
 			}
 			var _active_action = Game.game_loop_controller.action;
 			if _active_action != undefined && _active_action.type == "effect" && _active_action.effect_id == "summon" {
-				global.cell_click_callback = _cell;
+				Game.input_session.clicked_cell = _cell;
 				Game.game_loop_controller.choose_cell_for_summon();
 			}
-		};
+		});
 		O_BoardDraw.unblock_end_button();
 		var _overlay_index = array_get_index(Game.do_every_step_list, Button_set_overlay);
 		if _overlay_index != -1 {

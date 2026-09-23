@@ -20,20 +20,20 @@ function WarriorEffect() : GameEffect("warrior_ability") constructor {
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {
 		var _sources = get_sources(_state, _actor_id);
-		var _source = Game.game_input.cell("source_cell", "game.input.warrior_source", _sources);
+		var _source = GameInput.cell("source_cell", "game.input.warrior_source", _sources);
 		if !variable_struct_exists(_partial, "source_cell") {
 			return [_source];
 		}
-		if !Game.game_input.has_cell(_source, _partial.source_cell) {
+		if !GameInput.has_cell(_source, _partial.source_cell) {
 			return [_source];
 		}
 		var _targets = get_targets(_state, _actor_id, _partial.source_cell);
-		return [_source, Game.game_input.cell("target_cell", "game.input.warrior_target", _targets)];
+		return [_source, GameInput.cell("target_cell", "game.input.warrior_target", _targets)];
 	}
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot use warrior ability now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid warrior target"};
+		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid warrior target"};
 		return {ok: true, error: ""};
 	}
 	execute = function(_state, _actor_id, _inputs) {

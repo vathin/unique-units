@@ -1,4 +1,8 @@
 function TraderEffect() : GameEffect("trader_ability") constructor {
+	is_cancelable = function(_state, _actor_id, _partial_inputs = {}, _progress = {}) {
+		return !is_struct(_progress) || !variable_struct_exists(_progress, "card_revealed") || !_progress.card_revealed;
+	}
+
 	get_sources = function(_state, _actor_id) {
 		var _cells = [];
 		for (var _x = 0; _x < _state.data.width; _x++) for (var _y = 0; _y < _state.data.height; _y++) {
@@ -15,17 +19,22 @@ function TraderEffect() : GameEffect("trader_ability") constructor {
 		return _options;
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _source = Game.game_input.cell("source_cell", "game.input.trader_source", get_sources(_state, _actor_id));
-		if !variable_struct_exists(_partial, "source_cell") || !Game.game_input.has_cell(_source, _partial.source_cell) return [_source];
-		var _choice = Game.game_input.choice("figure_choice", "game.input.trader_choice", get_options(_state, _actor_id));
-		if !variable_struct_exists(_partial, "figure_choice") return [_source, _choice];
+		var _source = GameInput.cell("source_cell", "game.input.trader_source", get_sources(_state, _actor_id));
+		if !variable_struct_exists(_partial, "source_cell") || !GameInput.has_cell(_source, _partial.source_cell) return [_source];
 		var _summon = new SummonEffect();
-		return [_source, _choice, Game.game_input.cell("target_cell", "game.input.trader_target", _summon.get_summon_cells(_state, _actor_id))];
+		var _target_cells = _summon.get_summon_cells(_state, _actor_id);
+		var _choice = GameInput.choice("figure_choice", "game.input.trader_choice", get_options(_state, _actor_id));
+		if array_length(_target_cells) <= 0 {
+			_choice.options = [];
+			return [_source, _choice];
+		}
+		if !variable_struct_exists(_partial, "figure_choice") return [_source, _choice];
+		return [_source, _choice, GameInput.cell("target_cell", "game.input.trader_target", _target_cells)];
 	}
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot use trader ability now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 3 || !is_real(_inputs.figure_choice) || _inputs.figure_choice < 0 || _inputs.figure_choice > 2 || !Game.game_input.has_cell(_specs[2], _inputs.target_cell) return {ok: false, error: "Invalid trader input"};
+		if array_length(_specs) != 3 || !is_real(_inputs.figure_choice) || _inputs.figure_choice < 0 || _inputs.figure_choice > 2 || !GameInput.has_cell(_specs[2], _inputs.target_cell) return {ok: false, error: "Invalid trader input"};
 		return {ok: true, error: ""};
 	}
 	execute = function(_state, _actor_id, _inputs) {

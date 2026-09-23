@@ -4,8 +4,6 @@ function Start_match(_mode = "local_vs_local"){
 		show_debug_message("Start_match rejected: selected deck is invalid: " + json_stringify(_validation.errors));
 		return false;
 	}
-	global.cell_click_callback = undefined;
-	global.selected_cell = undefined;
 	global.able_to_summon = false;
 	global.moving_figure = false;
 	global.using_ability = false;
@@ -35,6 +33,7 @@ function Start_match(_mode = "local_vs_local"){
 	else {
 		global.game.end_game();
 	}
+	Game.input_session.clear();
 
 	global.game.online_match = false;
 	global.game.server_id = "";

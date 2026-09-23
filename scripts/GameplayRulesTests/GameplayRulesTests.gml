@@ -26,6 +26,26 @@ function GameplayRulesTests(_suite) constructor {
 		_result = rules.execute(_state, 1, {effect_id: "summon", inputs: {target_cell: [0, 0]}});
 		suite.assert_true(!_result.ok, "summon rejects an occupied target");
 		suite.assert_equal(_state.get_figure(0, 0).figure_id, "enemy", "rejected summon does not mutate state");
+
+		_state = make_state(["spearman"]);
+		var _block_id = 0;
+		for (var _x = 0; _x < _state.data.width; _x++) {
+			for (var _y = 0; _y < _state.data.height; _y++) {
+				_state.set_figure(_x, _y, {figure_id: "block_" + string(_block_id), behaviour: "archer", owner_id: 2, status: "active"});
+				_block_id++;
+			}
+		}
+		var _summon_spec = rules.get_inputs(_state, 1, "summon")[0];
+		suite.assert_true(array_length(_summon_spec.allowed_cells) == 0, "summon exposes no targets when every cell is unavailable");
+		suite.assert_true(!rules.can_summon(_state, 1), "summon is unavailable when it has no legal target cells");
+	}
+
+	test_effect_cancelability = function() {
+		var _state = make_state(["spearman"], ["archer"]);
+		suite.assert_true(rules.is_effect_cancelable(_state, 1, "summon", {}, {}), "summon is cancelable before its card is revealed");
+		suite.assert_true(!rules.is_effect_cancelable(_state, 1, "summon", {}, {card_revealed: true}), "summon is committed after its card is revealed");
+		suite.assert_true(rules.is_effect_cancelable(_state, 1, "trader_ability", {source_cell: [0, 0]}, {}), "trader is cancelable before its cards are revealed");
+		suite.assert_true(!rules.is_effect_cancelable(_state, 1, "trader_ability", {source_cell: [0, 0]}, {card_revealed: true}), "trader is committed after its cards are revealed");
 	}
 
 	test_move = function() {
@@ -64,7 +84,10 @@ function GameplayRulesTests(_suite) constructor {
 		_state.set_figure(0, 1, {figure_id: "left_anchor", behaviour: "spearman", owner_id: 1, status: "active"});
 		_state.set_figure(3, 1, {figure_id: "right_anchor", behaviour: "spearman", owner_id: 1, status: "active"});
 		_inputs = rules.get_inputs(_state, 1, "archer_move", {source_cell: [1, 1]});
-		suite.assert_true(!Game.game_input.has_cell(_inputs[1], [2, 1]), "archer cannot detach from one figure to cross a gap to another");
+		suite.assert_true(!GameInput.has_cell(_inputs[1], [2, 1]), "archer cannot detach from one figure to cross a gap to another");
+
+		var _effect = rules.get_effect("archer_move");
+		suite.assert_true(!_effect.is_valid_path(_state, [1, 1], [2, 1], [[1, 1], [3, 1], [2, 1]]), "archer rejects a route with a jump over a figure");
 	}
 
 	test_surround_capture = function() {
@@ -88,6 +111,7 @@ function GameplayRulesTests(_suite) constructor {
 
 	run = function() {
 		suite.run_case("summon", function() { test_summon(); });
+		suite.run_case("effect cancelability", function() { test_effect_cancelability(); });
 		suite.run_case("move", function() { test_move(); });
 		suite.run_case("warrior strike", function() { test_warrior_strike(); });
 		suite.run_case("archer", function() { test_archer(); });

@@ -6,6 +6,18 @@ function EffectInputController(_effect_id, _actor_id, _initial_inputs = {}) cons
 	inputs = deep_copy(_initial_inputs);
 	current_spec = undefined;
 	choice_view = undefined;
+	cancel_progress = {card_revealed: false};
+
+	is_cancelable = function() {
+		if Game.game_state == undefined || Game.game_rules == undefined {
+			return false;
+		}
+		return Game.game_rules.is_effect_cancelable(Game.game_state, actor_id, effect_id, inputs, cancel_progress);
+	}
+
+	sync_cancelability = function() {
+		Game.game_loop_controller.set_can_cancel(is_cancelable());
+	}
 
 	find_next_spec = function(_specs) {
 		for (var _index = 0; _index < array_length(_specs); _index++) {
@@ -45,24 +57,28 @@ function EffectInputController(_effect_id, _actor_id, _initial_inputs = {}) cons
 		}
 		if current_spec == undefined {
 			var _action = new EffectAction(effect_id, actor_id, inputs);
+			_action.cancel_progress = deep_copy(cancel_progress);
 			_action.retarget_input_id = _completed_spec == undefined ? undefined : _completed_spec.id;
 			if _completed_spec != undefined && _completed_spec.type == "cell" {
 				_action.set_preview(_completed_spec.id, inputs[$ _completed_spec.id][0], inputs[$ _completed_spec.id][1]);
 			}
 			Game.game_loop_controller.set_action(_action);
 			if _completed_spec != undefined && _completed_spec.type == "cell" {
-				global.cell_action = function(_cell) {
+				Game.input_session.set_handler(function(_cell) {
 					var _active_action = Game.game_loop_controller.action;
 					if _cell != undefined && _active_action != undefined && _active_action.type == "effect" {
 						_active_action.set_new_input_coordinates(_active_action.retarget_input_id, _cell.xcord, _cell.ycord);
 					}
-				};
+				});
 			}
 			Game.ability_input_controller = undefined;
 			O_BoardDraw.unblock_end_button();
+			sync_cancelability();
 			return;
 		}
 		if current_spec.type == "choice" {
+			cancel_progress.card_revealed = true;
+			sync_cancelability();
 			choice_view = Game.effect_choice_view_factory(current_spec, function(_value) {
 				inputs[$ current_spec.id] = _value;
 				refresh();
@@ -70,27 +86,31 @@ function EffectInputController(_effect_id, _actor_id, _initial_inputs = {}) cons
 			return;
 		}
 		mark_cells(current_spec);
-		global.cell_action = function(_cell) {
-			if _cell != undefined && Game.game_input.has_cell(current_spec, [_cell.xcord, _cell.ycord]) {
+		Game.input_session.set_handler(function(_cell) {
+			if _cell != undefined && GameInput.has_cell(current_spec, [_cell.xcord, _cell.ycord]) {
 				inputs[$ current_spec.id] = [_cell.xcord, _cell.ycord];
-				global.cell_click_callback = _cell;
+				Game.input_session.clicked_cell = _cell;
 				refresh();
 			}
-		};
+		});
 	}
 
 	back = function() {
+		if !is_cancelable() {
+			return;
+		}
 		if choice_view != undefined {
 			choice_view.destroy();
 		}
 		Game.field.clear_all_marks();
-		global.cell_click_callback = global.selected_cell;
+		Game.input_session.clicked_cell = Game.input_session.selected_cell;
 		Game.ability_input_controller = undefined;
 		Game.figure_action_controller = new FigureActionController();
 	}
 
 	Game.game_loop_controller.state = (_effect_id == "move" || _effect_id == "archer_move" || _effect_id == "warrior_move") ? STATE_LIST.figure_move : STATE_LIST.figure_ability;
-	global.mark = S_Ability_mark;
+	Game.input_session.mark_sprite = S_Ability_mark;
+	sync_cancelability();
 	O_BoardDraw.block_end_button();
 	refresh();
 }

@@ -20,31 +20,31 @@ update_layout = function() {
 	turn_owner_cord = [width/1.85, height/7.5];
 }
 
+can_current_player_summon = function() {
+	return Game.game_state != undefined && Game.game_rules != undefined
+		&& Game.game_rules.can_summon(Game.game_state, global.turn_owner);
+}
+
 // The click target is resolved from GameState; Field is only the hit-test and
 // rendering projection, so it deliberately is not accepted as a Figure here.
 figure_click = function() {
 		if Game.game_loop_controller.is_turn_transition_active() or !Game.game_loop_controller.is_human_turn() {
 			return;
 		}
-		if Game.game_loop_controller.get_game_state() != STATE_LIST.wait || Game.game_state == undefined || global.cell_click_callback == undefined {
+	if Game.game_loop_controller.get_game_state() != STATE_LIST.wait || Game.game_state == undefined || Game.input_session.clicked_cell == undefined {
 			return;
 		}
-		var _state_figure = Game.game_state.get_figure(global.cell_click_callback.xcord, global.cell_click_callback.ycord);
+	var _state_figure = Game.game_state.get_figure(Game.input_session.clicked_cell.xcord, Game.input_session.clicked_cell.ycord);
 		if _state_figure == undefined || string(_state_figure.owner_id) != string(global.turn_owner) || _state_figure.status != "active" {
 			return;
 		}
-		global.selected_cell = global.cell_click_callback;
+	Game.input_session.select(Game.input_session.clicked_cell);
 		Game.field.clear_all_marks();
 		Game.figure_action_controller = new FigureActionController();
 	}
 
 cancel = function() {
 	if Game.game_loop_controller.is_turn_transition_active() {
-		return;
-	}
-	// The card is revealed when summon mode starts, so this commitment cannot
-	// be rolled back to fish for another card.
-	if Game.game_loop_controller.get_game_state() == STATE_LIST.summon {
 		return;
 	}
 	if !Game.game_loop_controller.is_local_turn() {
@@ -56,7 +56,7 @@ cancel = function() {
 	if !Game.game_loop_controller.is_human_turn() {
 		return;
 	}
-	if (game_state == STATE_LIST.summon and global.cell_click_callback != undefined) or
+	if (game_state == STATE_LIST.summon and Game.input_session.clicked_cell != undefined) or
 	Game.game_loop_controller.can_cancel {
 		if Game.game_loop_controller.have_action(){Game.game_loop_controller.action.back()}
 		if Game.ability_input_controller != undefined {Game.ability_input_controller.back()}
@@ -72,9 +72,7 @@ main_button_click = function() {
 	if Game.game_loop_controller.get_game_state() == STATE_LIST.summon {
 		return;
 	}
-	var _player_key = string(global.turn_owner);
-	var _can_summon = Game.game_state != undefined && variable_struct_exists(Game.game_state.data.players, _player_key)
-		&& Game.game_state.data.players[$ _player_key].able_to_summon;
+	var _can_summon = can_current_player_summon();
 	if game_state == STATE_LIST.wait && _can_summon {
 		Game.summon_controller = new SummonInputController();
 	}

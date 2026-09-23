@@ -6,7 +6,7 @@ function ArcherBehaviour() : FigureBehaviour() constructor{
 	card = S_archer_card;
 	logo = S_ArcherLogo;
 	ability = undefined;
-	move_ability = ArcherMoveAbility;
+	move_effect_id = "archer_move";
 	rarity = 4;
 	deck_class = "A";
 	max_deck_amount = 5;

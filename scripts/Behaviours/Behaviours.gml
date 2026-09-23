@@ -74,6 +74,14 @@ function Behaviours() constructor{
 		if (is_undefined(_behaviour)) {return 0}
 		return _behaviour.max_deck_amount
 	}
+	static get_move_effect_id = function(behaviour_type) {
+		var _behaviour = get_behaviour(behaviour_type);
+		return _behaviour == undefined ? undefined : _behaviour.move_effect_id;
+	}
+	static get_ability_effect_id = function(behaviour_type) {
+		var _behaviour = get_behaviour(behaviour_type);
+		return _behaviour == undefined ? undefined : _behaviour.ability_effect_id;
+	}
 	static is_development_only = function(behaviour_type) {
 		var _behaviour = get_behaviour(behaviour_type);
 		return _behaviour == undefined || _behaviour.dev;

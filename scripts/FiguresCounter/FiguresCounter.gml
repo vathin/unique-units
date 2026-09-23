@@ -21,7 +21,12 @@ function FiguresCounter() constructor {
 	}
 
 	get_player_figures_amount = function(player) {
-		return array_length(Game.user_data.load(player).player_figures);
+		if Game.game_state != undefined && variable_struct_exists(Game.game_state.data, "players")
+		&& variable_struct_exists(Game.game_state.data.players, string(player)) {
+			var _deck = Game.game_state.data.players[$ string(player)].deck;
+			return is_array(_deck) ? array_length(_deck) : 0;
+		}
+		return 0;
 	}
 
 	change_field_figures_amount = function(player, amount) {							//кто прочитал тот дурак
@@ -57,11 +62,11 @@ function FiguresCounter() constructor {
 		var _opponent_id = get_display_opponent();
 		var _keys = variable_struct_get_names(_state.data.players);
 		if !variable_struct_exists(_state.data.players, string(_player_id)) && array_length(_keys) > 0 {
-			_player_id = _state.data.players[$ _keys[0]].id;
+			_player_id = _state.data.players[$ _keys[0]].player_id;
 		}
 		if !variable_struct_exists(_state.data.players, string(_opponent_id)) {
 			for (var _index = 0; _index < array_length(_keys); _index++) {
-				var _candidate_id = _state.data.players[$ _keys[_index]].id;
+				var _candidate_id = _state.data.players[$ _keys[_index]].player_id;
 				if string(_candidate_id) != string(_player_id) {
 					_opponent_id = _candidate_id;
 					break;
@@ -75,12 +80,8 @@ function FiguresCounter() constructor {
 		display_player_figures = _player != undefined && is_array(_player.deck) ? array_length(_player.deck) : 0;
 		display_opponent_figures = _opponent != undefined && is_array(_opponent.deck) ? array_length(_opponent.deck) : 0;
 		current_player_figures = display_player_figures;
-		var _player_data = _player_id != undefined ? Game.user_data.load(_player_id) : undefined;
-		var _opponent_data = _opponent_id != undefined ? Game.user_data.load(_opponent_id) : undefined;
-		display_player_max_figures = is_struct(_player_data) && variable_struct_exists(_player_data, "player_deck_size")
-			? _player_data.player_deck_size : max(display_player_max_figures, display_player_figures);
-		display_opponent_max_figures = is_struct(_opponent_data) && variable_struct_exists(_opponent_data, "player_deck_size")
-			? _opponent_data.player_deck_size : max(display_opponent_max_figures, display_opponent_figures);
+		display_player_max_figures = max(display_player_max_figures, display_player_figures);
+		display_opponent_max_figures = max(display_opponent_max_figures, display_opponent_figures);
 		return true;
 	}
 

@@ -11,7 +11,8 @@ function GameInput() constructor {
 	}
 
 	static has_cell = function(_spec, _value) {
-		if !is_array(_spec.allowed_cells) || !is_array(_value) || array_length(_value) != 2 {
+		if !is_struct(_spec) || !variable_struct_exists(_spec, "allowed_cells")
+		|| !is_array(_spec.allowed_cells) || !is_array(_value) || array_length(_value) != 2 {
 			return false;
 		}
 		var _count = array_length(_spec.allowed_cells);
@@ -25,7 +26,7 @@ function GameInput() constructor {
 	}
 
 	static has_choice = function(_spec, _value) {
-		if !is_array(_spec.options) {
+		if !is_struct(_spec) || !variable_struct_exists(_spec, "options") || !is_array(_spec.options) {
 			return false;
 		}
 		for (var _index = 0; _index < array_length(_spec.options); _index++) {

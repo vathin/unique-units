@@ -20,14 +20,14 @@ function SpearmanEffect() : GameEffect("spearman_ability") constructor {
 		return _cells;
 	}
 	get_inputs = function(_state, _actor_id, _partial = {}) {
-		var _source = Game.game_input.cell("source_cell", "game.input.spearman_source", get_sources(_state, _actor_id));
-		if !variable_struct_exists(_partial, "source_cell") || !Game.game_input.has_cell(_source, _partial.source_cell) return [_source];
-		return [_source, Game.game_input.cell("target_cell", "game.input.spearman_target", get_targets(_state, _partial.source_cell))];
+		var _source = GameInput.cell("source_cell", "game.input.spearman_source", get_sources(_state, _actor_id));
+		if !variable_struct_exists(_partial, "source_cell") || !GameInput.has_cell(_source, _partial.source_cell) return [_source];
+		return [_source, GameInput.cell("target_cell", "game.input.spearman_target", get_targets(_state, _partial.source_cell))];
 	}
 	validate_inputs = function(_state, _actor_id, _inputs) {
 		if _state.data.active_player_id != _actor_id || !is_struct(_inputs) return {ok: false, error: "Actor cannot use spearman ability now"};
 		var _specs = get_inputs(_state, _actor_id, _inputs);
-		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !Game.game_input.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid spearman target"};
+		if array_length(_specs) != 2 || !variable_struct_exists(_inputs, "target_cell") || !GameInput.has_cell(_specs[1], _inputs.target_cell) return {ok: false, error: "Invalid spearman target"};
 		return {ok: true, error: ""};
 	}
 	execute = function(_state, _actor_id, _inputs) {

@@ -6,6 +6,8 @@ function FigureBehaviour() constructor{
 	rarity = 0;
 	deck_class = "";
 	dev = false;
+	move_effect_id = "move";
+	ability_effect_id = undefined;
 }
 
 /// Placeholder behaviour for a future figure. It has no art, effects or move

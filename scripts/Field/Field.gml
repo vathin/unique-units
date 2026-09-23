@@ -173,7 +173,7 @@ function Field() constructor{
 
 				}
 				if (draw_cell.is_marked() and draw_cell.draw_mark == 1) {
-					draw_sprite_ext(global.mark, 0, get_cell_xy(draw_cell)[0], get_cell_xy(draw_cell)[1],
+					draw_sprite_ext(Game.input_session.mark_sprite, 0, get_cell_xy(draw_cell)[0], get_cell_xy(draw_cell)[1],
 					0.6*get_gui_scale(), 0.6*get_gui_scale(), 0, c_white, 1)
 				}
 				var _statuses = draw_cell.filled_figure_status.get_active_draw_statuses();
@@ -490,23 +490,6 @@ function Field() constructor{
 			}
 		}
 		return false;
-	}
-
-	check_status = function() {
-		var _surrounded_cells = check_every_figure(0);
-		var _conquested_cells = get_conquested_cells(1);
-		for (var i = 0; i < field_height; i++) {
-			for (var m = 0; m < field_width; m++) {
-				get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
-				get_cell(m, i).remove_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_conquest));
-			}
-		}
-		for (var i = 0; i < array_length(_surrounded_cells); i++) {
-			_surrounded_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_be_captured));
-		}
-		for (var i = 0; i < array_length(_conquested_cells); i++) {
-			_conquested_cells[i].add_figure_status(FigureStatusList.status(FIGURE_STATUS_LIST.will_conquest));
-		}
 	}
 
 	clear_every_status = function() {
